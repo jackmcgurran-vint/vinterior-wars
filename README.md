@@ -1,13 +1,13 @@
 # Vinterior Wars
 
-A Windows 98-style trading game in the spirit of Dope Wars: buy vintage furniture cheap, haul it across Europe in your van, sell it dear, and repay Featherstone & Sons before the interest eats you alive. 30 days, six cities, one shot at becoming a Vinterior Legend.
+A Windows 98-style trading game in the spirit of Dope Wars: buy vintage furniture low, haul it across Europe in your van, sell it high, and repay Featherstone & Sons before the interest eats you alive. 30 days, six cities, one shot at becoming a Vinterior Legend.
 
 **Play:** open `index.html` in any browser — no build, no dependencies.
 
 ## How to play
 
 - You start in London with £2,000 cash, £5,000 of debt (6% interest a day) and a 20-slot van.
-- Travelling to another city ends the day. Markets differ: teak is cheap in Copenhagen, Murano glass in Milan, Togo suites in Paris; Berlin is cheap across the board, London is dear.
+- Travelling to another city ends the day. Markets differ: teak is cheap in Copenhagen, Murano glass in Milan, Togo suites in Paris; Berlin is cheap across the board, London is pricey.
 - Debt can only be repaid in London.
 - Watch the log: markets spike and crash, and stock can spoil in the van — woodworm eats wood, moths eat fabric, glass smashes on cobbles, leather moulds under a leaky roof.
 - After 30 days you get your final net worth, a rank, and your run stats — then submit your score to the leaderboard.
