@@ -204,7 +204,7 @@
     <div class="tbtn">_</div><div class="tbtn">□</div><div class="tbtn">✕</div>
   </div>
   <div class="menubar">
-    <span class="menuitem" onclick="newGame()">Game</span>
+    <span class="menuitem" onclick="newGame()">New Game</span>
     <span class="menuitem" onclick="showLeaderboard()">Leaderboard</span>
     <span class="menuitem" onclick="showHelp()">Help</span>
   </div>
@@ -884,7 +884,7 @@ function render() {
     `<button ${S.over || c.name === S.city ? 'disabled' : ''} onclick="travel('${c.name}')">${c.name}</button>`
   ).join('');
 
-  status(S.over ? 'Game over — Game → New Game to play again.' : 'Ready.');
+  status(S.over ? 'Game over — click New Game to play again.' : 'Ready.');
 }
 
 function esc(s) { return s.replace(/'/g, "\\'"); }
@@ -897,6 +897,7 @@ $('amtInput').addEventListener('keydown', e => {
 });
 
 newGame();
+showHelp(); // first-time players see the rules on load
 </script>
 </body>
 </html>
