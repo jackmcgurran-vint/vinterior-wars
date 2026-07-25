@@ -187,6 +187,13 @@
     box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
     background: #fff;
   }
+  .dlg select {
+    font-family: inherit; font-size: 11px;
+    min-width: 80px; padding: 3px 4px;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    background: #fff;
+  }
   .dlg input[type=number] { width: 80px; }
   .dlg .btns { display: flex; justify-content: center; gap: 8px; }
   .dlg a { color: #000080; }
@@ -260,8 +267,9 @@
     <div class="body">
       <div class="msg" id="amtMsg"></div>
       <div class="row">
-        <label>How many?</label>
-        <input type="number" id="amtInput" min="0" value="1">
+        <label id="amtLabel">How many?</label>
+        <select id="amtSelect"></select>
+        <input type="number" id="amtInput" inputmode="numeric" min="0" value="1">
         <button style="min-width:48px" onclick="amtMax()">Max</button>
       </div>
       <div class="btns">
@@ -585,19 +593,37 @@ function openRepay() {
   showAmt(max);
 }
 
+// quantities (small max) use a select — native wheel picker on iOS/Android, no
+// keyboard; free amounts like debt repayment keep the typed field
+function amtUsesSelect() { return amtCtx.max <= 200; }
+
 function showAmt(def) {
-  $('amtInput').value = def;
-  $('amtInput').max = amtCtx.max;
+  $('amtLabel').textContent = amtCtx.kind === 'repay' ? 'Repay (£):' : 'How many?';
+  if (amtUsesSelect()) {
+    $('amtSelect').innerHTML = Array.from({ length: amtCtx.max }, (_, i) =>
+      `<option value="${i + 1}">${i + 1}</option>`).join('');
+    $('amtSelect').value = def;
+    $('amtSelect').style.display = '';
+    $('amtInput').style.display = 'none';
+  } else {
+    $('amtInput').value = def;
+    $('amtInput').max = amtCtx.max;
+    $('amtSelect').style.display = 'none';
+    $('amtInput').style.display = '';
+    if (matchMedia('(pointer: fine)').matches) { $('amtInput').focus(); $('amtInput').select(); }
+  }
   $('dlgAmt').classList.add('show');
-  $('amtInput').focus();
-  $('amtInput').select();
 }
 function closeAmt() { $('dlgAmt').classList.remove('show'); amtCtx = null; }
-function amtMax() { if (amtCtx) $('amtInput').value = amtCtx.max; }
+function amtMax() {
+  if (!amtCtx) return;
+  $(amtUsesSelect() ? 'amtSelect' : 'amtInput').value = amtCtx.max;
+}
 
 function amtOk() {
   if (!amtCtx) return;
-  const n = Math.max(0, Math.min(amtCtx.max, Math.floor(Number($('amtInput').value) || 0)));
+  const raw = $(amtUsesSelect() ? 'amtSelect' : 'amtInput').value;
+  const n = Math.max(0, Math.min(amtCtx.max, Math.floor(Number(raw) || 0)));
   const { kind, name, price } = amtCtx;
   closeAmt();
   if (!n) return;
