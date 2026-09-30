@@ -117,7 +117,6 @@
     height: 232px;
     overflow-y: auto;
   }
-  .listbox.short { height: 110px; }
   table { width: 100%; border-collapse: collapse; }
   th {
     text-align: left; font-weight: bold;
@@ -307,7 +306,6 @@
   </div>
   <div class="menubar">
     <span class="menuitem" onclick="newGame()">New Game</span>
-    <span class="menuitem" onclick="showGear()">Gear</span>
     <span class="menuitem" onclick="showBest()">Best</span>
     <span class="menuitem" onclick="showHelp()">Help</span>
   </div>
@@ -337,15 +335,6 @@
         <div class="panelbtns">
           <button id="btnSell" onclick="openSell()">Sell…</button>
           <button id="btnRepay" onclick="openRepay()">Repay loan…</button>
-        </div>
-      </fieldset>
-
-      <fieldset id="lockupPanel">
-        <legend>Lock-up (London)</legend>
-        <div class="listbox short" id="lockBox"></div>
-        <div class="panelbtns">
-          <button id="btnToLock" onclick="openToLock()">Stash…</button>
-          <button id="btnToVan" onclick="openToVan()">Retrieve…</button>
         </div>
       </fieldset>
     </div>
@@ -445,6 +434,8 @@ const ITEM_LINKS = {
   'Memphis-Style Bookcase':   'https://www.vinterior.co/search?q=memphis+style+bookcase',
   'Postmodern Squiggle Lamp': 'https://www.vinterior.co/search?q=postmodern+lamp',
 };
+// end-screen call to action
+const VINTERIOR_URL = 'https://www.vinterior.co/';
 
 const DAYS = 30;
 const START_CASH = 2000;
@@ -453,9 +444,6 @@ const START_CAP = 20;
 const INTEREST = 0.06;        // per day — Uncle Barry is family, not a charity
 
 const MIAMI_FARE = 300;       // flight there or back
-const LOCKUP_FEE = 250;       // one-off, first time you stash something
-const LOCKUP_CAP = 40;
-const MATE_FEE = 75;          // per day while hired
 const SACK_TRUCK_PRICE = 450;
 const COLLECTOR_DEBT = 8000;  // above this, Uncle Barry's lads roam
 
@@ -485,7 +473,7 @@ const ITEMS = [
 
 const CITIES = [
   { name: 'London',     mult: 1.15, home: 'uk', blurb: 'Pricey, but Uncle Barry takes payment here.' },
-  { name: 'Paris',      mult: 1.10, home: 'fr', blurb: 'Marché aux Puces — style costs.' },
+  { name: 'Paris',      mult: 1.10, home: 'fr', blurb: 'Marché aux Puces. Style costs.' },
   { name: 'Copenhagen', mult: 1.00, home: 'dk', blurb: 'Teak country. Danish design galore.' },
   { name: 'Milan',      mult: 1.00, home: 'it', blurb: 'Glass, brass and la dolce vita.' },
   { name: 'Amsterdam',  mult: 0.95, home: null, blurb: 'Canal-side kringloop bargains.' },
@@ -494,24 +482,24 @@ const CITIES = [
 ];
 
 const SPIKES = [
-  '{item} featured in The Upholsterer’s Gazette — collectors are frantic!',
-  'A celebrity designer name-drops the {item} — prices go through the roof!',
+  '{item} featured in The Upholsterer’s Gazette: collectors are frantic!',
+  'A celebrity designer name-drops the {item}: prices go through the roof!',
   'An auction record for a {item} sends the market wild!',
 ];
 const CRASHES = [
-  'A warehouse clearance floods the market with {item}s — prices collapse!',
-  'Convincing fakes of the {item} are doing the rounds — buyers spooked!',
-  'A big estate sale dumps dozens of {item}s — prices tumble!',
+  'A warehouse clearance floods the market with {item}s: prices collapse!',
+  'A home makeover show declares the {item} “so last year”. Prices tumble!',
+  'A big estate sale dumps dozens of {item}s: prices slide!',
 ];
 
 const DJ_LINES = [
-  'You’re listening to Teak FM — all killer, no filler, mostly veneer.',
+  'You’re listening to Teak FM: all killer, no filler, mostly veneer.',
   'Traffic news: a sideboard has shed its load on the ring road. Expect delays and bargains.',
   'That was the sound of a wardrobe being winched through a first-floor window. Poetry.',
   'Teak FM weather: dry, with a risk of woodworm.',
   'Coming up after the news: an hour of uninterrupted Danish oiling tips.',
-  'A listener writes: “Is it real Murano?” Trevor, it is never real Murano.',
-  'Remember: if the price looks too good to be true, it’s probably veneer.',
+  'Teak FM agony aunt: “My partner says the Chesterfield has to go.” Keep the Chesterfield.',
+  'Remember: measure the doorway before you buy the sofa.',
   'Teak FM travel: the ferry’s running, the van smells of mould, life is good.',
   'And now, the shipping forecast for anyone moving a sofa by sea.',
 ];
@@ -519,10 +507,10 @@ const DJ_LINES = [
 // material-targeted mishaps (van)
 const DAMAGE = [
   { mat: 'wood',    msg: 'Woodworm in the van! {n} × {item} ruined.' },
-  { mat: 'textile', msg: 'Moths have been at the van — {n} × {item} chewed beyond saving.' },
-  { mat: 'glass',   msg: 'Cobbles, potholes and dodgy suspension — {n} × {item} smashed.' },
+  { mat: 'textile', msg: 'Moths have been at the van: {n} × {item} chewed beyond saving.' },
+  { mat: 'glass',   msg: 'Cobbles, potholes and dodgy suspension: {n} × {item} smashed.' },
   { mat: 'leather', msg: 'The van roof leaks and mould claims {n} × {item}.' },
-  { mat: 'metal',   msg: 'Damp sea air on the ferry — {n} × {item} rusted through.' },
+  { mat: 'metal',   msg: 'Damp sea air on the ferry: {n} × {item} rusted through.' },
 ];
 
 /* ================= state & helpers ================= */
@@ -530,11 +518,10 @@ const DAMAGE = [
 let S = null;          // game state
 let selMarket = null;  // selected market item name
 let selVan = null;     // selected van item name
-let selLock = null;    // selected lock-up item name
 let endInfo = null;    // last finished game: {net, rank, cheated}
 
 const $ = id => document.getElementById(id);
-const fmt = n => '£' + Math.round(n).toLocaleString('en-GB');
+const fmt = n => (n < 0 ? '-£' : '£') + Math.abs(Math.round(n)).toLocaleString('en-GB');
 const rnd = (a, b) => a + Math.random() * (b - a);
 const ri = (a, b) => Math.floor(rnd(a, b + 1));
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -551,10 +538,10 @@ function saveJson(key, value) {
 function newGame() {
   S = {
     day: 1, cash: START_CASH, debt: START_DEBT, cap: START_CAP,
-    city: 'London', inv: {}, paid: {}, lock: {}, lockPaid: {}, lockOwned: false,
+    city: 'London', inv: {}, paid: {},
     market: {}, over: false,
     heat: 0, tradeHere: 0,
-    sackTruck: false, mate: false,
+    sackTruck: false,
     cheated: false,
     enc: null,          // pending encounter: {type, bribe, demand}
     stats: {
@@ -567,11 +554,11 @@ function newGame() {
       encounters: 0, escapes: 0, bribes: 0, daysLost: 0,
     },
   };
-  selMarket = selVan = selLock = null;
+  selMarket = selVan = null;
   endInfo = null;
   $('log').innerHTML = '';
-  log(`Day 1 — London`, 'day');
-  log(`Uncle Barry has lent you ${fmt(START_DEBT)} (${Math.round(INTEREST * 100)}% a day — “family rate”). You have ${fmt(START_CASH)}, a van with ${START_CAP} slots, and ${DAYS} days before he wants a word.`);
+  log(`Day 1: London`, 'day');
+  log(`Uncle Barry has lent you ${fmt(START_DEBT)} (${Math.round(INTEREST * 100)}% a day, “family rate”). You have ${fmt(START_CASH)}, a van with ${START_CAP} slots, and ${DAYS} days before he wants a word.`);
   genMarket();
   render();
 }
@@ -614,7 +601,6 @@ function genMarket() {
 }
 
 function vanUsed() { return Object.values(S.inv).reduce((a, b) => a + b, 0); }
-function lockUsed() { return Object.values(S.lock).reduce((a, b) => a + b, 0); }
 function netWorth() { return S.cash - S.debt; }
 function cargoValue() {
   let v = 0;
@@ -652,21 +638,16 @@ function travel(city) {
   if (S.debt > 0) S.debt = Math.round(S.debt * (1 + INTEREST));
   if (flying) {
     S.cash -= MIAMI_FARE;
-    log(`Flights and excess baggage: ${fmt(MIAMI_FARE)}. The van sulks in long-stay parking.`);
+    log(`Flights and excess baggage: ${fmt(MIAMI_FARE)}. The van rides in the hold, sulking.`);
   }
-  if (S.mate) {
-    if (S.cash >= MATE_FEE) { S.cash -= MATE_FEE; }
-    else { S.mate = false; log(`You can't cover Big Kev's ${fmt(MATE_FEE)} — he wishes you well and takes the bus home.`, 'bad'); }
-  }
-
   if (S.day > DAYS) { endGame(); return; }
 
   S.stats.cities[city] = true;
   S.tradeHere = 0;
-  selMarket = selVan = selLock = null;
+  selMarket = selVan = null;
   coolHeat();
   showCityCard(city, `Day ${S.day} of ${DAYS}`);
-  log(`Day ${S.day} — ${city}. ${CITIES.find(c => c.name === city).blurb}`, 'day');
+  log(`Day ${S.day}: ${city}. ${CITIES.find(c => c.name === city).blurb}`, 'day');
   genMarket();
 
   // one drama per day: debt collectors first, then heat encounters, then the mild
@@ -680,10 +661,9 @@ function travel(city) {
       startEncounter('barry');
     }
   } else if (S.day >= 4 && Math.random() < ENC_BASE + S.heat * ENC_PER_HEAT) {
-    startEncounter(pick(['inspector', 'rival', 'heavies']));
+    startEncounter(pick(['warden', 'rival', 'heavies']));
   } else {
     arrivalEvent();
-    if (lockUsed()) lockupEvent();
   }
   render();
 }
@@ -708,8 +688,9 @@ function arrivalEvent() {
   else if (roll < 0.18 && held.length) damageEvent(held);
   else if (roll < 0.26 && S.cash > 100) customsEvent();
   else if (roll < 0.33 && S.cap < 60) vanOffer();
-  else if (roll < 0.40 && held.length) dresserOffer(held);
-  else if (roll < 0.46) tipEvent();
+  else if (roll < 0.38 && !S.sackTruck) sackOffer();
+  else if (roll < 0.45 && held.length) dresserOffer(held);
+  else if (roll < 0.50) tipEvent();
 }
 
 function luckyFind() {
@@ -718,7 +699,7 @@ function luckyFind() {
   if (qty < 1) return;
   addStock(it.name, qty, 0);
   S.stats.found += qty;
-  log(`You spot a skip outside a house clearance — ${qty} × ${it.name} for nothing!`, 'good');
+  log(`You spot a skip outside a house clearance: ${qty} × ${it.name} for nothing!`, 'good');
 }
 
 // mishaps only strike stock made of the matching material
@@ -739,7 +720,7 @@ function damageEvent(held) {
 function customsEvent() {
   const fee = Math.min(S.cash, ri(80, 250) + S.day * 10);
   S.cash -= fee;
-  log(`Customs paperwork trouble at the border — you pay ${fmt(fee)} in duties and “handling”.`, 'bad');
+  log(`Customs paperwork trouble at the border. You pay ${fmt(fee)} in duties and “handling”.`, 'bad');
 }
 
 function vanOffer() {
@@ -757,6 +738,22 @@ function vanOffer() {
   });
 }
 
+// one-off purchase: the sack truck keeps its Run bonus in encounters
+function sackOffer() {
+  confirmMsg(`A removals firm is selling off a sack truck for ${fmt(SACK_TRUCK_PRICE)}. It makes running away a lot easier. Buy it?`, ok => {
+    if (ok && S.cash >= SACK_TRUCK_PRICE) {
+      S.cash -= SACK_TRUCK_PRICE;
+      S.sackTruck = true;
+      log(`You buy the sack truck. Suddenly every getaway has wheels.`, 'good');
+    } else if (ok) {
+      log(`You can't afford the sack truck.`, 'bad');
+    } else {
+      log(`You pass on the sack truck.`);
+    }
+    render();
+  });
+}
+
 // a film set dresser pays over the odds for stock you're holding
 function dresserOffer(held) {
   const name = pick(held);
@@ -764,12 +761,12 @@ function dresserOffer(held) {
   const qty = Math.min(S.inv[name], ri(1, 3));
   const base = S.market[name] || Math.round((it.min + it.max) / 2 * cityMult(it, S.city));
   const offer = Math.round(base * rnd(1.4, 2));
-  confirmMsg(`A set dresser on a film shoot needs ${qty} × ${name} today and offers ${fmt(offer)} each — well over the odds. Sell?`, ok => {
+  confirmMsg(`A set dresser on a film shoot needs ${qty} × ${name} today and offers ${fmt(offer)} each, well over the odds. Sell?`, ok => {
     if (ok) {
       recordSale(name, qty, offer);
       log(`Sold ${qty} × ${name} to the film crew for ${fmt(qty * offer)}.`, 'good');
     } else {
-      log(`You send the set dresser away — props are someone else's problem.`);
+      log(`You send the set dresser away. Props are someone else's problem.`);
     }
     render();
   });
@@ -778,41 +775,15 @@ function dresserOffer(held) {
 function tipEvent() {
   const tip = ri(50, 200);
   S.cash += tip;
-  log(`A grateful buyer sends a ${fmt(tip)} tip — “the sideboard made the room”.`, 'good');
-}
-
-// the lock-up has its own, milder risks
-function lockupEvent() {
-  const roll = Math.random();
-  const held = Object.keys(S.lock).filter(k => S.lock[k] > 0);
-  if (!held.length) return;
-  if (roll < 0.05) {
-    const name = pick(held);
-    const lost = Math.max(1, Math.ceil(S.lock[name] * rnd(0.3, 0.5)));
-    removeLock(name, lost);
-    S.stats.lost += lost;
-    log(`Someone's had the lock-up shutter open — ${lost} × ${name} gone. The padlock survived, insultingly.`, 'bad');
-  } else if (roll < 0.11) {
-    // damp only bothers wood and textile
-    const dampable = held.filter(n => {
-      const it = ITEMS.find(i => i.name === n);
-      return it.mats.includes('wood') || it.mats.includes('textile');
-    });
-    if (!dampable.length) return;
-    const name = pick(dampable);
-    const lost = Math.max(1, Math.ceil(S.lock[name] * rnd(0.25, 0.45)));
-    removeLock(name, lost);
-    S.stats.lost += lost;
-    log(`Damp in the lock-up — ${lost} × ${name} ruined. That drip was load-bearing after all.`, 'bad');
-  }
+  log(`A grateful buyer sends a ${fmt(tip)} tip: “the sideboard made the room”.`, 'good');
 }
 
 /* ---------- encounters ---------- */
 
 const ENC_DEFS = {
-  inspector: {
-    title: 'Trading Standards',
-    intro: () => `A man in a grey anorak flashes a laminated card: Trading Standards. “Mind if I have a look at that provenance paperwork, sir?”`,
+  warden: {
+    title: 'Traffic warden',
+    intro: () => `A traffic warden is photographing your van on the double yellows. “This your vehicle?”`,
     options: ['run', 'bribe', 'talk'],
   },
   rival: {
@@ -822,7 +793,7 @@ const ENC_DEFS = {
   },
   heavies: {
     title: 'Auction-house heavies',
-    intro: () => `Two large gentlemen from the auction house would like a word about “unpaid buyer's premium”.`,
+    intro: () => `Two enormous representatives of the auction house would like a word about “unpaid buyer's premium”.`,
     options: ['run', 'bribe', 'talk'],
   },
   barry: {
@@ -832,7 +803,17 @@ const ENC_DEFS = {
   },
 };
 
-const ENC_BTN_LABELS = { run: 'Run', bribe: 'Bribe', talk: 'Talk', pay: 'Pay up', stock: 'Hand over stock' };
+// button labels carry the odds, so every choice is an informed one;
+// Pay up and Hand over stock always work, so they get no percentage
+function encBtnLabel(type, action) {
+  if (action === 'pay') return 'Pay up';
+  if (action === 'stock') return 'Hand over stock';
+  const p = Math.round(encOdds(action) * 100) + '%';
+  if (action === 'run') return `Run (${p})`;
+  if (action === 'talk') return `Talk (${p})`;
+  const cost = fmt(S.enc.bribe);
+  return type === 'warden' ? `Pay the ticket ${cost} (${p})` : `Bribe ${cost} (${p})`;
+}
 
 function startEncounter(type) {
   const enc = { type };
@@ -844,12 +825,10 @@ function startEncounter(type) {
   S.enc = enc;
   S.stats.encounters++;
   const def = ENC_DEFS[type];
-  const detail = type === 'barry' ? '' :
-    `<div class="dim" style="margin-top:8px">A bribe would run to about ${fmt(enc.bribe)}. Heat: ${S.heat}/5.</div>`;
   baseMsg(
-    def.intro(enc) + detail,
+    def.intro(enc),
     def.title, false,
-    def.options.map(o => `<button onclick="resolveEncounter('${o}')">${ENC_BTN_LABELS[o]}</button>`).join(''),
+    def.options.map(o => `<button onclick="resolveEncounter('${o}')">${encBtnLabel(type, o)}</button>`).join(''),
     null
   );
   $('msgClose').style.display = 'none'; // no sneaking out of the dialog
@@ -859,10 +838,10 @@ function encOdds(action) {
   const load = vanUsed() / Math.max(1, S.cap);
   if (action === 'run') {
     return Math.max(0.1, Math.min(0.95,
-      0.62 + (S.sackTruck ? 0.15 : 0) + (S.mate ? 0.10 : 0) - S.heat * 0.04 - load * 0.15));
+      0.62 + (S.sackTruck ? 0.15 : 0) - S.heat * 0.04 - load * 0.15));
   }
   if (action === 'bribe') {
-    return Math.max(0.2, Math.min(0.95, 0.80 - S.heat * 0.06 + (S.mate ? 0.03 : 0)));
+    return Math.max(0.2, Math.min(0.95, 0.80 - S.heat * 0.06));
   }
   // talk: easier with an innocent-looking van
   return Math.max(0.1, Math.min(0.9,
@@ -897,10 +876,10 @@ function resolveEncounter(action) {
 
 function encounterSuccess(type, action) {
   const lines = {
-    inspector: {
-      run: `You leg it through a fire exit and lose him behind the bins. Not dignified, but effective.`,
-      bribe: `“Ah. Well. That all seems to be in order,” he says, anorak pocket slightly heavier.`,
-      talk: `You produce receipts so boring he loses the will to live and waves you through.`,
+    warden: {
+      run: `You're in the cab and gone before his printer finishes. Not dignified, but effective.`,
+      bribe: `You pay the ticket on the spot and throw in a Custard Cream. He moves on, mollified.`,
+      talk: `You explain you're only loading. You produce a sideboard as evidence. He waves you on.`,
     },
     rival: {
       run: `You nip down a one-way street the wrong way. The estate car can't follow. The curses can.`,
@@ -919,7 +898,7 @@ function encounterSuccess(type, action) {
   if (Math.random() < 0.15) {
     const bonus = ri(40, 150);
     S.cash += bonus;
-    log(`In the confusion somebody drops a tenner or three — you're ${fmt(bonus)} up.`, 'good');
+    log(`In the confusion somebody drops a tenner or three: you're ${fmt(bonus)} up.`, 'good');
   }
 }
 
@@ -930,20 +909,20 @@ function encounterFailure(type, action) {
     S.cash -= fine;
     const msg = action === 'bribe'
       ? `They take the ${fmt(fine)} and your afternoon. Mostly the afternoon.`
-      : `They know every shortcut you know, plus one. ${fine ? `You're ${fmt(fine)} lighter and ` : 'Y'}you spend the day “helping with enquiries”.`;
+      : `They follow you all the way to the depot and make you sit through a two-hour talk on auction etiquette.${fine ? ` You're ${fmt(fine)} lighter.` : ''} Day lost.`;
     if (loseDay(msg)) return;
     return;
   }
   const held = Object.keys(S.inv).filter(k => S.inv[k] > 0 && !ITEMS.find(i => i.name === k).golden);
-  if (held.length && (type === 'inspector' || Math.random() < 0.6)) {
+  if (held.length && (type === 'warden' || Math.random() < 0.6)) {
     const name = pick(held);
     const lost = Math.max(1, Math.ceil(S.inv[name] * rnd(0.2, 0.4)));
     removeStock(name, lost);
     S.stats.lost += lost;
     const msgs = {
-      inspector: action === 'bribe'
-        ? `“Are you attempting to BRIBE an officer of Trading Standards?” He impounds ${lost} × ${name} on principle.`
-        : `Your story has more holes than the upholstery. He impounds ${lost} × ${name} “pending inquiries”.`,
+      warden: action === 'bribe'
+        ? `He takes the money AND calls the tow truck. The pound “mislays” ${lost} × ${name}.`
+        : `Your story has more holes than the upholstery. The van gets towed and the pound “mislays” ${lost} × ${name}.`,
       rival: action === 'bribe'
         ? `She takes the lunch AND ${lost} × ${name}. You've been done up like a kipper.`
         : `She talks faster, knows more, and leaves with ${lost} × ${name}. Masterclass, really.`,
@@ -953,7 +932,7 @@ function encounterFailure(type, action) {
     const fine = Math.min(S.cash, ri(150, 400) + S.day * 8);
     S.cash -= fine;
     const msgs = {
-      inspector: `The fine writes itself: ${fmt(fine)}, plus a leaflet about your responsibilities.`,
+      warden: `The ticket writes itself: ${fmt(fine)}, plus a leaflet about loading bays.`,
       rival: `She gazumps you on the spot and it costs you ${fmt(fine)} to keep face. Worth it? Unclear.`,
     };
     log(msgs[type], 'bad');
@@ -1016,33 +995,6 @@ function removeStock(name, qty) {
   S.inv[name] = had - take;
   if (!S.inv[name]) { delete S.inv[name]; delete S.paid[name]; }
 }
-function removeLock(name, qty) {
-  const had = S.lock[name] || 0;
-  if (!had) return;
-  const take = Math.min(qty, had);
-  S.lockPaid[name] = Math.round((S.lockPaid[name] || 0) * (had - take) / had);
-  S.lock[name] = had - take;
-  if (!S.lock[name]) { delete S.lock[name]; delete S.lockPaid[name]; }
-}
-
-// move qty (and its share of cost basis) between van and lock-up
-function moveStock(name, qty, toLock) {
-  const [srcInv, srcPaid, addFn] = toLock
-    ? [S.inv, S.paid, (n, q, c) => { S.lock[n] = (S.lock[n] || 0) + q; S.lockPaid[n] = (S.lockPaid[n] || 0) + c; }]
-    : [S.lock, S.lockPaid, addStock];
-  const had = srcInv[name] || 0;
-  if (!had) return;
-  const take = Math.min(qty, had);
-  const costShare = Math.round((srcPaid[name] || 0) * take / had);
-  srcPaid[name] = (srcPaid[name] || 0) - costShare;
-  srcInv[name] = had - take;
-  if (!srcInv[name]) {
-    delete srcInv[name];
-    if (toLock) delete S.paid[name]; else delete S.lockPaid[name];
-  }
-  addFn(name, take, costShare);
-}
-
 function recordBuy(name, n, price) {
   S.cash -= n * price;
   addStock(name, n, n * price);
@@ -1071,7 +1023,7 @@ function tradeHeat(n) {
   S.tradeHere += n;
   while (S.tradeHere >= HEAT_TRADE_UNITS) {
     S.tradeHere -= HEAT_TRADE_UNITS;
-    bumpHeat(1, `Word gets round about a big spender in ${S.city}… (heat up)`);
+    bumpHeat(1, `Word gets round about a big spender in ${S.city}. Heat is rising.`);
   }
 }
 
@@ -1083,7 +1035,7 @@ function openBuy() {
   if (S.over || S.enc || !selMarket) return;
   const price = S.market[selMarket];
   const max = Math.min(Math.floor(S.cash / price), S.cap - vanUsed());
-  if (max < 1) { errorMsg(`You can't afford any <b>${selMarket}</b> — or the van is full.`, 'No deal'); return; }
+  if (max < 1) { errorMsg(`You can't afford any <b>${selMarket}</b>, or the van is full.`, 'No deal'); return; }
   amtCtx = { kind: 'buy', name: selMarket, price, max };
   $('amtTitle').textContent = 'Buy';
   $('amtMsg').innerHTML = `<b>${selMarket}</b> at ${fmt(price)} each.<br>You can afford <b>${max}</b>.`;
@@ -1094,7 +1046,7 @@ function openSell() {
   if (S.over || S.enc || !selVan) return;
   const qty = S.inv[selVan] || 0;
   const price = S.market[selVan];
-  if (!price) { errorMsg(`No buyers for <b>${selVan}</b> in ${S.city} today. Try another city — or another item.`, 'No buyers'); return; }
+  if (!price) { errorMsg(`No buyers for <b>${selVan}</b> in ${S.city} today. Try another city, or another item.`, 'No buyers'); return; }
   amtCtx = { kind: 'sell', name: selVan, price, max: qty };
   $('amtTitle').textContent = 'Sell';
   $('amtMsg').innerHTML = `<b>${selVan}</b> fetches ${fmt(price)} each here.<br>You have <b>${qty}</b>.`;
@@ -1109,31 +1061,6 @@ function openRepay() {
   amtCtx = { kind: 'repay', name: 'debt', price: 1, max };
   $('amtTitle').textContent = 'Repay loan';
   $('amtMsg').innerHTML = `You owe Uncle Barry <b>${fmt(S.debt)}</b>. How much will you repay?`;
-  showAmt(max);
-}
-
-function openToLock() {
-  if (S.over || S.enc || S.city !== 'London' || !selVan) return;
-  const qty = S.inv[selVan] || 0;
-  if (!qty) return;
-  const room = LOCKUP_CAP - lockUsed();
-  const max = Math.min(qty, room);
-  if (max < 1) { errorMsg('The lock-up is full.', 'No room'); return; }
-  const feeNote = S.lockOwned ? '' : `<br><span class="dim">First visit: ${fmt(LOCKUP_FEE)} sorts the rent out.</span>`;
-  amtCtx = { kind: 'tolock', name: selVan, price: 0, max };
-  $('amtTitle').textContent = 'Stash in lock-up';
-  $('amtMsg').innerHTML = `Move <b>${selVan}</b> from the van to the lock-up.${feeNote}`;
-  showAmt(max);
-}
-
-function openToVan() {
-  if (S.over || S.enc || S.city !== 'London' || !selLock) return;
-  const qty = S.lock[selLock] || 0;
-  const max = Math.min(qty, S.cap - vanUsed());
-  if (max < 1) { errorMsg('The van is full.', 'No room'); return; }
-  amtCtx = { kind: 'tovan', name: selLock, price: 0, max };
-  $('amtTitle').textContent = 'Back in the van';
-  $('amtMsg').innerHTML = `Move <b>${selLock}</b> from the lock-up to the van.`;
   showAmt(max);
 }
 
@@ -1180,19 +1107,7 @@ function amtOk() {
     log(`Sold ${n} × ${name} for ${fmt(n * price)}.`);
   } else if (kind === 'repay') {
     S.cash -= n; S.debt -= n;
-    log(`Repaid ${fmt(n)}. ${S.debt > 0 ? 'Still owing ' + fmt(S.debt) + '.' : 'Loan cleared — Uncle Barry buys YOU a chip.'}`, S.debt > 0 ? null : 'good');
-  } else if (kind === 'tolock') {
-    if (!S.lockOwned) {
-      if (S.cash < LOCKUP_FEE) { errorMsg(`You need <b>${fmt(LOCKUP_FEE)}</b> for the lock-up rent.`, 'Rent due'); return; }
-      S.cash -= LOCKUP_FEE;
-      S.lockOwned = true;
-      log(`You take a lock-up under the arches for ${fmt(LOCKUP_FEE)}. It smells of oil and possibility.`);
-    }
-    moveStock(name, n, true);
-    log(`Stashed ${n} × ${name} in the lock-up.`);
-  } else if (kind === 'tovan') {
-    moveStock(name, n, false);
-    log(`Loaded ${n} × ${name} back in the van.`);
+    log(`Repaid ${fmt(n)}. ${S.debt > 0 ? 'Still owing ' + fmt(S.debt) + '.' : 'Loan cleared. Uncle Barry buys YOU a chip.'}`, S.debt > 0 ? null : 'good');
   }
   render();
 }
@@ -1237,10 +1152,10 @@ function closeMsg(ok) {
 function showIntro() {
   infoMsg(
     `<b>November 2026. Launch week.</b><br><br>` +
-    `The biggest video game of all time is out, every telly in Europe is on, and suddenly ` +
-    `every living room looks tired. Half the continent wants a new sofa by Friday.<br><br>` +
-    `Uncle Barry has lent you ${fmt(START_DEBT)} to make the most of it. You have a van, ` +
-    `${DAYS} days, and his complete confidence. Don't waste either.`,
+    `Half of Europe is about to spend a month on the sofa, and they've just noticed how ` +
+    `tired it looks.<br><br>` +
+    `Uncle Barry has lent you ${fmt(START_DEBT)} to make the most of it. You've got a van, ` +
+    `${DAYS} days and his complete confidence. Don't waste any of them.`,
     'Vice Settee'
   );
 }
@@ -1249,52 +1164,17 @@ function showHelp() {
   infoMsg(
     `Buy vintage furniture low, travel, sell it high.<br><br>` +
     `• Travelling ends the day; you have <b>${DAYS} days</b>.<br>` +
-    `• Uncle Barry's loan grows <b>${Math.round(INTEREST * 100)}% a day</b> — repay it in London. ` +
+    `• Uncle Barry's loan grows <b>${Math.round(INTEREST * 100)}% a day</b>: repay it in London. ` +
     `Let it pile up and his lads will find you anywhere.<br>` +
     `• <b>Heat</b> (status bar) rises when you trade big or botch an encounter. ` +
-    `High heat means more trouble: inspectors, rivals, heavies. Run, bribe or talk your way out. ` +
+    `High heat means more trouble: wardens, rivals, heavies. Run, bribe or talk your way out. ` +
     `Heat cools as you keep moving.<br>` +
-    `• The van holds <b>${START_CAP} slots</b>; a lock-up in London holds ${LOCKUP_CAP} more (mind the damp).<br>` +
-    `• Gear helps: a sack truck for quicker getaways, or Big Kev, who costs ${fmt(MATE_FEE)} a day and looks convincing.<br>` +
+    `• The van holds <b>${START_CAP} slots</b> to start. Watch for offers: a bigger van, or a sack truck for quicker getaways.<br>` +
     `• Stock can spoil: woodworm eats wood, moths eat fabric, glass smashes, leather moulds.<br>` +
     `• Miami is a flight away: cheap postmodern pieces, wild prices.<br><br>` +
     `Finish with the highest net worth you can. Your best run is saved on this device only.`,
     'How to play'
   );
-}
-
-/* ---------- gear ---------- */
-
-function showGear() {
-  if (!S || S.over) return;
-  const sack = S.sackTruck
-    ? `<span class="dim">Sack truck: owned. You corner like a dream.</span>`
-    : `<button onclick="buyGear('sack')">Sack truck — ${fmt(SACK_TRUCK_PRICE)}</button> <span class="dim">better getaways</span>`;
-  const mate = S.mate
-    ? `<button onclick="buyGear('sackKev')">Send Big Kev home</button> <span class="dim">currently ${fmt(MATE_FEE)}/day</span>`
-    : `<button onclick="buyGear('mate')">Hire Big Kev — ${fmt(MATE_FEE)}/day</button> <span class="dim">better odds all round</span>`;
-  baseMsg(
-    `<div class="row">${sack}</div><div class="row">${mate}</div>`,
-    'Gear', false,
-    '<button onclick="closeMsg(true)">Close</button>', null
-  );
-}
-
-function buyGear(what) {
-  if (what === 'sack') {
-    if (S.cash < SACK_TRUCK_PRICE) { errorMsg(`You can't afford the sack truck.`, 'Empty pockets'); return; }
-    S.cash -= SACK_TRUCK_PRICE;
-    S.sackTruck = true;
-    log(`You buy a sack truck. Suddenly every getaway has wheels.`, 'good');
-  } else if (what === 'mate') {
-    S.mate = true;
-    log(`Big Kev is aboard — ${fmt(MATE_FEE)} a day, sandwiches not included. People are politer already.`, 'good');
-  } else {
-    S.mate = false;
-    log(`Big Kev heads home. The van feels roomier and less safe.`);
-  }
-  closeMsg(true);
-  render();
 }
 
 /* ---------- cheats ---------- */
@@ -1310,7 +1190,7 @@ function applyCheat(code) {
   if (!fn || !S || S.over) return false;
   S.cheated = true;
   log(fn(), 'good');
-  log(`(Cheat active — this run won't count for your personal best.)`);
+  log(`(Cheat active: this run won't count for your personal best.)`);
   render();
   return true;
 }
@@ -1369,8 +1249,8 @@ function updateLifetime() {
 
 function bestHtml() {
   const best = loadJson('vs-best', null);
-  if (!best) return `<div class="dim">No personal best yet — finish a run without cheats.</div>`;
-  return `Personal best on this device: <b>${fmt(best.net)}</b> — ${escHtml(best.rank)} <span class="dim">(${escHtml(best.when)})</span>`;
+  if (!best) return `<div class="dim">No personal best yet. Finish a run without cheats.</div>`;
+  return `Personal best on this device: <b>${fmt(best.net)}</b>, ${escHtml(best.rank)} <span class="dim">(${escHtml(best.when)})</span>`;
 }
 
 function lifetimeHtml() {
@@ -1390,7 +1270,10 @@ function showBest() {
 
 function shareText() {
   const url = location.origin !== 'null' ? location.href.split('?')[0].split('#')[0] : '';
-  return `I made ${fmt(endInfo.net)} in 30 days as a vintage dealer in Vinterior Wars: Vice Settee — can you beat me? ${url}`.trim();
+  const text = endInfo.net >= 0
+    ? `I turned Uncle Barry's ${fmt(START_DEBT)} loan into ${fmt(endInfo.net)} in ${DAYS} days on Vinterior Wars: Vice Settee. Beat that: ${url}`
+    : `I went bust owing Uncle Barry ${fmt(Math.abs(endInfo.net))} on Vinterior Wars: Vice Settee. You'll do better: ${url}`;
+  return text.trim();
 }
 
 async function shareScore() {
@@ -1404,16 +1287,16 @@ async function shareScore() {
       return;
     }
     await navigator.clipboard.writeText(text);
-    if (el) el.textContent = 'Copied to clipboard — paste it anywhere.';
+    if (el) el.textContent = 'Copied to clipboard. Paste it anywhere.';
   } catch (e) {
-    if (el) el.textContent = 'Could not share — long-press the text above to copy it.';
+    if (el) el.textContent = 'Could not share, so copy it yourself: ' + text;
   }
 }
 
 /* ---------- end game ---------- */
 
 function rankFor(net) {
-  if (net < 0)           return 'Bankrupt — back to flat-pack';
+  if (net < 0)           return 'Bankrupt. Back to flat-pack';
   if (net < 5000)        return 'Car Boot Browser';
   if (net < 20000)       return 'Market Stall Regular';
   if (net < 50000)       return 'Respected Dealer';
@@ -1430,10 +1313,10 @@ function statsHtml() {
     ['Spent on stock', fmt(st.spend)],
     ['Takings', fmt(st.revenue)],
     ['Trading profit', fmt(st.profit)],
-    ['Best flip', st.bestFlip.item ? `${fmt(st.bestFlip.profit)} on ${st.bestFlip.item}` : '—'],
-    ['Most traded item', most ? `${most[0]} (${most[1]} units)` : '—'],
+    ['Best flip', st.bestFlip.item ? `${fmt(st.bestFlip.profit)} on ${st.bestFlip.item}` : '-'],
+    ['Most traded item', most ? `${most[0]} (${most[1]} units)` : '-'],
     ['Cities visited', `${Object.keys(st.cities).length} of ${CITIES.length}`],
-    ['Close shaves', `${st.encounters} encounters, ${st.escapes} clean getaways`],
+    ['Close shaves', `${st.encounters} encounter${st.encounters === 1 ? '' : 's'}, ${st.escapes} clean getaway${st.escapes === 1 ? '' : 's'}`],
     ['Spent on bribes', fmt(st.bribes)],
     ['Days lost to trouble', String(st.daysLost)],
     ['Lucky finds / stock lost', `${st.found} found, ${st.lost} lost`],
@@ -1452,23 +1335,24 @@ function endGame() {
   const newBest = updateLifetime();
   render();
   showEndDialog(newBest);
-  log(`Game over. Final net worth ${fmt(net)} — ${endInfo.rank}`, 'day');
+  log(`Game over. Final net worth ${fmt(net)}. ${endInfo.rank}.`, 'day');
 }
 
 function showEndDialog(newBest) {
   if (!endInfo) return;
   const cheatNote = endInfo.cheated
-    ? `<div class="center" style="margin:6px 0"><b>Cheats were used</b> — this run doesn't count for your personal best. The golden chair knows what it did.</div>`
+    ? `<div class="center" style="margin:6px 0"><b>Cheats were used</b>, so this run doesn't count for your personal best. The golden chair knows what it did.</div>`
     : (newBest ? `<div class="center" style="margin:6px 0"><b>New personal best!</b></div>` : '');
   bigMsg(
     `<div class="center">The ${DAYS} days are up. Uncle Barry counts on his fingers.<br>` +
-    `Final net worth: <b class="${endInfo.net < 0 ? 'neg' : ''}">${fmt(endInfo.net)}</b> — <b>${endInfo.rank}</b></div>` +
+    `Final net worth: <b class="${endInfo.net < 0 ? 'neg' : ''}">${fmt(endInfo.net)}</b><br><b>${endInfo.rank}</b></div>` +
     cheatNote +
     statsHtml() +
     `<div>${bestHtml()}</div>` +
     `<div class="row" style="margin-top:8px"><button onclick="shareScore()">Share your score</button>` +
-    `<span id="shareStatus" class="dim"></span></div>`,
-    'Time, gentlemen, please'
+    `<span id="shareStatus" class="dim"></span></div>` +
+    `<div class="center" style="margin-top:6px"><a href="${withUtm(VINTERIOR_URL)}" target="_blank" rel="noopener">Done dealing? The real thing is on Vinterior</a></div>`,
+    'Last orders'
   );
 }
 
@@ -1505,7 +1389,7 @@ function updateTicker() {
   // deterministic-ish filler per day so render() calls don't reshuffle it
   const idx = (S.day * 3) % DJ_LINES.length;
   bits.push(DJ_LINES[idx % DJ_LINES.length], DJ_LINES[(idx + 1) % DJ_LINES.length]);
-  if (S.heat >= 4) bits.push('And a word to the wise: word is the inspectors are about. You didn’t hear it from Teak FM.');
+  if (S.heat >= 4) bits.push('A word to the wise: the wardens are out in force. You didn’t hear it from Teak FM.');
   const text = bits.join('  •••  ');
   if (text === lastTicker) return;
   lastTicker = text;
@@ -1520,12 +1404,13 @@ function heatHtml() {
   return h;
 }
 
+function withUtm(url) { return url + (url.includes('?') ? '&' : '?') + UTM; }
+
 function shopLink(name) {
   const url = ITEM_LINKS[name];
   if (!url) return '';
-  const full = url + (url.includes('?') ? '&' : '?') + UTM;
-  return `<a class="shoplink" href="${full}" target="_blank" rel="noopener" ` +
-    `title="Find a real one on Vinterior" onclick="event.stopPropagation()">real ↗</a>`;
+  return `<a class="shoplink" href="${withUtm(url)}" target="_blank" rel="noopener" ` +
+    `title="Find a real one on Vinterior" onclick="event.stopPropagation()">Shop&nbsp;real&nbsp;↗</a>`;
 }
 
 function render() {
@@ -1538,7 +1423,7 @@ function render() {
   $('stNet').textContent = fmt(net);
   $('stNet').className = net < 0 ? 'neg' : '';
   $('stHeat').innerHTML = heatHtml();
-  $('marketLegend').textContent = 'Market — ' + S.city;
+  $('marketLegend').textContent = 'Market: ' + S.city;
   $('statusLoc').textContent = S.city + ', day ' + Math.min(S.day, DAYS);
   document.body.classList.toggle('miami', S.city === 'Miami');
 
@@ -1562,7 +1447,7 @@ function render() {
       '<table><thead><tr><th>Item</th><th class="r">Qty</th><th class="r">Paid avg</th><th class="r">Here</th></tr></thead><tbody>' +
       vNames.map(n => {
         const avg = S.inv[n] ? Math.round((S.paid[n] || 0) / S.inv[n]) : 0;
-        const here = S.market[n] ? fmt(S.market[n]) : '<span class="dim">—</span>';
+        const here = S.market[n] ? fmt(S.market[n]) : '<span class="dim">-</span>';
         return `<tr class="${selVan === n ? 'sel' : ''}" onclick="selectVan('${esc(n)}')" ondblclick="selectVan('${esc(n)}');openSell()">` +
           `<td>${n}</td><td class="r">${S.inv[n]}</td><td class="r">${fmt(avg)}</td><td class="r">${here}</td></tr>`;
       }).join('') + '</tbody></table>';
@@ -1570,26 +1455,11 @@ function render() {
     $('vanBox').innerHTML = '<div class="empty">The van is empty.</div>';
   }
 
-  // lock-up
-  const inLondon = S.city === 'London';
-  const lNames = Object.keys(S.lock).sort();
-  if (lNames.length) {
-    $('lockBox').innerHTML =
-      '<table><thead><tr><th>Item</th><th class="r">Qty</th></tr></thead><tbody>' +
-      lNames.map(n =>
-        `<tr class="${selLock === n ? 'sel' : ''}" onclick="selectLock('${esc(n)}')">` +
-        `<td>${n}</td><td class="r">${S.lock[n]}</td></tr>`
-      ).join('') + '</tbody></table>';
-  } else {
-    $('lockBox').innerHTML = `<div class="empty">${inLondon ? 'Nothing stashed.' : 'Your stash is back in London.'}</div>`;
-  }
-
   // buttons
+  const inLondon = S.city === 'London';
   $('btnBuy').disabled = S.over || !!S.enc || !selMarket;
   $('btnSell').disabled = S.over || !!S.enc || !selVan || !S.market[selVan];
   $('btnRepay').disabled = S.over || !!S.enc || S.debt <= 0 || !inLondon;
-  $('btnToLock').disabled = S.over || !!S.enc || !inLondon || !selVan;
-  $('btnToVan').disabled = S.over || !!S.enc || !inLondon || !selLock;
 
   // travel
   $('travelBtns').innerHTML = CITIES.map(c => {
@@ -1598,13 +1468,12 @@ function render() {
   }).join('');
 
   updateTicker();
-  status(S.over ? 'Game over — click New Game to play again.' : 'Ready.');
+  status(S.over ? 'Game over. Click New Game to play again.' : 'Ready.');
 }
 
 function esc(s) { return s.replace(/'/g, "\\'"); }
 function selectMarket(name) { selMarket = name; render(); }
 function selectVan(name) { selVan = name; render(); }
-function selectLock(name) { selLock = name; render(); }
 
 $('amtInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') amtOk();
