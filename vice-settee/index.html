@@ -10,7 +10,10 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: #008080;
+    /* desktop wallpaper: top-down pixel streets, a nod to the classic bird's-eye
+       caper games — drawn by hand as an inline SVG tile, no assets borrowed */
+    background: #4c5054 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' shape-rendering='crispEdges'%3E%3Crect width='160' height='160' fill='%23565a5e'/%3E%3Crect x='2' y='2' width='60' height='60' fill='%236f695c' stroke='%233f3c34'/%3E%3Crect x='98' y='2' width='60' height='60' fill='%235d6a70' stroke='%2339444a'/%3E%3Crect x='2' y='98' width='60' height='60' fill='%2371606a' stroke='%23453a41'/%3E%3Crect x='98' y='98' width='60' height='60' fill='%2363705d' stroke='%233c4837'/%3E%3Crect x='10' y='10' width='10' height='10' fill='%235c574c'/%3E%3Crect x='40' y='34' width='14' height='8' fill='%235c574c'/%3E%3Crect x='110' y='14' width='12' height='12' fill='%23505c62'/%3E%3Crect x='134' y='40' width='10' height='8' fill='%23505c62'/%3E%3Crect x='14' y='112' width='12' height='10' fill='%23615159'/%3E%3Crect x='40' y='136' width='10' height='10' fill='%23615159'/%3E%3Crect x='108' y='110' width='14' height='10' fill='%23556050'/%3E%3Crect x='136' y='134' width='10' height='12' fill='%23556050'/%3E%3Crect x='4' y='78' width='16' height='4' fill='%23c9b945'/%3E%3Crect x='36' y='78' width='16' height='4' fill='%23c9b945'/%3E%3Crect x='108' y='78' width='16' height='4' fill='%23c9b945'/%3E%3Crect x='140' y='78' width='16' height='4' fill='%23c9b945'/%3E%3Crect x='78' y='4' width='4' height='16' fill='%23c9b945'/%3E%3Crect x='78' y='36' width='4' height='16' fill='%23c9b945'/%3E%3Crect x='78' y='108' width='4' height='16' fill='%23c9b945'/%3E%3Crect x='78' y='140' width='4' height='16' fill='%23c9b945'/%3E%3Crect x='68' y='18' width='8' height='14' fill='%23a03434' stroke='%23571c1c'/%3E%3Crect x='69' y='21' width='6' height='3' fill='%23cfd8e0'/%3E%3Crect x='112' y='70' width='14' height='8' fill='%233657a5' stroke='%231d3161'/%3E%3Crect x='115' y='71' width='3' height='6' fill='%23cfd8e0'/%3E%3Crect x='86' y='120' width='8' height='14' fill='%23c7c7c7' stroke='%23666'/%3E%3Crect x='87' y='128' width='6' height='3' fill='%23cfd8e0'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
     font-family: Tahoma, "MS Sans Serif", Geneva, sans-serif;
     font-size: 11px;
     display: flex;
@@ -19,11 +22,11 @@
     min-height: 100vh;
     padding: 24px 8px;
     -webkit-font-smoothing: none;
-    transition: background 0.6s;
   }
-  /* Miami: the desktop goes 80s pink-and-teal; the window chrome stays Win98 grey */
+  /* Miami: same streets, 80s pink-and-teal; the window chrome stays Win98 grey */
   body.miami {
-    background: linear-gradient(180deg, #ff6ec7 0%, #ff9de2 40%, #29d6d6 100%);
+    background: #1fb8b8 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' shape-rendering='crispEdges'%3E%3Crect width='160' height='160' fill='%2317a0a8'/%3E%3Crect x='2' y='2' width='60' height='60' fill='%23ff8fd1' stroke='%23b3448c'/%3E%3Crect x='98' y='2' width='60' height='60' fill='%23f4a7d8' stroke='%23b3448c'/%3E%3Crect x='2' y='98' width='60' height='60' fill='%23e86bb8' stroke='%23993d78'/%3E%3Crect x='98' y='98' width='60' height='60' fill='%23ffa3e0' stroke='%23b3448c'/%3E%3Crect x='10' y='10' width='10' height='10' fill='%23d16aa8'/%3E%3Crect x='40' y='34' width='14' height='8' fill='%23d16aa8'/%3E%3Crect x='110' y='14' width='12' height='12' fill='%23cc7fb0'/%3E%3Crect x='134' y='40' width='10' height='8' fill='%23cc7fb0'/%3E%3Crect x='14' y='112' width='12' height='10' fill='%23bf5596'/%3E%3Crect x='40' y='136' width='10' height='10' fill='%23bf5596'/%3E%3Crect x='108' y='110' width='14' height='10' fill='%23d883b8'/%3E%3Crect x='136' y='134' width='10' height='12' fill='%23d883b8'/%3E%3Crect x='4' y='78' width='16' height='4' fill='%23ffffff'/%3E%3Crect x='36' y='78' width='16' height='4' fill='%23ffffff'/%3E%3Crect x='108' y='78' width='16' height='4' fill='%23ffffff'/%3E%3Crect x='140' y='78' width='16' height='4' fill='%23ffffff'/%3E%3Crect x='78' y='4' width='4' height='16' fill='%23ffffff'/%3E%3Crect x='78' y='36' width='4' height='16' fill='%23ffffff'/%3E%3Crect x='78' y='108' width='4' height='16' fill='%23ffffff'/%3E%3Crect x='78' y='140' width='4' height='16' fill='%23ffffff'/%3E%3Crect x='68' y='18' width='8' height='14' fill='%23fff1f8' stroke='%23b3448c'/%3E%3Crect x='69' y='21' width='6' height='3' fill='%2317a0a8'/%3E%3Crect x='112' y='70' width='14' height='8' fill='%23ffd400' stroke='%23a8872a'/%3E%3Crect x='115' y='71' width='3' height='6' fill='%2317a0a8'/%3E%3Crect x='86' y='120' width='8' height='14' fill='%23ff6ec7' stroke='%23b3448c'/%3E%3Crect x='87' y='128' width='6' height='3' fill='%23fff1f8'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
   }
 
   /* ---- Win98 chrome ---- */
@@ -255,6 +258,44 @@
 
   .stattbl { width: 100%; margin: 8px 0; }
   .stattbl td { padding: 2px 4px; border-bottom: 1px dotted #a0a0a0; }
+
+  /* error dialog icon */
+  .erricon { flex: 0 0 auto; }
+  .errrow { display: flex; gap: 10px; align-items: flex-start; }
+
+  /* city-name card on travel: big chunky capitals, level-intro style */
+  #cityCard {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, .88);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #cityCard.show { animation: citycard 1.5s ease forwards; }
+  @keyframes citycard {
+    0% { opacity: 0; }
+    12% { opacity: 1; }
+    72% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  #cityCard .cityname {
+    font-family: Impact, "Arial Black", "Helvetica Neue", sans-serif;
+    font-weight: 900;
+    font-size: min(72px, 14vw);
+    color: #ffd400;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transform: skewX(-6deg);
+    text-shadow: 3px 3px 0 #8a3c00, 6px 6px 0 rgba(0, 0, 0, .7);
+  }
+  #cityCard .citysub {
+    color: #fff;
+    margin-top: 10px;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
 </style>
 </head>
 <body>
@@ -358,6 +399,9 @@
     </div>
   </div>
 </div>
+
+<!-- city-name card shown on travel -->
+<div id="cityCard"><div class="cityname"></div><div class="citysub"></div></div>
 
 <!-- cheat entry ("Run…" box, opened by typing on desktop or tapping the title 5 times) -->
 <div class="overlay" id="dlgCheat">
@@ -599,7 +643,7 @@ function travel(city) {
   if (S.over || city === S.city || S.enc) return;
   const flying = city === 'Miami' || S.city === 'Miami';
   if (flying && S.cash < MIAMI_FARE) {
-    status(`The flight costs ${fmt(MIAMI_FARE)} — you can't afford it.`);
+    errorMsg(`The flight costs <b>${fmt(MIAMI_FARE)}</b> and you have ${fmt(S.cash)}. Even the budget airline says no.`, 'Flight unavailable');
     return;
   }
 
@@ -621,6 +665,7 @@ function travel(city) {
   S.tradeHere = 0;
   selMarket = selVan = selLock = null;
   coolHeat();
+  showCityCard(city, `Day ${S.day} of ${DAYS}`);
   log(`Day ${S.day} — ${city}. ${CITIES.find(c => c.name === city).blurb}`, 'day');
   genMarket();
 
@@ -1038,7 +1083,7 @@ function openBuy() {
   if (S.over || S.enc || !selMarket) return;
   const price = S.market[selMarket];
   const max = Math.min(Math.floor(S.cash / price), S.cap - vanUsed());
-  if (max < 1) { status(`You can't afford any ${selMarket} (or the van is full).`); return; }
+  if (max < 1) { errorMsg(`You can't afford any <b>${selMarket}</b> — or the van is full.`, 'No deal'); return; }
   amtCtx = { kind: 'buy', name: selMarket, price, max };
   $('amtTitle').textContent = 'Buy';
   $('amtMsg').innerHTML = `<b>${selMarket}</b> at ${fmt(price)} each.<br>You can afford <b>${max}</b>.`;
@@ -1049,7 +1094,7 @@ function openSell() {
   if (S.over || S.enc || !selVan) return;
   const qty = S.inv[selVan] || 0;
   const price = S.market[selVan];
-  if (!price) { status(`No buyers for ${selVan} in ${S.city} today.`); return; }
+  if (!price) { errorMsg(`No buyers for <b>${selVan}</b> in ${S.city} today. Try another city — or another item.`, 'No buyers'); return; }
   amtCtx = { kind: 'sell', name: selVan, price, max: qty };
   $('amtTitle').textContent = 'Sell';
   $('amtMsg').innerHTML = `<b>${selVan}</b> fetches ${fmt(price)} each here.<br>You have <b>${qty}</b>.`;
@@ -1058,9 +1103,9 @@ function openSell() {
 
 function openRepay() {
   if (S.over || S.enc || S.debt <= 0) return;
-  if (S.city !== 'London') { status(`Uncle Barry only takes payment in London. Cash, in person, no cheques.`); return; }
+  if (S.city !== 'London') { errorMsg(`Uncle Barry only takes payment in <b>London</b>. Cash, in person, no cheques.`, 'Wrong city'); return; }
   const max = Math.min(S.cash, S.debt);
-  if (max < 1) { status('You have no cash to repay with.'); return; }
+  if (max < 1) { errorMsg('You have no cash to repay with.', 'Empty pockets'); return; }
   amtCtx = { kind: 'repay', name: 'debt', price: 1, max };
   $('amtTitle').textContent = 'Repay loan';
   $('amtMsg').innerHTML = `You owe Uncle Barry <b>${fmt(S.debt)}</b>. How much will you repay?`;
@@ -1073,7 +1118,7 @@ function openToLock() {
   if (!qty) return;
   const room = LOCKUP_CAP - lockUsed();
   const max = Math.min(qty, room);
-  if (max < 1) { status('The lock-up is full.'); return; }
+  if (max < 1) { errorMsg('The lock-up is full.', 'No room'); return; }
   const feeNote = S.lockOwned ? '' : `<br><span class="dim">First visit: ${fmt(LOCKUP_FEE)} sorts the rent out.</span>`;
   amtCtx = { kind: 'tolock', name: selVan, price: 0, max };
   $('amtTitle').textContent = 'Stash in lock-up';
@@ -1085,7 +1130,7 @@ function openToVan() {
   if (S.over || S.enc || S.city !== 'London' || !selLock) return;
   const qty = S.lock[selLock] || 0;
   const max = Math.min(qty, S.cap - vanUsed());
-  if (max < 1) { status('The van is full.'); return; }
+  if (max < 1) { errorMsg('The van is full.', 'No room'); return; }
   amtCtx = { kind: 'tovan', name: selLock, price: 0, max };
   $('amtTitle').textContent = 'Back in the van';
   $('amtMsg').innerHTML = `Move <b>${selLock}</b> from the lock-up to the van.`;
@@ -1138,7 +1183,7 @@ function amtOk() {
     log(`Repaid ${fmt(n)}. ${S.debt > 0 ? 'Still owing ' + fmt(S.debt) + '.' : 'Loan cleared — Uncle Barry buys YOU a chip.'}`, S.debt > 0 ? null : 'good');
   } else if (kind === 'tolock') {
     if (!S.lockOwned) {
-      if (S.cash < LOCKUP_FEE) { status(`You need ${fmt(LOCKUP_FEE)} for the lock-up rent.`); return; }
+      if (S.cash < LOCKUP_FEE) { errorMsg(`You need <b>${fmt(LOCKUP_FEE)}</b> for the lock-up rent.`, 'Rent due'); return; }
       S.cash -= LOCKUP_FEE;
       S.lockOwned = true;
       log(`You take a lock-up under the arches for ${fmt(LOCKUP_FEE)}. It smells of oil and possibility.`);
@@ -1166,6 +1211,15 @@ function baseMsg(html, title, wide, btnsHtml, cb) {
 }
 function infoMsg(html, title) {
   baseMsg(html, title, false, '<button onclick="closeMsg(true)">OK</button>', null);
+}
+// blocking problems get a proper Win98 error box, not a quiet status-bar mumble
+const ERR_ICON = `<svg class="erricon" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">` +
+  `<circle cx="16" cy="16" r="14" fill="#d40000" stroke="#7a0000" stroke-width="2"/>` +
+  `<path d="M10 10 L22 22 M22 10 L10 22" stroke="#fff" stroke-width="4" stroke-linecap="square"/></svg>`;
+function errorMsg(text, title) {
+  baseMsg(`<div class="errrow">${ERR_ICON}<div>${text}</div></div>`, title || 'Vice Settee', false,
+    '<button onclick="closeMsg(true)">OK</button>', null);
+  status(text.replace(/<[^>]*>/g, ''));
 }
 function bigMsg(html, title) {
   baseMsg(html, title, true, '<button onclick="closeMsg(true)">Close</button>', null);
@@ -1228,7 +1282,7 @@ function showGear() {
 
 function buyGear(what) {
   if (what === 'sack') {
-    if (S.cash < SACK_TRUCK_PRICE) { status(`You can't afford the sack truck.`); return; }
+    if (S.cash < SACK_TRUCK_PRICE) { errorMsg(`You can't afford the sack truck.`, 'Empty pockets'); return; }
     S.cash -= SACK_TRUCK_PRICE;
     S.sackTruck = true;
     log(`You buy a sack truck. Suddenly every getaway has wheels.`, 'good');
@@ -1288,7 +1342,7 @@ function closeCheat() { $('dlgCheat').classList.remove('show'); }
 function cheatOk() {
   const val = $('cheatInput').value;
   closeCheat();
-  if (!applyCheat(val)) status(`Windows cannot find '${val}'. Check the spelling and try again.`);
+  if (!applyCheat(val)) errorMsg(`Windows cannot find '<b>${escHtml(val)}</b>'. Check the spelling and try again.`, 'Run');
 }
 
 /* ---------- personal best & lifetime (this device only) ---------- */
@@ -1427,6 +1481,15 @@ function log(text, cls) {
   $('log').prepend(p);
 }
 function status(text) { $('statusMsg').textContent = text; }
+
+function showCityCard(name, sub) {
+  const card = $('cityCard');
+  card.querySelector('.cityname').textContent = name;
+  card.querySelector('.citysub').textContent = sub;
+  card.classList.remove('show');
+  void card.offsetWidth; // restart the animation
+  card.classList.add('show');
+}
 
 // today's Teak FM bulletin: headlines first, then filler; rebuilt on demand,
 // only touching the DOM when the text changes so the animation doesn't restart
