@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinterior Wars: Vice Settee</title>
+<!-- Win98-style pixel-art "V" favicon, inlined to keep the game a single file -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20shape-rendering='crispEdges'%3E%3Crect%20width='16'%20height='16'%20fill='%23c0c0c0'/%3E%3Crect%20width='16'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20width='1'%20height='16'%20fill='%23ffffff'/%3E%3Crect%20y='15'%20width='16'%20height='1'%20fill='%23404040'/%3E%3Crect%20x='15'%20width='1'%20height='16'%20fill='%23404040'/%3E%3Cg%20fill='%23000080'%3E%3Crect%20x='3'%20y='3'%20width='2'%20height='2'/%3E%3Crect%20x='4'%20y='5'%20width='2'%20height='2'/%3E%3Crect%20x='5'%20y='7'%20width='2'%20height='2'/%3E%3Crect%20x='6'%20y='9'%20width='2'%20height='2'/%3E%3Crect%20x='7'%20y='11'%20width='2'%20height='2'/%3E%3Crect%20x='11'%20y='3'%20width='2'%20height='2'/%3E%3Crect%20x='10'%20y='5'%20width='2'%20height='2'/%3E%3Crect%20x='9'%20y='7'%20width='2'%20height='2'/%3E%3Crect%20x='8'%20y='9'%20width='2'%20height='2'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #008080;
+    font-family: Tahoma, "MS Sans Serif", Geneva, sans-serif;
+    font-size: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 24px 8px;
+    -webkit-font-smoothing: none;
+    transition: background 0.6s;
+  }
+  /* Miami: the desktop goes 80s pink-and-teal; the window chrome stays Win98 grey */
+  body.miami {
+    background: linear-gradient(180deg, #ff6ec7 0%, #ff9de2 40%, #29d6d6 100%);
+  }
+
+  /* ---- Win98 chrome ---- */
+  .win {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #dfdfdf #404040 #404040 #dfdfdf;
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080, 2px 2px 6px rgba(0,0,0,.35);
+    width: 720px;
+    max-width: 100%;
+  }
+  .titlebar {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #fff;
+    font-weight: bold;
+    padding: 3px 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+  }
+  .titlebar .title { flex: 1; }
+  .tbtn {
+    width: 16px; height: 14px;
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #fff #404040 #404040 #fff;
+    box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+    font-size: 9px; line-height: 12px; text-align: center;
+    color: #000; font-family: "Marlett", Tahoma, sans-serif;
+  }
+  .menubar {
+    padding: 2px 4px;
+    border-bottom: 1px solid #808080;
+    box-shadow: 0 1px 0 #fff;
+    display: flex; gap: 2px;
+    user-select: none;
+  }
+  .menuitem { padding: 2px 7px; cursor: default; }
+  .menuitem:hover { background: #000080; color: #fff; }
+
+  .body { padding: 8px; }
+
+  /* ---- stats bar ---- */
+  .stats {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;
+  }
+  .stat {
+    flex: 1 1 auto;
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+  .stat b { font-weight: bold; }
+  .stat .neg, b.neg { color: #a00000; }
+
+  /* heat meter: five inset LED blocks */
+  .heatled {
+    display: inline-block;
+    width: 9px; height: 9px;
+    margin: 0 1px -1px 0;
+    background: #e8e8e8;
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+  }
+  .heatled.on { background: #c00000; border-color: #600 #f88 #f88 #600; }
+
+  /* ---- panels ---- */
+  .panels { display: flex; flex-wrap: wrap; gap: 8px; }
+  fieldset {
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+    box-shadow: 1px 1px 0 #fff inset;
+    padding: 6px;
+    flex: 1;
+    min-width: 0;
+    flex-basis: 220px;
+  }
+  legend { padding: 0 4px; font-weight: bold; }
+
+  .listbox {
+    background: #fff;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
+    height: 232px;
+    overflow-y: auto;
+  }
+  .listbox.short { height: 110px; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-weight: bold;
+    background: #c0c0c0;
+    border-bottom: 1px solid #808080;
+    padding: 2px 6px;
+    position: sticky; top: 0;
+  }
+  th.r, td.r { text-align: right; }
+  td { padding: 3px 6px; cursor: default; }
+  tbody tr:hover { background: #cce4ff; }
+  tbody tr.sel { background: #000080; color: #fff; }
+  .dim { color: #808080; }
+  .empty { color: #808080; padding: 8px; font-style: italic; }
+  a.shoplink { color: #000080; text-decoration: underline; font-size: 10px; white-space: nowrap; }
+  tr.sel a.shoplink { color: #fff; }
+
+  .panelbtns { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+
+  /* ---- buttons ---- */
+  button {
+    font-family: inherit; font-size: 11px;
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #fff #404040 #404040 #fff;
+    box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+    padding: 3px 12px;
+    min-width: 66px;
+    cursor: pointer;
+  }
+  button:active:not(:disabled) {
+    border-color: #404040 #fff #fff #404040;
+    box-shadow: inset 1px 1px 0 #808080;
+  }
+  button:disabled { color: #808080; text-shadow: 1px 1px 0 #fff; cursor: default; }
+  button:focus { outline: 1px dotted #000; outline-offset: -4px; }
+
+  /* ---- travel ---- */
+  .travel { margin-top: 8px; }
+  .travelbtns { display: flex; flex-wrap: wrap; gap: 6px; }
+  .travelbtns button { flex: 1 1 90px; }
+
+  /* ---- log ---- */
+  .log {
+    margin-top: 8px;
+    background: #fff;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
+    height: 84px;
+    overflow-y: auto;
+    padding: 4px 6px;
+  }
+  .log p { margin: 0 0 2px; }
+  .log p.day { color: #000080; font-weight: bold; }
+  .log p.bad { color: #a00000; }
+  .log p.good { color: #006000; }
+
+  /* ---- Teak FM ticker ---- */
+  .tickerrow {
+    display: flex; align-items: stretch; gap: 0;
+    margin-top: 8px;
+  }
+  .tickerlabel {
+    background: #000080; color: #fff; font-weight: bold;
+    padding: 3px 8px;
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+    white-space: nowrap;
+  }
+  .tickerbox {
+    flex: 1;
+    overflow: hidden;
+    background: #fff;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    box-shadow: inset 1px 1px 0 #404040;
+    position: relative;
+  }
+  .tickertext {
+    display: inline-block;
+    white-space: nowrap;
+    padding: 3px 0;
+    animation: tick linear infinite;
+    will-change: transform;
+  }
+  @keyframes tick {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(-100%); }
+  }
+
+  .statusbar {
+    display: flex; gap: 2px;
+    padding: 2px;
+    border-top: 1px solid #fff;
+  }
+  .statusbar .cell {
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 2px 8px;
+    flex: 1;
+  }
+  .statusbar .cell.tight { flex: 0 0 auto; }
+
+  /* ---- dialogs ---- */
+  .overlay {
+    position: fixed; inset: 0;
+    display: none;
+    justify-content: center; align-items: center;
+    background: rgba(0,0,0,.15);
+    z-index: 10;
+  }
+  .overlay.show { display: flex; }
+  .dlg { width: 320px; }
+  .dlg.wide { width: 460px; }
+  .dlg .body { padding: 12px; }
+  .dlg .msg { margin-bottom: 10px; line-height: 1.5; }
+  .dlg .row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .dlg input[type=number], .dlg input[type=text] {
+    font-family: inherit; font-size: 11px;
+    padding: 3px 4px;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
+    background: #fff;
+  }
+  .dlg select {
+    font-family: inherit; font-size: 11px;
+    min-width: 80px; padding: 3px 4px;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    background: #fff;
+  }
+  .dlg input[type=number] { width: 80px; }
+  .dlg .btns { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .dlg a { color: #000080; }
+  .center { text-align: center; }
+
+  .stattbl { width: 100%; margin: 8px 0; }
+  .stattbl td { padding: 2px 4px; border-bottom: 1px dotted #a0a0a0; }
+</style>
+</head>
+<body>
+
+<div class="win">
+  <div class="titlebar">
+    <span class="title" id="titleCaption">Vinterior Wars: Vice Settee</span>
+    <div class="tbtn">_</div><div class="tbtn">□</div><div class="tbtn">✕</div>
+  </div>
+  <div class="menubar">
+    <span class="menuitem" onclick="newGame()">New Game</span>
+    <span class="menuitem" onclick="showGear()">Gear</span>
+    <span class="menuitem" onclick="showBest()">Best</span>
+    <span class="menuitem" onclick="showHelp()">Help</span>
+  </div>
+
+  <div class="body">
+    <div class="stats">
+      <div class="stat">Day: <b id="stDay"></b></div>
+      <div class="stat">Cash: <b id="stCash"></b></div>
+      <div class="stat">Debt: <b id="stDebt" class="neg"></b></div>
+      <div class="stat">Van: <b id="stVan"></b></div>
+      <div class="stat">Net: <b id="stNet"></b></div>
+      <div class="stat">Heat: <span id="stHeat"></span></div>
+    </div>
+
+    <div class="panels">
+      <fieldset>
+        <legend id="marketLegend">Market</legend>
+        <div class="listbox" id="marketBox"></div>
+        <div class="panelbtns">
+          <button id="btnBuy" onclick="openBuy()">Buy…</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Your Van</legend>
+        <div class="listbox" id="vanBox"></div>
+        <div class="panelbtns">
+          <button id="btnSell" onclick="openSell()">Sell…</button>
+          <button id="btnRepay" onclick="openRepay()">Repay loan…</button>
+        </div>
+      </fieldset>
+
+      <fieldset id="lockupPanel">
+        <legend>Lock-up (London)</legend>
+        <div class="listbox short" id="lockBox"></div>
+        <div class="panelbtns">
+          <button id="btnToLock" onclick="openToLock()">Stash…</button>
+          <button id="btnToVan" onclick="openToVan()">Retrieve…</button>
+        </div>
+      </fieldset>
+    </div>
+
+    <fieldset class="travel">
+      <legend>Travel (ends the day)</legend>
+      <div class="travelbtns" id="travelBtns"></div>
+    </fieldset>
+
+    <div class="log" id="log"></div>
+
+    <div class="tickerrow">
+      <div class="tickerlabel">TEAK FM</div>
+      <div class="tickerbox"><span class="tickertext" id="ticker"></span></div>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <div class="cell" id="statusMsg">Ready.</div>
+    <div class="cell tight" id="statusLoc"></div>
+  </div>
+</div>
+
+<!-- amount dialog -->
+<div class="overlay" id="dlgAmt">
+  <div class="win dlg">
+    <div class="titlebar"><span class="title" id="amtTitle">Buy</span><div class="tbtn" onclick="closeAmt()">✕</div></div>
+    <div class="body">
+      <div class="msg" id="amtMsg"></div>
+      <div class="row">
+        <label id="amtLabel">How many?</label>
+        <select id="amtSelect"></select>
+        <input type="number" id="amtInput" inputmode="numeric" min="0" value="1">
+        <button style="min-width:48px" onclick="amtMax()">Max</button>
+      </div>
+      <div class="btns">
+        <button onclick="amtOk()">OK</button>
+        <button onclick="closeAmt()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- message / confirm / encounter dialog -->
+<div class="overlay" id="dlgMsg">
+  <div class="win dlg" id="msgWin">
+    <div class="titlebar"><span class="title" id="msgTitle">Vice Settee</span><div class="tbtn" id="msgClose" onclick="closeMsg(false)">✕</div></div>
+    <div class="body">
+      <div class="msg" id="msgBody"></div>
+      <div class="btns" id="msgBtns"></div>
+    </div>
+  </div>
+</div>
+
+<!-- cheat entry ("Run…" box, opened by typing on desktop or tapping the title 5 times) -->
+<div class="overlay" id="dlgCheat">
+  <div class="win dlg">
+    <div class="titlebar"><span class="title">Run</span><div class="tbtn" onclick="closeCheat()">✕</div></div>
+    <div class="body">
+      <div class="msg">Type the name of a program, folder or dubious favour, and Windows will open it for you.</div>
+      <div class="row">
+        <label>Open:</label>
+        <input type="text" id="cheatInput" style="flex:1" autocomplete="off" autocapitalize="characters">
+      </div>
+      <div class="btns">
+        <button onclick="cheatOk()">OK</button>
+        <button onclick="closeCheat()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ================= configuration ================= */
+
+// Public edition: no remote leaderboard, no analytics, no network calls.
+// Personal best only, stored locally on the player's device.
+
+// "Find a real one on Vinterior" links — placeholder search URLs, to be
+// confirmed before launch. UTM appended at render time.
+const UTM = 'utm_source=vice-settee&utm_medium=game&utm_campaign=gta6-launch-2026';
+const ITEM_LINKS = {
+  'Ercol Windsor Chair':      'https://www.vinterior.co/search?q=ercol+windsor+chair',
+  'Anglepoise Lamp':          'https://www.vinterior.co/search?q=anglepoise+lamp',
+  'Persian Rug':              'https://www.vinterior.co/search?q=persian+rug',
+  'G Plan Sideboard':         'https://www.vinterior.co/search?q=g+plan+sideboard',
+  'Danish Teak Desk':         'https://www.vinterior.co/search?q=danish+teak+desk',
+  'Murano Chandelier':        'https://www.vinterior.co/search?q=murano+chandelier',
+  'Chesterfield Sofa':        'https://www.vinterior.co/search?q=chesterfield+sofa',
+  'Eames Lounge Chair':       'https://www.vinterior.co/search?q=eames+lounge+chair',
+  'Togo Sofa Suite':          'https://www.vinterior.co/search?q=togo+sofa',
+  'Memphis-Style Bookcase':   'https://www.vinterior.co/search?q=memphis+style+bookcase',
+  'Postmodern Squiggle Lamp': 'https://www.vinterior.co/search?q=postmodern+lamp',
+};
+
+const DAYS = 30;
+const START_CASH = 2000;
+const START_DEBT = 5000;
+const START_CAP = 20;
+const INTEREST = 0.06;        // per day — Uncle Barry is family, not a charity
+
+const MIAMI_FARE = 300;       // flight there or back
+const LOCKUP_FEE = 250;       // one-off, first time you stash something
+const LOCKUP_CAP = 40;
+const MATE_FEE = 75;          // per day while hired
+const SACK_TRUCK_PRICE = 450;
+const COLLECTOR_DEBT = 8000;  // above this, Uncle Barry's lads roam
+
+// encounter frequency: base + per-heat, checked on each travel day
+const ENC_BASE = 0.05;
+const ENC_PER_HEAT = 0.06;
+const HEAT_TRADE_UNITS = 26;  // units bought+sold in one city before tongues wag
+
+/* ================= data ================= */
+
+// mats: what the item is made of — targeted mishaps only hit matching stock
+const ITEMS = [
+  { name: 'Ercol Windsor Chair',      min: 40,   max: 180,   tag: 'uk', mats: ['wood'] },
+  { name: 'Anglepoise Lamp',          min: 60,   max: 240,   tag: 'uk', mats: ['metal'] },
+  { name: 'Persian Rug',              min: 150,  max: 700,   tag: null, mats: ['textile'] },
+  { name: 'G Plan Sideboard',         min: 180,  max: 750,   tag: 'uk', mats: ['wood'] },
+  { name: 'Postmodern Squiggle Lamp', min: 90,   max: 700,   tag: 'us', mats: ['metal'] },
+  { name: 'Danish Teak Desk',         min: 300,  max: 1400,  tag: 'dk', mats: ['wood'] },
+  { name: 'Memphis-Style Bookcase',   min: 250,  max: 1600,  tag: 'us', mats: ['wood'] },
+  { name: 'Murano Chandelier',        min: 450,  max: 2200,  tag: 'it', mats: ['glass'] },
+  { name: 'Chesterfield Sofa',        min: 700,  max: 3200,  tag: 'uk', mats: ['leather'] },
+  { name: 'Eames Lounge Chair',       min: 1800, max: 8500,  tag: null, mats: ['wood', 'leather'] },
+  { name: 'Togo Sofa Suite',          min: 4000, max: 20000, tag: 'fr', mats: ['textile'] },
+  // cheat-only: never listed by genMarket, immune to damage, flat silly price while held
+  { name: 'Golden Eames Chair',       min: 12345, max: 12345, tag: null, mats: ['gold'], golden: true },
+];
+
+const CITIES = [
+  { name: 'London',     mult: 1.15, home: 'uk', blurb: 'Pricey, but Uncle Barry takes payment here.' },
+  { name: 'Paris',      mult: 1.10, home: 'fr', blurb: 'Marché aux Puces — style costs.' },
+  { name: 'Copenhagen', mult: 1.00, home: 'dk', blurb: 'Teak country. Danish design galore.' },
+  { name: 'Milan',      mult: 1.00, home: 'it', blurb: 'Glass, brass and la dolce vita.' },
+  { name: 'Amsterdam',  mult: 0.95, home: null, blurb: 'Canal-side kringloop bargains.' },
+  { name: 'Berlin',     mult: 0.85, home: null, blurb: 'Flohmarkt city. Cheap and cheerful.' },
+  { name: 'Miami',      mult: 1.00, home: 'us', blurb: 'Neon, pastels and poolside pastiche.', volatile: true },
+];
+
+const SPIKES = [
+  '{item} featured in The Upholsterer’s Gazette — collectors are frantic!',
+  'A celebrity designer name-drops the {item} — prices go through the roof!',
+  'An auction record for a {item} sends the market wild!',
+];
+const CRASHES = [
+  'A warehouse clearance floods the market with {item}s — prices collapse!',
+  'Convincing fakes of the {item} are doing the rounds — buyers spooked!',
+  'A big estate sale dumps dozens of {item}s — prices tumble!',
+];
+
+const DJ_LINES = [
+  'You’re listening to Teak FM — all killer, no filler, mostly veneer.',
+  'Traffic news: a sideboard has shed its load on the ring road. Expect delays and bargains.',
+  'That was the sound of a wardrobe being winched through a first-floor window. Poetry.',
+  'Teak FM weather: dry, with a risk of woodworm.',
+  'Coming up after the news: an hour of uninterrupted Danish oiling tips.',
+  'A listener writes: “Is it real Murano?” Trevor, it is never real Murano.',
+  'Remember: if the price looks too good to be true, it’s probably veneer.',
+  'Teak FM travel: the ferry’s running, the van smells of mould, life is good.',
+  'And now, the shipping forecast for anyone moving a sofa by sea.',
+];
+
+// material-targeted mishaps (van)
+const DAMAGE = [
+  { mat: 'wood',    msg: 'Woodworm in the van! {n} × {item} ruined.' },
+  { mat: 'textile', msg: 'Moths have been at the van — {n} × {item} chewed beyond saving.' },
+  { mat: 'glass',   msg: 'Cobbles, potholes and dodgy suspension — {n} × {item} smashed.' },
+  { mat: 'leather', msg: 'The van roof leaks and mould claims {n} × {item}.' },
+  { mat: 'metal',   msg: 'Damp sea air on the ferry — {n} × {item} rusted through.' },
+];
+
+/* ================= state & helpers ================= */
+
+let S = null;          // game state
+let selMarket = null;  // selected market item name
+let selVan = null;     // selected van item name
+let selLock = null;    // selected lock-up item name
+let endInfo = null;    // last finished game: {net, rank, cheated}
+
+const $ = id => document.getElementById(id);
+const fmt = n => '£' + Math.round(n).toLocaleString('en-GB');
+const rnd = (a, b) => a + Math.random() * (b - a);
+const ri = (a, b) => Math.floor(rnd(a, b + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const escHtml = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// storage must never be load-bearing: private windows and blocked storage are fine
+function loadJson(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch (e) { return fallback; }
+}
+function saveJson(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage unavailable — carry on */ }
+}
+
+function newGame() {
+  S = {
+    day: 1, cash: START_CASH, debt: START_DEBT, cap: START_CAP,
+    city: 'London', inv: {}, paid: {}, lock: {}, lockPaid: {}, lockOwned: false,
+    market: {}, over: false,
+    heat: 0, tradeHere: 0,
+    sackTruck: false, mate: false,
+    cheated: false,
+    enc: null,          // pending encounter: {type, bribe, demand}
+    stats: {
+      buys: 0, sells: 0, unitsBought: 0, unitsSold: 0,
+      spend: 0, revenue: 0, profit: 0,
+      bestFlip: { item: null, profit: 0 },
+      perItem: {}, lost: 0, found: 0,
+      cities: { London: true },
+      peakNet: START_CASH - START_DEBT,
+      encounters: 0, escapes: 0, bribes: 0, daysLost: 0,
+    },
+  };
+  selMarket = selVan = selLock = null;
+  endInfo = null;
+  $('log').innerHTML = '';
+  log(`Day 1 — London`, 'day');
+  log(`Uncle Barry has lent you ${fmt(START_DEBT)} (${Math.round(INTEREST * 100)}% a day — “family rate”). You have ${fmt(START_CASH)}, a van with ${START_CAP} slots, and ${DAYS} days before he wants a word.`);
+  genMarket();
+  render();
+}
+
+function cityMult(item, city) {
+  const c = CITIES.find(c => c.name === city);
+  let m = c.mult;
+  if (item.tag && item.tag === c.home && c.home !== 'uk') m *= 0.65; // local speciality is cheap
+  if (item.tag === 'uk' && c.home === 'uk') m *= 0.9;               // mild home discount
+  return m;
+}
+
+function genMarket() {
+  S.market = {};
+  const cityDef = CITIES.find(c => c.name === S.city);
+  // 5–7 of the items show up on any given day (never the golden one)
+  const pool = ITEMS.filter(i => !i.golden);
+  const n = ri(5, 7);
+  const avail = [...pool].sort(() => Math.random() - 0.5).slice(0, n);
+  for (const it of avail) {
+    let price = rnd(it.min, it.max) * cityMult(it, S.city);
+    if (cityDef.volatile) price *= rnd(0.55, 1.8); // Miami swings hard
+    S.market[it.name] = Math.max(5, Math.round(price));
+  }
+  // the golden chair (cheat) sells anywhere, at exactly what it says on the tin
+  if (S.inv['Golden Eames Chair']) S.market['Golden Eames Chair'] = 12345;
+
+  // chance of a spike or crash on a listed item (doubled in Miami)
+  const roll = Math.random() / (cityDef.volatile ? 2 : 1);
+  const names = Object.keys(S.market).filter(n => n !== 'Golden Eames Chair');
+  if (roll < 0.17 && names.length) {
+    const name = pick(names);
+    S.market[name] = Math.round(S.market[name] * rnd(2.5, 4));
+    headline(pick(SPIKES).replace('{item}', name), 'good');
+  } else if (roll < 0.34 && names.length) {
+    const name = pick(names);
+    S.market[name] = Math.max(5, Math.round(S.market[name] / rnd(2.5, 4)));
+    headline(pick(CRASHES).replace('{item}', name), 'bad');
+  }
+}
+
+function vanUsed() { return Object.values(S.inv).reduce((a, b) => a + b, 0); }
+function lockUsed() { return Object.values(S.lock).reduce((a, b) => a + b, 0); }
+function netWorth() { return S.cash - S.debt; }
+function cargoValue() {
+  let v = 0;
+  for (const [name, qty] of Object.entries(S.inv)) {
+    const it = ITEMS.find(i => i.name === name);
+    v += qty * (S.market[name] || Math.round((it.min + it.max) / 2));
+  }
+  return v;
+}
+
+/* ---------- heat ---------- */
+
+function bumpHeat(n, why) {
+  const before = S.heat;
+  S.heat = Math.max(0, Math.min(5, S.heat + n));
+  if (S.heat > before && why) log(why, 'bad');
+}
+
+function coolHeat() {
+  S.heat = Math.max(0, S.heat - 1);
+}
+
+/* ---------- travel & events ---------- */
+
+function travel(city) {
+  if (S.over || city === S.city || S.enc) return;
+  const flying = city === 'Miami' || S.city === 'Miami';
+  if (flying && S.cash < MIAMI_FARE) {
+    status(`The flight costs ${fmt(MIAMI_FARE)} — you can't afford it.`);
+    return;
+  }
+
+  S.city = city;
+  S.day++;
+  if (S.debt > 0) S.debt = Math.round(S.debt * (1 + INTEREST));
+  if (flying) {
+    S.cash -= MIAMI_FARE;
+    log(`Flights and excess baggage: ${fmt(MIAMI_FARE)}. The van sulks in long-stay parking.`);
+  }
+  if (S.mate) {
+    if (S.cash >= MATE_FEE) { S.cash -= MATE_FEE; }
+    else { S.mate = false; log(`You can't cover Big Kev's ${fmt(MATE_FEE)} — he wishes you well and takes the bus home.`, 'bad'); }
+  }
+
+  if (S.day > DAYS) { endGame(); return; }
+
+  S.stats.cities[city] = true;
+  S.tradeHere = 0;
+  selMarket = selVan = selLock = null;
+  coolHeat();
+  log(`Day ${S.day} — ${city}. ${CITIES.find(c => c.name === city).blurb}`, 'day');
+  genMarket();
+
+  // one drama per day: debt collectors first, then heat encounters, then the mild
+  // stuff — with a few days' grace at the start while word gets round
+  if (S.day >= 8 && S.debt > COLLECTOR_DEBT && Math.random() < 0.14) {
+    // no point shaking down the destitute — they get a warning, not a bill
+    if (S.cash + cargoValue() < Math.max(400, S.debt * 0.15) * 0.5) {
+      log(`One of Uncle Barry's lads watches you from across the road, makes a note, and leaves. “Barry says get earning.”`, 'bad');
+      arrivalEvent();
+    } else {
+      startEncounter('barry');
+    }
+  } else if (S.day >= 4 && Math.random() < ENC_BASE + S.heat * ENC_PER_HEAT) {
+    startEncounter(pick(['inspector', 'rival', 'heavies']));
+  } else {
+    arrivalEvent();
+    if (lockUsed()) lockupEvent();
+  }
+  render();
+}
+
+function loseDay(why) {
+  S.day++;
+  S.stats.daysLost++;
+  if (S.debt > 0) S.debt = Math.round(S.debt * (1 + INTEREST));
+  log(why + ` (Day ${Math.min(S.day, DAYS)} dawns.)`, 'bad');
+  if (S.day > DAYS) { endGame(); return true; }
+  genMarket();
+  return false;
+}
+
+function arrivalEvent() {
+  const roll = Math.random();
+  const held = Object.keys(S.inv).filter(k => S.inv[k] > 0 && !ITEMS.find(i => i.name === k).golden);
+
+  // skint dealers spend more time round the back of house clearances
+  const findChance = netWorth() < 0 ? 0.18 : 0.10;
+  if (roll < findChance) luckyFind();
+  else if (roll < 0.18 && held.length) damageEvent(held);
+  else if (roll < 0.26 && S.cash > 100) customsEvent();
+  else if (roll < 0.33 && S.cap < 60) vanOffer();
+  else if (roll < 0.40 && held.length) dresserOffer(held);
+  else if (roll < 0.46) tipEvent();
+}
+
+function luckyFind() {
+  const it = pick(ITEMS.filter(i => i.min <= 750 && !i.golden));
+  const qty = Math.min(ri(1, 3), S.cap - vanUsed());
+  if (qty < 1) return;
+  addStock(it.name, qty, 0);
+  S.stats.found += qty;
+  log(`You spot a skip outside a house clearance — ${qty} × ${it.name} for nothing!`, 'good');
+}
+
+// mishaps only strike stock made of the matching material
+function damageEvent(held) {
+  const options = [];
+  for (const name of held) {
+    const it = ITEMS.find(i => i.name === name);
+    for (const d of DAMAGE) if (it.mats.includes(d.mat)) options.push({ name, d });
+  }
+  if (!options.length) return;
+  const { name, d } = pick(options);
+  const lost = Math.max(1, Math.ceil(S.inv[name] * rnd(0.3, 0.6)));
+  removeStock(name, lost);
+  S.stats.lost += lost;
+  log(d.msg.replace('{n}', lost).replace('{item}', name), 'bad');
+}
+
+function customsEvent() {
+  const fee = Math.min(S.cash, ri(80, 250) + S.day * 10);
+  S.cash -= fee;
+  log(`Customs paperwork trouble at the border — you pay ${fmt(fee)} in duties and “handling”.`, 'bad');
+}
+
+function vanOffer() {
+  const price = ri(600, 900) + S.day * 40;
+  confirmMsg(`A dealer's retiring and offers you their box van: +15 slots for ${fmt(price)}. Buy it?`, ok => {
+    if (ok && S.cash >= price) {
+      S.cash -= price; S.cap += 15;
+      log(`You bought the bigger van. Capacity is now ${S.cap} slots.`, 'good');
+    } else if (ok) {
+      log(`You can't afford the van.`, 'bad');
+    } else {
+      log(`You pass on the van.`);
+    }
+    render();
+  });
+}
+
+// a film set dresser pays over the odds for stock you're holding
+function dresserOffer(held) {
+  const name = pick(held);
+  const it = ITEMS.find(i => i.name === name);
+  const qty = Math.min(S.inv[name], ri(1, 3));
+  const base = S.market[name] || Math.round((it.min + it.max) / 2 * cityMult(it, S.city));
+  const offer = Math.round(base * rnd(1.4, 2));
+  confirmMsg(`A set dresser on a film shoot needs ${qty} × ${name} today and offers ${fmt(offer)} each — well over the odds. Sell?`, ok => {
+    if (ok) {
+      recordSale(name, qty, offer);
+      log(`Sold ${qty} × ${name} to the film crew for ${fmt(qty * offer)}.`, 'good');
+    } else {
+      log(`You send the set dresser away — props are someone else's problem.`);
+    }
+    render();
+  });
+}
+
+function tipEvent() {
+  const tip = ri(50, 200);
+  S.cash += tip;
+  log(`A grateful buyer sends a ${fmt(tip)} tip — “the sideboard made the room”.`, 'good');
+}
+
+// the lock-up has its own, milder risks
+function lockupEvent() {
+  const roll = Math.random();
+  const held = Object.keys(S.lock).filter(k => S.lock[k] > 0);
+  if (!held.length) return;
+  if (roll < 0.05) {
+    const name = pick(held);
+    const lost = Math.max(1, Math.ceil(S.lock[name] * rnd(0.3, 0.5)));
+    removeLock(name, lost);
+    S.stats.lost += lost;
+    log(`Someone's had the lock-up shutter open — ${lost} × ${name} gone. The padlock survived, insultingly.`, 'bad');
+  } else if (roll < 0.11) {
+    // damp only bothers wood and textile
+    const dampable = held.filter(n => {
+      const it = ITEMS.find(i => i.name === n);
+      return it.mats.includes('wood') || it.mats.includes('textile');
+    });
+    if (!dampable.length) return;
+    const name = pick(dampable);
+    const lost = Math.max(1, Math.ceil(S.lock[name] * rnd(0.25, 0.45)));
+    removeLock(name, lost);
+    S.stats.lost += lost;
+    log(`Damp in the lock-up — ${lost} × ${name} ruined. That drip was load-bearing after all.`, 'bad');
+  }
+}
+
+/* ---------- encounters ---------- */
+
+const ENC_DEFS = {
+  inspector: {
+    title: 'Trading Standards',
+    intro: () => `A man in a grey anorak flashes a laminated card: Trading Standards. “Mind if I have a look at that provenance paperwork, sir?”`,
+    options: ['run', 'bribe', 'talk'],
+  },
+  rival: {
+    title: 'Rival dealer',
+    intro: () => `Marlene from the auction rooms blocks the pavement with her estate car. “This is MY patch, sunshine.”`,
+    options: ['run', 'bribe', 'talk'],
+  },
+  heavies: {
+    title: 'Auction-house heavies',
+    intro: () => `Two large gentlemen from the auction house would like a word about “unpaid buyer's premium”.`,
+    options: ['run', 'bribe', 'talk'],
+  },
+  barry: {
+    title: "Uncle Barry's lads",
+    intro: (enc) => `Two of Uncle Barry's lads are leaning on your van, eating chips. “Barry says hello. Barry also says ${fmt(enc.demand)}.”`,
+    options: ['pay', 'stock', 'run'],
+  },
+};
+
+const ENC_BTN_LABELS = { run: 'Run', bribe: 'Bribe', talk: 'Talk', pay: 'Pay up', stock: 'Hand over stock' };
+
+function startEncounter(type) {
+  const enc = { type };
+  if (type === 'barry') {
+    enc.demand = Math.min(S.cash + cargoValue(), Math.max(400, Math.round(S.debt * 0.15)));
+  } else {
+    enc.bribe = Math.max(100, Math.round(S.cash * (type === 'heavies' ? 0.12 : 0.08)));
+  }
+  S.enc = enc;
+  S.stats.encounters++;
+  const def = ENC_DEFS[type];
+  const detail = type === 'barry' ? '' :
+    `<div class="dim" style="margin-top:8px">A bribe would run to about ${fmt(enc.bribe)}. Heat: ${S.heat}/5.</div>`;
+  baseMsg(
+    def.intro(enc) + detail,
+    def.title, false,
+    def.options.map(o => `<button onclick="resolveEncounter('${o}')">${ENC_BTN_LABELS[o]}</button>`).join(''),
+    null
+  );
+  $('msgClose').style.display = 'none'; // no sneaking out of the dialog
+}
+
+function encOdds(action) {
+  const load = vanUsed() / Math.max(1, S.cap);
+  if (action === 'run') {
+    return Math.max(0.1, Math.min(0.95,
+      0.62 + (S.sackTruck ? 0.15 : 0) + (S.mate ? 0.10 : 0) - S.heat * 0.04 - load * 0.15));
+  }
+  if (action === 'bribe') {
+    return Math.max(0.2, Math.min(0.95, 0.80 - S.heat * 0.06 + (S.mate ? 0.03 : 0)));
+  }
+  // talk: easier with an innocent-looking van
+  return Math.max(0.1, Math.min(0.9,
+    0.50 - S.heat * 0.04 + (cargoValue() < 1000 ? 0.15 : 0)));
+}
+
+function resolveEncounter(action) {
+  const enc = S.enc;
+  if (!enc) return;
+  S.enc = null;
+  $('dlgMsg').classList.remove('show');
+  $('msgClose').style.display = '';
+
+  if (enc.type === 'barry') { resolveBarry(enc, action); return; }
+
+  const ok = Math.random() < encOdds(action);
+  if (action === 'bribe') {
+    const paid = Math.min(S.cash, enc.bribe);
+    S.cash -= paid;
+    S.stats.bribes += paid;
+  }
+
+  if (ok) {
+    S.stats.escapes++;
+    encounterSuccess(enc.type, action);
+  } else {
+    bumpHeat(1);
+    encounterFailure(enc.type, action);
+  }
+  render();
+}
+
+function encounterSuccess(type, action) {
+  const lines = {
+    inspector: {
+      run: `You leg it through a fire exit and lose him behind the bins. Not dignified, but effective.`,
+      bribe: `“Ah. Well. That all seems to be in order,” he says, anorak pocket slightly heavier.`,
+      talk: `You produce receipts so boring he loses the will to live and waves you through.`,
+    },
+    rival: {
+      run: `You nip down a one-way street the wrong way. The estate car can't follow. The curses can.`,
+      bribe: `You buy her a carvery lunch and promise first refusal on the next sideboard. Peace, of a sort.`,
+      talk: `You flatter her eye for walnut until she forgets why she stopped you.`,
+    },
+    heavies: {
+      run: `You've never moved a van that fast. You lose them at the lock gates.`,
+      bribe: `The “account” is settled. Nobody mentions it again.`,
+      talk: `You quote clause 14b of the auction terms at them until their eyes glaze over.`,
+    },
+  };
+  log(lines[type][action], 'good');
+  if (action === 'talk') S.heat = Math.max(0, S.heat - 1); // a good story cools things down
+  // sometimes a clean getaway comes with a little bonus
+  if (Math.random() < 0.15) {
+    const bonus = ri(40, 150);
+    S.cash += bonus;
+    log(`In the confusion somebody drops a tenner or three — you're ${fmt(bonus)} up.`, 'good');
+  }
+}
+
+function encounterFailure(type, action) {
+  if (type === 'heavies') {
+    // heavies cost you time, and money if they can find any
+    const fine = Math.min(S.cash, ri(200, 600));
+    S.cash -= fine;
+    const msg = action === 'bribe'
+      ? `They take the ${fmt(fine)} and your afternoon. Mostly the afternoon.`
+      : `They know every shortcut you know, plus one. ${fine ? `You're ${fmt(fine)} lighter and ` : 'Y'}you spend the day “helping with enquiries”.`;
+    if (loseDay(msg)) return;
+    return;
+  }
+  const held = Object.keys(S.inv).filter(k => S.inv[k] > 0 && !ITEMS.find(i => i.name === k).golden);
+  if (held.length && (type === 'inspector' || Math.random() < 0.6)) {
+    const name = pick(held);
+    const lost = Math.max(1, Math.ceil(S.inv[name] * rnd(0.2, 0.4)));
+    removeStock(name, lost);
+    S.stats.lost += lost;
+    const msgs = {
+      inspector: action === 'bribe'
+        ? `“Are you attempting to BRIBE an officer of Trading Standards?” He impounds ${lost} × ${name} on principle.`
+        : `Your story has more holes than the upholstery. He impounds ${lost} × ${name} “pending inquiries”.`,
+      rival: action === 'bribe'
+        ? `She takes the lunch AND ${lost} × ${name}. You've been done up like a kipper.`
+        : `She talks faster, knows more, and leaves with ${lost} × ${name}. Masterclass, really.`,
+    };
+    log(msgs[type], 'bad');
+  } else {
+    const fine = Math.min(S.cash, ri(150, 400) + S.day * 8);
+    S.cash -= fine;
+    const msgs = {
+      inspector: `The fine writes itself: ${fmt(fine)}, plus a leaflet about your responsibilities.`,
+      rival: `She gazumps you on the spot and it costs you ${fmt(fine)} to keep face. Worth it? Unclear.`,
+    };
+    log(msgs[type], 'bad');
+  }
+}
+
+function resolveBarry(enc, action) {
+  if (action === 'pay') {
+    const paid = Math.min(S.cash, enc.demand);
+    S.cash -= paid;
+    S.debt = Math.max(0, S.debt - paid);
+    log(`You pay ${fmt(paid)} off the loan. They hand you a chip. “No hard feelings.”`);
+    if (paid < enc.demand) { bumpHeat(1, `It wasn't the full amount, though. Barry will hear about it.`); }
+  } else if (action === 'stock') {
+    const held = Object.keys(S.inv).filter(k => S.inv[k] > 0 && !ITEMS.find(i => i.name === k).golden);
+    if (!held.length) {
+      bumpHeat(1, `Your van is empty. The lads look at each other. Barry will hear about this.`);
+    } else {
+      let owed = enc.demand, took = [];
+      for (const name of [...held].sort(() => Math.random() - 0.5)) {
+        if (owed <= 0) break;
+        const it = ITEMS.find(i => i.name === name);
+        const unit = S.market[name] || Math.round((it.min + it.max) / 2);
+        const qty = Math.min(S.inv[name], Math.max(1, Math.ceil(owed / unit)));
+        removeStock(name, qty);
+        S.stats.lost += qty;
+        owed -= qty * unit;
+        took.push(`${qty} × ${name}`);
+      }
+      S.debt = Math.max(0, S.debt - (enc.demand - Math.max(0, owed)));
+      log(`They take ${took.join(', ')} “for the showroom”. Barry has a showroom now, apparently.`, 'bad');
+    }
+  } else { // run
+    S.stats.encounters++; // running from Barry counts double against the nerves
+    if (Math.random() < encOdds('run')) {
+      S.stats.escapes++;
+      bumpHeat(1);
+      log(`You're gone before the chips are finished. Barry will hear about this.`, 'good');
+    } else {
+      const grabbed = Math.min(S.cash, Math.round(enc.demand * 0.6));
+      S.cash -= grabbed;
+      bumpHeat(1);
+      log(`They were expecting that. They empty your pockets of ${fmt(grabbed)} and finish the chips.`, 'bad');
+    }
+  }
+  render();
+}
+
+/* ---------- stock helpers ---------- */
+
+function addStock(name, qty, cost) {
+  S.inv[name] = (S.inv[name] || 0) + qty;
+  S.paid[name] = (S.paid[name] || 0) + cost;
+}
+function removeStock(name, qty) {
+  const had = S.inv[name] || 0;
+  if (!had) return;
+  const take = Math.min(qty, had);
+  S.paid[name] = Math.round((S.paid[name] || 0) * (had - take) / had);
+  S.inv[name] = had - take;
+  if (!S.inv[name]) { delete S.inv[name]; delete S.paid[name]; }
+}
+function removeLock(name, qty) {
+  const had = S.lock[name] || 0;
+  if (!had) return;
+  const take = Math.min(qty, had);
+  S.lockPaid[name] = Math.round((S.lockPaid[name] || 0) * (had - take) / had);
+  S.lock[name] = had - take;
+  if (!S.lock[name]) { delete S.lock[name]; delete S.lockPaid[name]; }
+}
+
+// move qty (and its share of cost basis) between van and lock-up
+function moveStock(name, qty, toLock) {
+  const [srcInv, srcPaid, addFn] = toLock
+    ? [S.inv, S.paid, (n, q, c) => { S.lock[n] = (S.lock[n] || 0) + q; S.lockPaid[n] = (S.lockPaid[n] || 0) + c; }]
+    : [S.lock, S.lockPaid, addStock];
+  const had = srcInv[name] || 0;
+  if (!had) return;
+  const take = Math.min(qty, had);
+  const costShare = Math.round((srcPaid[name] || 0) * take / had);
+  srcPaid[name] = (srcPaid[name] || 0) - costShare;
+  srcInv[name] = had - take;
+  if (!srcInv[name]) {
+    delete srcInv[name];
+    if (toLock) delete S.paid[name]; else delete S.lockPaid[name];
+  }
+  addFn(name, take, costShare);
+}
+
+function recordBuy(name, n, price) {
+  S.cash -= n * price;
+  addStock(name, n, n * price);
+  const st = S.stats;
+  st.buys++; st.unitsBought += n; st.spend += n * price;
+  st.perItem[name] = (st.perItem[name] || 0) + n;
+  tradeHeat(n);
+}
+
+function recordSale(name, n, price) {
+  const had = S.inv[name] || 0;
+  const avg = had ? (S.paid[name] || 0) / had : 0;
+  S.cash += n * price;
+  removeStock(name, n);
+  const st = S.stats;
+  st.sells++; st.unitsSold += n; st.revenue += n * price;
+  const flip = Math.round((price - avg) * n);
+  st.profit += flip;
+  if (flip > st.bestFlip.profit) st.bestFlip = { item: name, profit: flip };
+  st.perItem[name] = (st.perItem[name] || 0) + n;
+  tradeHeat(n);
+}
+
+// shifting a lot of stock in one city gets you noticed
+function tradeHeat(n) {
+  S.tradeHere += n;
+  while (S.tradeHere >= HEAT_TRADE_UNITS) {
+    S.tradeHere -= HEAT_TRADE_UNITS;
+    bumpHeat(1, `Word gets round about a big spender in ${S.city}… (heat up)`);
+  }
+}
+
+/* ---------- buy / sell / repay / stash dialogs ---------- */
+
+let amtCtx = null;
+
+function openBuy() {
+  if (S.over || S.enc || !selMarket) return;
+  const price = S.market[selMarket];
+  const max = Math.min(Math.floor(S.cash / price), S.cap - vanUsed());
+  if (max < 1) { status(`You can't afford any ${selMarket} (or the van is full).`); return; }
+  amtCtx = { kind: 'buy', name: selMarket, price, max };
+  $('amtTitle').textContent = 'Buy';
+  $('amtMsg').innerHTML = `<b>${selMarket}</b> at ${fmt(price)} each.<br>You can afford <b>${max}</b>.`;
+  showAmt(max);
+}
+
+function openSell() {
+  if (S.over || S.enc || !selVan) return;
+  const qty = S.inv[selVan] || 0;
+  const price = S.market[selVan];
+  if (!price) { status(`No buyers for ${selVan} in ${S.city} today.`); return; }
+  amtCtx = { kind: 'sell', name: selVan, price, max: qty };
+  $('amtTitle').textContent = 'Sell';
+  $('amtMsg').innerHTML = `<b>${selVan}</b> fetches ${fmt(price)} each here.<br>You have <b>${qty}</b>.`;
+  showAmt(qty);
+}
+
+function openRepay() {
+  if (S.over || S.enc || S.debt <= 0) return;
+  if (S.city !== 'London') { status(`Uncle Barry only takes payment in London. Cash, in person, no cheques.`); return; }
+  const max = Math.min(S.cash, S.debt);
+  if (max < 1) { status('You have no cash to repay with.'); return; }
+  amtCtx = { kind: 'repay', name: 'debt', price: 1, max };
+  $('amtTitle').textContent = 'Repay loan';
+  $('amtMsg').innerHTML = `You owe Uncle Barry <b>${fmt(S.debt)}</b>. How much will you repay?`;
+  showAmt(max);
+}
+
+function openToLock() {
+  if (S.over || S.enc || S.city !== 'London' || !selVan) return;
+  const qty = S.inv[selVan] || 0;
+  if (!qty) return;
+  const room = LOCKUP_CAP - lockUsed();
+  const max = Math.min(qty, room);
+  if (max < 1) { status('The lock-up is full.'); return; }
+  const feeNote = S.lockOwned ? '' : `<br><span class="dim">First visit: ${fmt(LOCKUP_FEE)} sorts the rent out.</span>`;
+  amtCtx = { kind: 'tolock', name: selVan, price: 0, max };
+  $('amtTitle').textContent = 'Stash in lock-up';
+  $('amtMsg').innerHTML = `Move <b>${selVan}</b> from the van to the lock-up.${feeNote}`;
+  showAmt(max);
+}
+
+function openToVan() {
+  if (S.over || S.enc || S.city !== 'London' || !selLock) return;
+  const qty = S.lock[selLock] || 0;
+  const max = Math.min(qty, S.cap - vanUsed());
+  if (max < 1) { status('The van is full.'); return; }
+  amtCtx = { kind: 'tovan', name: selLock, price: 0, max };
+  $('amtTitle').textContent = 'Back in the van';
+  $('amtMsg').innerHTML = `Move <b>${selLock}</b> from the lock-up to the van.`;
+  showAmt(max);
+}
+
+// quantities (small max) use a select — native wheel picker on iOS/Android, no
+// keyboard; free amounts like loan repayment keep the typed field
+function amtUsesSelect() { return amtCtx.max <= 200; }
+
+function showAmt(def) {
+  $('amtLabel').textContent = amtCtx.kind === 'repay' ? 'Repay (£):' : 'How many?';
+  if (amtUsesSelect()) {
+    $('amtSelect').innerHTML = Array.from({ length: amtCtx.max }, (_, i) =>
+      `<option value="${i + 1}">${i + 1}</option>`).join('');
+    $('amtSelect').value = def;
+    $('amtSelect').style.display = '';
+    $('amtInput').style.display = 'none';
+  } else {
+    $('amtInput').value = def;
+    $('amtInput').max = amtCtx.max;
+    $('amtSelect').style.display = 'none';
+    $('amtInput').style.display = '';
+    if (matchMedia('(pointer: fine)').matches) { $('amtInput').focus(); $('amtInput').select(); }
+  }
+  $('dlgAmt').classList.add('show');
+}
+function closeAmt() { $('dlgAmt').classList.remove('show'); amtCtx = null; }
+function amtMax() {
+  if (!amtCtx) return;
+  $(amtUsesSelect() ? 'amtSelect' : 'amtInput').value = amtCtx.max;
+}
+
+function amtOk() {
+  if (!amtCtx) return;
+  const raw = $(amtUsesSelect() ? 'amtSelect' : 'amtInput').value;
+  const n = Math.max(0, Math.min(amtCtx.max, Math.floor(Number(raw) || 0)));
+  const { kind, name, price } = amtCtx;
+  closeAmt();
+  if (!n) return;
+
+  if (kind === 'buy') {
+    recordBuy(name, n, price);
+    log(`Bought ${n} × ${name} for ${fmt(n * price)}.`);
+  } else if (kind === 'sell') {
+    recordSale(name, n, price);
+    log(`Sold ${n} × ${name} for ${fmt(n * price)}.`);
+  } else if (kind === 'repay') {
+    S.cash -= n; S.debt -= n;
+    log(`Repaid ${fmt(n)}. ${S.debt > 0 ? 'Still owing ' + fmt(S.debt) + '.' : 'Loan cleared — Uncle Barry buys YOU a chip.'}`, S.debt > 0 ? null : 'good');
+  } else if (kind === 'tolock') {
+    if (!S.lockOwned) {
+      if (S.cash < LOCKUP_FEE) { status(`You need ${fmt(LOCKUP_FEE)} for the lock-up rent.`); return; }
+      S.cash -= LOCKUP_FEE;
+      S.lockOwned = true;
+      log(`You take a lock-up under the arches for ${fmt(LOCKUP_FEE)}. It smells of oil and possibility.`);
+    }
+    moveStock(name, n, true);
+    log(`Stashed ${n} × ${name} in the lock-up.`);
+  } else if (kind === 'tovan') {
+    moveStock(name, n, false);
+    log(`Loaded ${n} × ${name} back in the van.`);
+  }
+  render();
+}
+
+/* ---------- message / confirm dialog ---------- */
+
+let msgCb = null;
+
+function baseMsg(html, title, wide, btnsHtml, cb) {
+  $('msgTitle').textContent = title || 'Vice Settee';
+  $('msgWin').classList.toggle('wide', !!wide);
+  $('msgBody').innerHTML = html;
+  $('msgBtns').innerHTML = btnsHtml;
+  msgCb = cb || null;
+  $('dlgMsg').classList.add('show');
+}
+function infoMsg(html, title) {
+  baseMsg(html, title, false, '<button onclick="closeMsg(true)">OK</button>', null);
+}
+function bigMsg(html, title) {
+  baseMsg(html, title, true, '<button onclick="closeMsg(true)">Close</button>', null);
+}
+function confirmMsg(html, cb) {
+  baseMsg(html, null, false, '<button onclick="closeMsg(true)">Yes</button><button onclick="closeMsg(false)">No</button>', cb);
+}
+function closeMsg(ok) {
+  if (S && S.enc) return; // encounters must be answered with their own buttons
+  $('dlgMsg').classList.remove('show');
+  const cb = msgCb; msgCb = null;
+  if (cb) cb(ok);
+}
+
+function showIntro() {
+  infoMsg(
+    `<b>November 2026. Launch week.</b><br><br>` +
+    `The biggest video game of all time is out, every telly in Europe is on, and suddenly ` +
+    `every living room looks tired. Half the continent wants a new sofa by Friday.<br><br>` +
+    `Uncle Barry has lent you ${fmt(START_DEBT)} to make the most of it. You have a van, ` +
+    `${DAYS} days, and his complete confidence. Don't waste either.`,
+    'Vice Settee'
+  );
+}
+
+function showHelp() {
+  infoMsg(
+    `Buy vintage furniture low, travel, sell it high.<br><br>` +
+    `• Travelling ends the day; you have <b>${DAYS} days</b>.<br>` +
+    `• Uncle Barry's loan grows <b>${Math.round(INTEREST * 100)}% a day</b> — repay it in London. ` +
+    `Let it pile up and his lads will find you anywhere.<br>` +
+    `• <b>Heat</b> (status bar) rises when you trade big or botch an encounter. ` +
+    `High heat means more trouble: inspectors, rivals, heavies. Run, bribe or talk your way out. ` +
+    `Heat cools as you keep moving.<br>` +
+    `• The van holds <b>${START_CAP} slots</b>; a lock-up in London holds ${LOCKUP_CAP} more (mind the damp).<br>` +
+    `• Gear helps: a sack truck for quicker getaways, or Big Kev, who costs ${fmt(MATE_FEE)} a day and looks convincing.<br>` +
+    `• Stock can spoil: woodworm eats wood, moths eat fabric, glass smashes, leather moulds.<br>` +
+    `• Miami is a flight away: cheap postmodern pieces, wild prices.<br><br>` +
+    `Finish with the highest net worth you can. Your best run is saved on this device only.`,
+    'How to play'
+  );
+}
+
+/* ---------- gear ---------- */
+
+function showGear() {
+  if (!S || S.over) return;
+  const sack = S.sackTruck
+    ? `<span class="dim">Sack truck: owned. You corner like a dream.</span>`
+    : `<button onclick="buyGear('sack')">Sack truck — ${fmt(SACK_TRUCK_PRICE)}</button> <span class="dim">better getaways</span>`;
+  const mate = S.mate
+    ? `<button onclick="buyGear('sackKev')">Send Big Kev home</button> <span class="dim">currently ${fmt(MATE_FEE)}/day</span>`
+    : `<button onclick="buyGear('mate')">Hire Big Kev — ${fmt(MATE_FEE)}/day</button> <span class="dim">better odds all round</span>`;
+  baseMsg(
+    `<div class="row">${sack}</div><div class="row">${mate}</div>`,
+    'Gear', false,
+    '<button onclick="closeMsg(true)">Close</button>', null
+  );
+}
+
+function buyGear(what) {
+  if (what === 'sack') {
+    if (S.cash < SACK_TRUCK_PRICE) { status(`You can't afford the sack truck.`); return; }
+    S.cash -= SACK_TRUCK_PRICE;
+    S.sackTruck = true;
+    log(`You buy a sack truck. Suddenly every getaway has wheels.`, 'good');
+  } else if (what === 'mate') {
+    S.mate = true;
+    log(`Big Kev is aboard — ${fmt(MATE_FEE)} a day, sandwiches not included. People are politer already.`, 'good');
+  } else {
+    S.mate = false;
+    log(`Big Kev heads home. The van feels roomier and less safe.`);
+  }
+  closeMsg(true);
+  render();
+}
+
+/* ---------- cheats ---------- */
+
+const CHEATS = {
+  MIDAS:      () => { addStock('Golden Eames Chair', 1, 0); S.market['Golden Eames Chair'] = 12345; return 'A Golden Eames Chair materialises in the van. It hums faintly.'; },
+  HOLDALL:    () => { S.cap = 999; return 'The van is now significantly bigger on the inside.'; },
+  CUPPA:      () => { S.heat = 0; return 'You put the kettle on. Everyone calms down. Heat wiped.'; },
+};
+
+function applyCheat(code) {
+  const fn = CHEATS[code.trim().toUpperCase()];
+  if (!fn || !S || S.over) return false;
+  S.cheated = true;
+  log(fn(), 'good');
+  log(`(Cheat active — this run won't count for your personal best.)`);
+  render();
+  return true;
+}
+
+// desktop: just type the code; mobile: tap the title 5 times for a Run… box
+let keyBuf = '';
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA')) return;
+  if (!/^[a-zA-Z]$/.test(e.key)) return;
+  keyBuf = (keyBuf + e.key.toUpperCase()).slice(-12);
+  for (const code of Object.keys(CHEATS)) {
+    if (keyBuf.endsWith(code)) { keyBuf = ''; applyCheat(code); }
+  }
+});
+
+let titleTaps = [];
+function titleTap() {
+  const now = Date.now();
+  titleTaps = titleTaps.filter(t => now - t < 3000);
+  titleTaps.push(now);
+  if (titleTaps.length >= 5) {
+    titleTaps = [];
+    $('cheatInput').value = '';
+    $('dlgCheat').classList.add('show');
+  }
+}
+function closeCheat() { $('dlgCheat').classList.remove('show'); }
+function cheatOk() {
+  const val = $('cheatInput').value;
+  closeCheat();
+  if (!applyCheat(val)) status(`Windows cannot find '${val}'. Check the spelling and try again.`);
+}
+
+/* ---------- personal best & lifetime (this device only) ---------- */
+
+function updateLifetime() {
+  const lt = loadJson('vs-lifetime', {});
+  const st = S.stats;
+  const net = netWorth();
+  lt.games = (lt.games || 0) + 1;
+  lt.profit = (lt.profit || 0) + st.profit;
+  lt.units = (lt.units || 0) + st.unitsBought + st.unitsSold;
+  lt.perItem = lt.perItem || {};
+  for (const [k, v] of Object.entries(st.perItem)) lt.perItem[k] = (lt.perItem[k] || 0) + v;
+  saveJson('vs-lifetime', lt);
+  if (!S.cheated) {
+    const best = loadJson('vs-best', null);
+    if (!best || net > best.net) {
+      saveJson('vs-best', { net, rank: rankFor(net), when: new Date().toISOString().slice(0, 10) });
+      return !best ? false : true; // "new personal best" only means something once there was one
+    }
+  }
+  return false;
+}
+
+function bestHtml() {
+  const best = loadJson('vs-best', null);
+  if (!best) return `<div class="dim">No personal best yet — finish a run without cheats.</div>`;
+  return `Personal best on this device: <b>${fmt(best.net)}</b> — ${escHtml(best.rank)} <span class="dim">(${escHtml(best.when)})</span>`;
+}
+
+function lifetimeHtml() {
+  const lt = loadJson('vs-lifetime', {});
+  if (!lt.games) return '';
+  const fav = Object.entries(lt.perItem || {}).sort((a, b) => b[1] - a[1])[0];
+  return `<div class="dim" style="margin-top:6px">Lifetime on this device: ${lt.games} game${lt.games === 1 ? '' : 's'}, ` +
+    `${(lt.units || 0).toLocaleString('en-GB')} units traded, ${fmt(lt.profit || 0)} trading profit` +
+    `${fav ? ', favourite item: ' + escHtml(fav[0]) : ''}.</div>`;
+}
+
+function showBest() {
+  bigMsg(`<div>${bestHtml()}</div>${lifetimeHtml()}`, 'Personal best');
+}
+
+/* ---------- share ---------- */
+
+function shareText() {
+  const url = location.origin !== 'null' ? location.href.split('?')[0].split('#')[0] : '';
+  return `I made ${fmt(endInfo.net)} in 30 days as a vintage dealer in Vinterior Wars: Vice Settee — can you beat me? ${url}`.trim();
+}
+
+async function shareScore() {
+  if (!endInfo) return;
+  const text = shareText();
+  const el = $('shareStatus');
+  try {
+    if (navigator.share) {
+      await navigator.share({ text });
+      if (el) el.textContent = 'Shared.';
+      return;
+    }
+    await navigator.clipboard.writeText(text);
+    if (el) el.textContent = 'Copied to clipboard — paste it anywhere.';
+  } catch (e) {
+    if (el) el.textContent = 'Could not share — long-press the text above to copy it.';
+  }
+}
+
+/* ---------- end game ---------- */
+
+function rankFor(net) {
+  if (net < 0)           return 'Bankrupt — back to flat-pack';
+  if (net < 5000)        return 'Car Boot Browser';
+  if (net < 20000)       return 'Market Stall Regular';
+  if (net < 50000)       return 'Respected Dealer';
+  if (net < 150000)      return 'Vintage Connoisseur';
+  return 'Vinterior Legend';
+}
+
+function statsHtml() {
+  const st = S.stats;
+  const most = Object.entries(st.perItem).sort((a, b) => b[1] - a[1])[0];
+  const rows = [
+    ['Deals done', `${st.buys + st.sells} (${st.buys} buys, ${st.sells} sales)`],
+    ['Units shifted', `${st.unitsBought} bought, ${st.unitsSold} sold`],
+    ['Spent on stock', fmt(st.spend)],
+    ['Takings', fmt(st.revenue)],
+    ['Trading profit', fmt(st.profit)],
+    ['Best flip', st.bestFlip.item ? `${fmt(st.bestFlip.profit)} on ${st.bestFlip.item}` : '—'],
+    ['Most traded item', most ? `${most[0]} (${most[1]} units)` : '—'],
+    ['Cities visited', `${Object.keys(st.cities).length} of ${CITIES.length}`],
+    ['Close shaves', `${st.encounters} encounters, ${st.escapes} clean getaways`],
+    ['Spent on bribes', fmt(st.bribes)],
+    ['Days lost to trouble', String(st.daysLost)],
+    ['Lucky finds / stock lost', `${st.found} found, ${st.lost} lost`],
+    ['Peak net worth', fmt(st.peakNet)],
+  ];
+  return '<table class="stattbl">' +
+    rows.map(r => `<tr><td>${r[0]}</td><td class="r"><b>${r[1]}</b></td></tr>`).join('') +
+    '</table>';
+}
+
+function endGame() {
+  S.over = true;
+  S.enc = null;
+  const net = netWorth();
+  endInfo = { net, rank: rankFor(net), cheated: S.cheated };
+  const newBest = updateLifetime();
+  render();
+  showEndDialog(newBest);
+  log(`Game over. Final net worth ${fmt(net)} — ${endInfo.rank}`, 'day');
+}
+
+function showEndDialog(newBest) {
+  if (!endInfo) return;
+  const cheatNote = endInfo.cheated
+    ? `<div class="center" style="margin:6px 0"><b>Cheats were used</b> — this run doesn't count for your personal best. The golden chair knows what it did.</div>`
+    : (newBest ? `<div class="center" style="margin:6px 0"><b>New personal best!</b></div>` : '');
+  bigMsg(
+    `<div class="center">The ${DAYS} days are up. Uncle Barry counts on his fingers.<br>` +
+    `Final net worth: <b class="${endInfo.net < 0 ? 'neg' : ''}">${fmt(endInfo.net)}</b> — <b>${endInfo.rank}</b></div>` +
+    cheatNote +
+    statsHtml() +
+    `<div>${bestHtml()}</div>` +
+    `<div class="row" style="margin-top:8px"><button onclick="shareScore()">Share your score</button>` +
+    `<span id="shareStatus" class="dim"></span></div>`,
+    'Time, gentlemen, please'
+  );
+}
+
+/* ---------- rendering ---------- */
+
+function log(text, cls) {
+  const p = document.createElement('p');
+  if (cls) p.className = cls;
+  p.textContent = text;
+  $('log').prepend(p);
+}
+function status(text) { $('statusMsg').textContent = text; }
+
+// today's Teak FM bulletin: headlines first, then filler; rebuilt on demand,
+// only touching the DOM when the text changes so the animation doesn't restart
+let todaysHeadlines = [];
+function headline(text, cls) {
+  log(text, cls);
+  todaysHeadlines.push(text);
+  if (todaysHeadlines.length > 3) todaysHeadlines.shift();
+}
+let lastTicker = '';
+function updateTicker() {
+  const bits = [...todaysHeadlines];
+  // deterministic-ish filler per day so render() calls don't reshuffle it
+  const idx = (S.day * 3) % DJ_LINES.length;
+  bits.push(DJ_LINES[idx % DJ_LINES.length], DJ_LINES[(idx + 1) % DJ_LINES.length]);
+  if (S.heat >= 4) bits.push('And a word to the wise: word is the inspectors are about. You didn’t hear it from Teak FM.');
+  const text = bits.join('  •••  ');
+  if (text === lastTicker) return;
+  lastTicker = text;
+  const el = $('ticker');
+  el.textContent = text;
+  el.style.animationDuration = Math.max(14, Math.round(text.length / 7)) + 's';
+}
+
+function heatHtml() {
+  let h = '';
+  for (let i = 1; i <= 5; i++) h += `<span class="heatled${S.heat >= i ? ' on' : ''}"></span>`;
+  return h;
+}
+
+function shopLink(name) {
+  const url = ITEM_LINKS[name];
+  if (!url) return '';
+  const full = url + (url.includes('?') ? '&' : '?') + UTM;
+  return `<a class="shoplink" href="${full}" target="_blank" rel="noopener" ` +
+    `title="Find a real one on Vinterior" onclick="event.stopPropagation()">real ↗</a>`;
+}
+
+function render() {
+  $('stDay').textContent = Math.min(S.day, DAYS) + ' / ' + DAYS;
+  $('stCash').textContent = fmt(S.cash);
+  $('stDebt').textContent = fmt(S.debt);
+  $('stVan').textContent = vanUsed() + ' / ' + S.cap + ' slots';
+  const net = netWorth();
+  S.stats.peakNet = Math.max(S.stats.peakNet, net);
+  $('stNet').textContent = fmt(net);
+  $('stNet').className = net < 0 ? 'neg' : '';
+  $('stHeat').innerHTML = heatHtml();
+  $('marketLegend').textContent = 'Market — ' + S.city;
+  $('statusLoc').textContent = S.city + ', day ' + Math.min(S.day, DAYS);
+  document.body.classList.toggle('miami', S.city === 'Miami');
+
+  // market
+  const mNames = Object.keys(S.market).sort();
+  if (mNames.length) {
+    $('marketBox').innerHTML =
+      '<table><thead><tr><th>Item</th><th class="r">Price</th><th></th></tr></thead><tbody>' +
+      mNames.map(n =>
+        `<tr class="${selMarket === n ? 'sel' : ''}" onclick="selectMarket('${esc(n)}')" ondblclick="selectMarket('${esc(n)}');openBuy()">` +
+        `<td>${n}</td><td class="r">${fmt(S.market[n])}</td><td class="r">${shopLink(n)}</td></tr>`
+      ).join('') + '</tbody></table>';
+  } else {
+    $('marketBox').innerHTML = '<div class="empty">Nothing on offer today.</div>';
+  }
+
+  // van
+  const vNames = Object.keys(S.inv).sort();
+  if (vNames.length) {
+    $('vanBox').innerHTML =
+      '<table><thead><tr><th>Item</th><th class="r">Qty</th><th class="r">Paid avg</th><th class="r">Here</th></tr></thead><tbody>' +
+      vNames.map(n => {
+        const avg = S.inv[n] ? Math.round((S.paid[n] || 0) / S.inv[n]) : 0;
+        const here = S.market[n] ? fmt(S.market[n]) : '<span class="dim">—</span>';
+        return `<tr class="${selVan === n ? 'sel' : ''}" onclick="selectVan('${esc(n)}')" ondblclick="selectVan('${esc(n)}');openSell()">` +
+          `<td>${n}</td><td class="r">${S.inv[n]}</td><td class="r">${fmt(avg)}</td><td class="r">${here}</td></tr>`;
+      }).join('') + '</tbody></table>';
+  } else {
+    $('vanBox').innerHTML = '<div class="empty">The van is empty.</div>';
+  }
+
+  // lock-up
+  const inLondon = S.city === 'London';
+  const lNames = Object.keys(S.lock).sort();
+  if (lNames.length) {
+    $('lockBox').innerHTML =
+      '<table><thead><tr><th>Item</th><th class="r">Qty</th></tr></thead><tbody>' +
+      lNames.map(n =>
+        `<tr class="${selLock === n ? 'sel' : ''}" onclick="selectLock('${esc(n)}')">` +
+        `<td>${n}</td><td class="r">${S.lock[n]}</td></tr>`
+      ).join('') + '</tbody></table>';
+  } else {
+    $('lockBox').innerHTML = `<div class="empty">${inLondon ? 'Nothing stashed.' : 'Your stash is back in London.'}</div>`;
+  }
+
+  // buttons
+  $('btnBuy').disabled = S.over || !!S.enc || !selMarket;
+  $('btnSell').disabled = S.over || !!S.enc || !selVan || !S.market[selVan];
+  $('btnRepay').disabled = S.over || !!S.enc || S.debt <= 0 || !inLondon;
+  $('btnToLock').disabled = S.over || !!S.enc || !inLondon || !selVan;
+  $('btnToVan').disabled = S.over || !!S.enc || !inLondon || !selLock;
+
+  // travel
+  $('travelBtns').innerHTML = CITIES.map(c => {
+    const fare = (c.name === 'Miami' || S.city === 'Miami') && c.name !== S.city ? ` ✈` : '';
+    return `<button ${S.over || c.name === S.city || S.enc ? 'disabled' : ''} onclick="travel('${c.name}')">${c.name}${fare}</button>`;
+  }).join('');
+
+  updateTicker();
+  status(S.over ? 'Game over — click New Game to play again.' : 'Ready.');
+}
+
+function esc(s) { return s.replace(/'/g, "\\'"); }
+function selectMarket(name) { selMarket = name; render(); }
+function selectVan(name) { selVan = name; render(); }
+function selectLock(name) { selLock = name; render(); }
+
+$('amtInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') amtOk();
+  if (e.key === 'Escape') closeAmt();
+});
+$('cheatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') cheatOk();
+  if (e.key === 'Escape') closeCheat();
+});
+$('titleCaption').addEventListener('click', titleTap);
+
+newGame();
+showIntro();
+</script>
+</body>
+</html>
