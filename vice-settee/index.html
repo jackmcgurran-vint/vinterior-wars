@@ -454,15 +454,15 @@ const VINTERIOR_URL = 'https://www.vinterior.co/';
 
 const JOBS = [
   { ring: 2,  qty: 5, item: 'Ercol Windsor Chair',    dest: 'Paris',     deadline: 7,  bonus: 800,
-    brief: `Paris has discovered the Ercol chair. They think they invented it. Five chairs, Paris, day 7. Don't correct anyone.` },
+    brief: `Paris has discovered the Ercol chair and thinks it invented it. Five chairs, Paris, day 7. Smile. Don't correct anyone.` },
   { ring: 8,  qty: 3, item: 'Danish Teak Desk',       dest: 'London',    deadline: 13, bonus: 2000,
     brief: `Three teak desks to London by day 13. The client works from home and wants everyone on their video calls to know it.` },
   { ring: 13, qty: 2, item: 'Murano Chandelier',      dest: 'Amsterdam', deadline: 18, bonus: 3500,
-    brief: `Two Murano chandeliers to Amsterdam by day 18. They're glass. Amsterdam is cobbles. I'll let you do the maths.` },
+    brief: `Two Murano chandeliers to Amsterdam by day 18. They're glass. Amsterdam is cobbles. Drive like there's a pavlova on the passenger seat.` },
   { ring: 18, qty: 1, item: 'Memphis-Style Bookcase', dest: 'Milan',     deadline: 24, bonus: 4000,
-    brief: `Milan wants a Memphis bookcase back. Miami's full of them, obviously. One to Milan by day 24. If it doesn't look like a fruit bowl fell on a shelf, it's the wrong one.` },
+    brief: `Milan wants a Memphis bookcase home. Miami's full of them, obviously. One to Milan by day 24. If it doesn't look like a fruit bowl fell on a shelf, it's the wrong one.` },
   { ring: 23, qty: 1, item: 'Togo Sofa Suite',        dest: 'London',    deadline: 29, bonus: 10000,
-    brief: `One Togo, London, day 29. It's the big one. The client says it's for the dog. Don't ask questions. Do measure the dog.` },
+    brief: `One Togo, London, day 29. It's the big one. The client says it's for the dog. I didn't ask. Measure the dog.` },
 ];
 const JOB_DONE_LINES = [
   `On time. Money's in. Try not to look so surprised.`,
@@ -476,21 +476,21 @@ const JOB_MISSED_LINES = [
 
 const SCENES = [
   { day: 10, title: 'Chapter 2: The Interest Is Doing Better Than You', who: 'barry',
-    setting: 'Uncle Barry slides into the seat opposite you. He has brought his own fry-up.',
+    setting: 'Uncle Barry slides into the seat opposite you with a fry-up he brought from home. Nobody tells him he can’t do that.',
     lines: [`BARRY: You're doing alright, kid. Not as well as my interest, mind. My interest is having the year of its life.`,
             `BARRY: Day 30. Every penny. I've got a little book, and you're in it. In pen.`] },
   { day: 20, title: `Chapter 3: Marlene's Patch`, who: 'marlene',
     setting: 'Outside the auction rooms. Marlene is leaning on an estate car that has seen things.',
     lines: [`MARLENE: I've seen you about. Buying my chairs. Selling to my buyers. Parking in my space.`,
-            `MARLENE: Ten days, sunshine. Then it's back to car boots for you. I'll be there. I'll offer you a fiver.`] },
+            `MARLENE: Ten days, sunshine. Then it's back to car boots for you. I'll be there. I'll offer you a fiver. For the van.`] },
 ];
 
 const VERDICTS = {
   'Bankrupt. Back to flat-pack': `You went bust. Selling furniture. To people who sit down every day. I didn't know that was possible.`,
-  'Car Boot Browser':     `You made money. About one nice lamp's worth. Think bigger.`,
+  'Car Boot Browser':     `You made money. About one nice lamp's worth. It's a start. It's not a career.`,
   'Market Stall Regular': `Decent. I don't do decent.`,
   'Respected Dealer':     `Good. Not legendary. But good. I'll stop there before it goes to your head.`,
-  'Vintage Connoisseur':  `Now that's a bet that paid off. I'll ring you first next time.`,
+  'Vintage Connoisseur':  `Now that's a bet that paid off. I'll ring you first next time. Don't make it weird.`,
   'Vinterior Legend':     `Vinterior Legend. I said it. I won't say it twice, and I'll deny it if asked.`,
 };
 
@@ -548,45 +548,47 @@ const ITEMS = [
 ];
 
 const CITIES = [
-  { name: 'London',     mult: 1.15, home: 'uk', blurb: 'Pricey, but Uncle Barry takes payment here.' },
-  { name: 'Paris',      mult: 1.10, home: 'fr', blurb: 'Marché aux Puces. Style costs.' },
-  { name: 'Copenhagen', mult: 1.00, home: 'dk', blurb: 'Teak country. Danish design galore.' },
-  { name: 'Milan',      mult: 1.00, home: 'it', blurb: 'Glass, brass and la dolce vita.' },
-  { name: 'Amsterdam',  mult: 0.95, home: null, blurb: 'Canal-side kringloop bargains.' },
-  { name: 'Berlin',     mult: 0.85, home: null, blurb: 'Flohmarkt city. Cheap and cheerful.' },
-  { name: 'Miami',      mult: 1.00, home: 'us', blurb: 'Neon, pastels and poolside pastiche.', volatile: true },
+  { name: 'London',     mult: 1.15, home: 'uk', blurb: 'Everything costs more, including the parking. Uncle Barry takes payment here.' },
+  { name: 'Paris',      mult: 1.10, home: 'fr', blurb: 'Marché aux Puces. Everything is “une pièce unique”, including the bloke selling it.' },
+  { name: 'Copenhagen', mult: 1.00, home: 'dk', blurb: 'Teak country. Even the bus shelters have tapered legs.' },
+  { name: 'Milan',      mult: 1.00, home: 'it', blurb: 'Glass, brass and a man who will explain your own chandelier to you.' },
+  { name: 'Amsterdam',  mult: 0.95, home: null, blurb: 'Canal-side kringloop bargains. Mind the bikes. The bikes will not mind you.' },
+  { name: 'Berlin',     mult: 0.85, home: null, blurb: 'Flohmarkt city. Cheap, cheerful, and open until a time you won’t remember.' },
+  { name: 'Miami',      mult: 1.00, home: 'us', blurb: 'Neon, pastels and furniture that looks like it’s been to a rave.', volatile: true },
 ];
 
 const SPIKES = [
-  '{item} featured in The Upholsterer’s Gazette: collectors are frantic!',
-  'A celebrity designer name-drops the {item}: prices go through the roof!',
-  'An auction record for a {item} sends the market wild!',
+  'A {item} is spotted in the background of a celebrity video call. Collectors lose their minds!',
+  'A Sunday supplement calls the {item} “the new avocado”. Prices go stratospheric!',
+  'A {item} sets an auction record. The winning bidder had to sit down. Prices soar!',
 ];
 const CRASHES = [
   'A warehouse clearance floods the market with {item}s: prices collapse!',
   'A home makeover show declares the {item} “so last year”. Prices tumble!',
-  'A big estate sale dumps dozens of {item}s: prices slide!',
+  'An influencer says the {item} “gives dentist’s waiting room”. Prices slide!',
 ];
 
 const DJ_LINES = [
   'You’re listening to Teak FM: all killer, no filler, mostly veneer.',
-  'Traffic news: a sideboard has shed its load on the ring road. Expect delays and bargains.',
-  'That was the sound of a wardrobe being winched through a first-floor window. Poetry.',
-  'Teak FM weather: dry, with a risk of woodworm.',
-  'Coming up after the news: an hour of uninterrupted Danish oiling tips.',
+  'Traffic news: a sideboard has shed its load on the ring road. Drivers are advised to slow down and make an offer.',
+  'That was the sound of a wardrobe being winched through a first-floor window. Beautiful. Let’s hear it again.',
+  'Teak FM weather: dry and bright, with a 40% chance of woodworm.',
+  'Coming up after the news: Desert Island Dovetails, with a man who has strong feelings about drawers.',
   'Teak FM agony aunt: “My partner says the Chesterfield has to go.” Keep the Chesterfield.',
-  'Remember: measure the doorway before you buy the sofa.',
-  'Teak FM travel: the ferry’s running, the van smells of mould, life is good.',
-  'And now, the shipping forecast for anyone moving a sofa by sea.',
+  'Public service announcement: measure the doorway before you buy the sofa. Then measure it again. It’s smaller than that.',
+  'Teak FM travel: the ferry’s running, the van smells of mould, and morale is surprisingly high.',
+  'And now the shipping forecast, for anyone moving a sofa by sea. Why are you moving a sofa by sea.',
+  'Teak FM is a flat-pack-free station. If you can hear an Allen key, turn it off at the wall.',
+  'Caller on line two says his nan’s sideboard is “probably worth a fortune”. Line two, we love you. Get it valued.',
 ];
 
 // material-targeted mishaps (van)
 const DAMAGE = [
-  { mat: 'wood',    msg: 'Woodworm in the van! {n} × {item} ruined.' },
-  { mat: 'textile', msg: 'Moths have been at the van: {n} × {item} chewed beyond saving.' },
-  { mat: 'glass',   msg: 'Cobbles, potholes and dodgy suspension: {n} × {item} smashed.' },
-  { mat: 'leather', msg: 'The van roof leaks and mould claims {n} × {item}.' },
-  { mat: 'metal',   msg: 'Damp sea air on the ferry: {n} × {item} rusted through.' },
+  { mat: 'wood',    msg: 'Woodworm! {n} × {item} now more hole than furniture.' },
+  { mat: 'textile', msg: 'Moths have unionised in the back of the van. {n} × {item} eaten.' },
+  { mat: 'glass',   msg: 'You hit a pothole and hear a sound like very expensive wind chimes. {n} × {item} smashed.' },
+  { mat: 'leather', msg: 'The van roof leaks and mould claims {n} × {item}. The smell stays. The smell is family now.' },
+  { mat: 'metal',   msg: 'Damp sea air on the ferry. {n} × {item} rusted solid. Very industrial chic. Totally unsellable.' },
 ];
 
 /* ================= state & helpers ================= */
@@ -636,7 +638,7 @@ function newGame() {
   endInfo = null;
   $('log').innerHTML = '';
   log(`Day 1: London`, 'day');
-  log(`Uncle Barry has lent you ${fmt(START_DEBT)} (${Math.round(INTEREST * 100)}% a day, “family rate”). You have ${fmt(START_CASH)}, a van with ${START_CAP} slots, and ${DAYS} days before he wants a word.`);
+  log(`Uncle Barry has lent you ${fmt(START_DEBT)} (${Math.round(INTEREST * 100)}% a day, “family rate”). You have ${fmt(START_CASH)}, a van with ${START_CAP} slots, and ${DAYS} days before he “pops round”.`);
   genMarket();
   render();
 }
@@ -738,7 +740,7 @@ function travel(city) {
   } else if (S.day >= 8 && S.debt > COLLECTOR_DEBT && Math.random() < 0.14) {
     // no point shaking down the destitute — they get a warning, not a bill
     if (S.cash + cargoValue() < Math.max(400, S.debt * 0.15) * 0.5) {
-      log(`One of Uncle Barry's lads watches you from across the road, makes a note, and leaves. “Barry says get earning.”`, 'bad');
+      log(`One of Uncle Barry's lads watches you from across the road, eats a pasty with real menace, and leaves. “Barry says get earning.”`, 'bad');
       arrivalEvent();
     } else {
       startEncounter('barry');
@@ -782,7 +784,7 @@ function luckyFind() {
   if (qty < 1) return;
   addStock(it.name, qty, 0);
   S.stats.found += qty;
-  log(`You spot a skip outside a house clearance: ${qty} × ${it.name} for nothing!`, 'good');
+  log(`A skip outside a house clearance! ${qty} × ${it.name}: free, slightly damp, entirely yours.`, 'good');
 }
 
 // mishaps only strike stock made of the matching material
@@ -803,19 +805,19 @@ function damageEvent(held) {
 function customsEvent() {
   const fee = Math.min(S.cash, ri(80, 250) + S.day * 10);
   S.cash -= fee;
-  log(`Customs paperwork trouble at the border. You pay ${fmt(fee)} in duties and “handling”.`, 'bad');
+  log(`Customs at the border. Form B7, form B7a, and ${fmt(fee)} for the form that tells you which form you need.`, 'bad');
 }
 
 function vanOffer() {
   const price = ri(600, 900) + S.day * 40;
-  confirmMsg(`A dealer's retiring and offers you their box van: +15 slots for ${fmt(price)}. Buy it?`, ok => {
+  confirmMsg(`A dealer is retiring to Spain and selling their box van: +15 slots for ${fmt(price)}. It's only been on fire once. Buy it?`, ok => {
     if (ok && S.cash >= price) {
       S.cash -= price; S.cap += 15;
-      log(`You bought the bigger van. Capacity is now ${S.cap} slots.`, 'good');
+      log(`The bigger van is yours. ${S.cap} slots, and only a faint smell of smoke.`, 'good');
     } else if (ok) {
-      log(`You can't afford the van.`, 'bad');
+      log(`You can't afford the van. The dealer retires anyway.`, 'bad');
     } else {
-      log(`You pass on the van.`);
+      log(`You pass on the van. Something about the word “once”.`);
     }
     render();
   });
@@ -823,15 +825,15 @@ function vanOffer() {
 
 // one-off purchase: the sack truck keeps its Run bonus in encounters
 function sackOffer() {
-  confirmMsg(`A removals firm is selling off a sack truck for ${fmt(SACK_TRUCK_PRICE)}. It makes running away a lot easier. Buy it?`, ok => {
+  confirmMsg(`A removals firm is selling off a sack truck for ${fmt(SACK_TRUCK_PRICE)}. It makes running away a lot easier, which is not what they used it for. Buy it?`, ok => {
     if (ok && S.cash >= SACK_TRUCK_PRICE) {
       S.cash -= SACK_TRUCK_PRICE;
       S.sackTruck = true;
       log(`You buy the sack truck. Suddenly every getaway has wheels.`, 'good');
     } else if (ok) {
-      log(`You can't afford the sack truck.`, 'bad');
+      log(`You can't afford the sack truck. You'll have to run away the old-fashioned way.`, 'bad');
     } else {
-      log(`You pass on the sack truck.`);
+      log(`You pass on the sack truck. Your legs will have to do.`);
     }
     render();
   });
@@ -844,12 +846,12 @@ function dresserOffer(held) {
   const qty = Math.min(S.inv[name], ri(1, 3));
   const base = S.market[name] || Math.round((it.min + it.max) / 2 * cityMult(it, S.city));
   const offer = Math.round(base * rnd(1.4, 2));
-  confirmMsg(`A set dresser on a film shoot needs ${qty} × ${name} today and offers ${fmt(offer)} each, well over the odds. Sell?`, ok => {
+  confirmMsg(`A set dresser on a period drama needs ${qty} × ${name} by lunchtime and offers ${fmt(offer)} each, well over the odds. Sell?`, ok => {
     if (ok) {
       recordSale(name, qty, offer);
-      log(`Sold ${qty} × ${name} to the film crew for ${fmt(qty * offer)}.`, 'good');
+      log(`Sold ${qty} × ${name} to the film crew for ${fmt(qty * offer)}. Look out for them behind somebody in a bonnet.`, 'good');
     } else {
-      log(`You send the set dresser away. Props are someone else's problem.`);
+      log(`You send the set dresser away. The period drama makes do with flat-pack. The critics notice.`);
     }
     render();
   });
@@ -858,7 +860,7 @@ function dresserOffer(held) {
 function tipEvent() {
   const tip = ri(50, 200);
   S.cash += tip;
-  log(`A grateful buyer sends a ${fmt(tip)} tip: “the sideboard made the room”.`, 'good');
+  log(`A happy customer sends a ${fmt(tip)} tip and a photo of their cat asleep on the sideboard.`, 'good');
 }
 
 /* ---------- Sandrine's jobs & cutscenes ---------- */
@@ -934,17 +936,17 @@ function showChapterScene() {
 const ENC_DEFS = {
   warden: {
     title: 'Traffic warden',
-    intro: () => `A traffic warden is photographing your van on the double yellows. “This your vehicle?”`,
+    intro: () => `A traffic warden is photographing your van on the double yellows from several artistic angles. “This your vehicle?”`,
     options: ['run', 'bribe', 'talk'],
   },
   rival: {
     title: 'Rival dealer',
-    intro: () => `Marlene from the auction rooms blocks the pavement with her estate car. “This is MY patch, sunshine.”`,
+    intro: () => `Marlene from the auction rooms has parked her estate car across the pavement. “This is MY patch, sunshine. I've been here since decimalisation.”`,
     options: ['run', 'bribe', 'talk'],
   },
   heavies: {
     title: 'Auction-house heavies',
-    intro: () => `Two enormous representatives of the auction house would like a word about “unpaid buyer's premium”.`,
+    intro: () => `Two enormous, very polite representatives of the auction house would like a word about some “unpaid buyer's premium”. One of them is holding a gavel he does not need.`,
     options: ['run', 'bribe', 'talk'],
   },
   barry: {
@@ -1034,13 +1036,13 @@ function encounterSuccess(type, action) {
     },
     rival: {
       run: `You nip down a one-way street the wrong way. The estate car can't follow. The curses can.`,
-      bribe: `You buy her a carvery lunch and promise first refusal on the next sideboard. Peace, of a sort.`,
-      talk: `You flatter her eye for walnut until she forgets why she stopped you.`,
+      bribe: `You buy her a carvery and promise first refusal on your next sideboard. She has three Yorkshire puddings. Peace, of a sort.`,
+      talk: `You compliment her eye for walnut. She tells you about her eye for walnut for forty minutes, then forgets why she stopped you.`,
     },
     heavies: {
-      run: `You've never moved a van that fast. You lose them at the lock gates.`,
+      run: `You lose them at the lock gates. They're big lads, but they're not built for cornering.`,
       bribe: `The “account” is settled. Nobody mentions it again.`,
-      talk: `You quote clause 14b of the auction terms at them until their eyes glaze over.`,
+      talk: `You quote clause 14b of the auction terms at them. Then 14c. By 14d they're asking if you're all right.`,
     },
   };
   log(lines[type][action], 'good');
@@ -1060,7 +1062,7 @@ function encounterFailure(type, action) {
     S.cash -= fine;
     const msg = action === 'bribe'
       ? `They take the ${fmt(fine)} and your afternoon. Mostly the afternoon.`
-      : `They follow you all the way to the depot and make you sit through a two-hour talk on auction etiquette.${fine ? ` You're ${fmt(fine)} lighter.` : ''} Day lost.`;
+      : `They follow you all the way to the depot and make you sit through a two-hour talk on auction etiquette. There are slides.${fine ? ` You're ${fmt(fine)} lighter.` : ''} Day lost.`;
     if (loseDay(msg)) return;
     return;
   }
@@ -1174,7 +1176,7 @@ function tradeHeat(n) {
   S.tradeHere += n;
   while (S.tradeHere >= HEAT_TRADE_UNITS) {
     S.tradeHere -= HEAT_TRADE_UNITS;
-    bumpHeat(1, `Word gets round about a big spender in ${S.city}. Heat is rising.`);
+    bumpHeat(1, `Word gets round about a big spender in ${S.city}. People are starting to point. Heat is rising.`);
   }
 }
 
@@ -1186,7 +1188,7 @@ function openBuy() {
   if (S.over || S.enc || !selMarket) return;
   const price = S.market[selMarket];
   const max = Math.min(Math.floor(S.cash / price), S.cap - vanUsed());
-  if (max < 1) { errorMsg(`You can't afford any <b>${selMarket}</b>, or the van is full.`, 'No deal'); return; }
+  if (max < 1) { errorMsg(`You can't afford any <b>${selMarket}</b>, or the van is full. Possibly both. Have a look.`, 'No deal'); return; }
   amtCtx = { kind: 'buy', name: selMarket, price, max };
   $('amtTitle').textContent = 'Buy';
   $('amtMsg').innerHTML = `<b>${selMarket}</b> at ${fmt(price)} each.<br>You can afford <b>${max}</b>.`;
@@ -1197,7 +1199,7 @@ function openSell() {
   if (S.over || S.enc || !selVan) return;
   const qty = S.inv[selVan] || 0;
   const price = S.market[selVan];
-  if (!price) { errorMsg(`No buyers for <b>${selVan}</b> in ${S.city} today. Try another city, or another item.`, 'No buyers'); return; }
+  if (!price) { errorMsg(`Nobody in ${S.city} wants a <b>${selVan}</b> today. Try another city. Or another item. Or, at a push, another career.`, 'No buyers'); return; }
   amtCtx = { kind: 'sell', name: selVan, price, max: qty };
   $('amtTitle').textContent = 'Sell';
   $('amtMsg').innerHTML = `<b>${selVan}</b> fetches ${fmt(price)} each here.<br>You have <b>${qty}</b>.`;
@@ -1206,7 +1208,7 @@ function openSell() {
 
 function openRepay() {
   if (S.over || S.enc || S.debt <= 0) return;
-  if (S.city !== 'London') { errorMsg(`Uncle Barry only takes payment in <b>London</b>. Cash, in person, no cheques.`, 'Wrong city'); return; }
+  if (S.city !== 'London') { errorMsg(`Uncle Barry only takes payment in <b>London</b>. Cash, in person. No cheques, no “I'll transfer it later”.`, 'Wrong city'); return; }
   const max = Math.min(S.cash, S.debt);
   if (max < 1) { errorMsg('You have no cash to repay with.', 'Empty pockets'); return; }
   amtCtx = { kind: 'repay', name: 'debt', price: 1, max };
@@ -1334,9 +1336,9 @@ function showIntro() {
     '<button onclick="closeMsg(true)">Find the van keys</button>', null
   );
   typeInto($('introText'),
-    `SANDRINE: It's Sandrine. I hear you've got a van, thirty days and a loan from someone called Barry.\n\n` +
-    `I'm not going to ask about Barry. Nobody should ask about Barry.\n\n` +
-    `I'll ring with jobs. You deliver, I pay. Bring me anything in orange pine and I'll hang up.`);
+    `SANDRINE: It's Sandrine. Half of Europe is about to spend a month on the sofa, and most of those sofas are a cry for help.\n\n` +
+    `You've got a van, thirty days and a loan from someone called Barry. I won't ask about Barry. Nobody asks about Barry.\n\n` +
+    `I'll ring with jobs. You deliver, I pay. Don't make me ring twice.`);
 }
 
 function showHelp() {
@@ -1528,7 +1530,7 @@ function showEndDialog(newBest) {
     ? `<div class="callrow" style="margin:8px 0">${portraitHtml('sandrine')}<div class="calltext">SANDRINE: ${VERDICTS[endInfo.rank]}</div></div>`
     : '';
   bigMsg(
-    `<div class="center">The ${DAYS} days are up. Uncle Barry counts on his fingers.<br>` +
+    `<div class="center">The ${DAYS} days are up. Uncle Barry counts it twice, licks his thumb, and counts it again.<br>` +
     `Final net worth: <b class="${endInfo.net < 0 ? 'neg' : ''}">${fmt(endInfo.net)}</b><br><b>${endInfo.rank}</b></div>` +
     verdict +
     cheatNote +
@@ -1574,7 +1576,7 @@ function updateTicker() {
   // deterministic-ish filler per day so render() calls don't reshuffle it
   const idx = (S.day * 3) % DJ_LINES.length;
   bits.push(DJ_LINES[idx % DJ_LINES.length], DJ_LINES[(idx + 1) % DJ_LINES.length]);
-  if (S.heat >= 4) bits.push('A word to the wise: the wardens are out in force. You didn’t hear it from Teak FM.');
+  if (S.heat >= 4) bits.push('A word to the wise: the wardens are out in force. You didn’t hear it from Teak FM. Teak FM was never here.');
   const text = bits.join('  •••  ');
   if (text === lastTicker) return;
   lastTicker = text;
@@ -1629,7 +1631,7 @@ function render() {
         `<td>${n}</td><td class="r">${fmt(S.market[n])}</td><td class="r">${shopLink(n)}</td></tr>`
       ).join('') + '</tbody></table>';
   } else {
-    $('marketBox').innerHTML = '<div class="empty">Nothing on offer today.</div>';
+    $('marketBox').innerHTML = '<div class="empty">Nothing on offer today. Even the pigeons have left.</div>';
   }
 
   // van
@@ -1644,7 +1646,7 @@ function render() {
           `<td>${n}</td><td class="r">${S.inv[n]}</td><td class="r">${fmt(avg)}</td><td class="r">${here}</td></tr>`;
       }).join('') + '</tbody></table>';
   } else {
-    $('vanBox').innerHTML = '<div class="empty">The van is empty.</div>';
+    $('vanBox').innerHTML = '<div class="empty">The van is empty. It echoes.</div>';
   }
 
   // buttons
