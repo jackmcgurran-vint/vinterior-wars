@@ -262,6 +262,16 @@
   .erricon { flex: 0 0 auto; }
   .errrow { display: flex; gap: 10px; align-items: flex-start; }
 
+  /* calls and cutscenes */
+  .callrow { display: flex; gap: 10px; align-items: flex-start; }
+  .calltext { white-space: pre-line; line-height: 1.5; flex: 1; min-height: 44px; }
+  .portrait {
+    flex: 0 0 auto;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    background: #fff;
+  }
+
   /* city-name card on travel: big chunky capitals, level-intro style */
   #cityCard {
     position: fixed; inset: 0;
@@ -318,6 +328,7 @@
       <div class="stat">Van: <b id="stVan"></b></div>
       <div class="stat">Net: <b id="stNet"></b></div>
       <div class="stat">Heat: <span id="stHeat"></span></div>
+      <div class="stat" id="stJob" style="display:none"></div>
     </div>
 
     <div class="panels">
@@ -437,6 +448,64 @@ const ITEM_LINKS = {
 // end-screen call to action
 const VINTERIOR_URL = 'https://www.vinterior.co/';
 
+/* ---- Sandrine: calls, jobs, cutscenes (SCRIPT PENDING HER APPROVAL) ---- */
+// Portraits are abstract pixel placeholders, not likenesses, until the
+// design team's art is drawn and approved.
+
+const JOBS = [
+  { ring: 2,  qty: 5, item: 'Ercol Windsor Chair',    dest: 'Paris',     deadline: 7,  bonus: 800,
+    brief: `Paris has discovered the Ercol chair. Five of them, there by day 7. Easy money. Don't make it hard.` },
+  { ring: 8,  qty: 3, item: 'Danish Teak Desk',       dest: 'London',    deadline: 13, bonus: 2000,
+    brief: `Copenhagen is selling teak like it's firewood. Three desks, London, day 13. Tell me early if you can't do it.` },
+  { ring: 13, qty: 2, item: 'Murano Chandelier',      dest: 'Amsterdam', deadline: 18, bonus: 3500,
+    brief: `Amsterdam wants Murano. Two chandeliers, day 18. Glass, so drive like you mean it, but carefully.` },
+  { ring: 18, qty: 1, item: 'Memphis-Style Bookcase', dest: 'Milan',     deadline: 24, bonus: 4000,
+    brief: `Memphis was born in Milan, and Milan wants it back. Get to Miami, find me a bookcase, bring it home by day 24.` },
+  { ring: 23, qty: 1, item: 'Togo Sofa Suite',        dest: 'London',    deadline: 29, bonus: 10000,
+    brief: `One Togo. London. Day 29. It's the big one. Bold bets only.` },
+];
+const JOB_DONE_LINES = [`On time. Money's in.`, `Good. Next.`, `That's how it's done.`];
+const JOB_MISSED_LINES = [`You're late. I'll find someone who isn't.`, `Next time, tell me before, not after.`];
+
+const SCENES = [
+  { day: 10, title: 'Chapter 2: The Interest Is Doing Better Than You', who: 'barry',
+    setting: 'A greasy spoon in London. Uncle Barry is eating a full English.',
+    lines: [`BARRY: You're doing alright, kid. Not as well as my interest, mind. That's doing brilliantly.`,
+            `BARRY: Just so we understand each other. Day 30. Every penny.`] },
+  { day: 20, title: `Chapter 3: Marlene's Patch`, who: 'marlene',
+    setting: 'Outside the auction rooms. Marlene is leaning on an estate car.',
+    lines: [`MARLENE: I've seen you about. Buying my chairs. Selling to my buyers.`,
+            `MARLENE: Ten days, sunshine. Then it's back to car boots for you.`] },
+];
+
+const VERDICTS = {
+  'Bankrupt. Back to flat-pack': `You went bust. In launch week. When everyone wanted a sofa. Impressive, in its way.`,
+  'Car Boot Browser':     `You made money. Not much. Next time, think bigger.`,
+  'Market Stall Regular': `Decent. I don't do decent.`,
+  'Respected Dealer':     `Good. Not legendary. But good.`,
+  'Vintage Connoisseur':  `Now that's a bet that paid off. Call me.`,
+  'Vinterior Legend':     `Vinterior Legend. I said it. Don't make me say it twice.`,
+};
+
+const PORTRAITS = {
+  sandrine: { bg: '#4d7f99', hair: '#3a2a1e', top: '#000080' },
+  barry:    { bg: '#8a7a55', hair: '#c9c2b4', top: '#5a4632' },
+  marlene:  { bg: '#6e8060', hair: '#b9a98f', top: '#405a40' },
+};
+function portraitHtml(who) {
+  const p = PORTRAITS[who];
+  return `<svg class="portrait" width="48" height="48" viewBox="0 0 48 48" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">` +
+    `<rect width="48" height="48" fill="${p.bg}"/>` +
+    `<rect x="14" y="18" width="20" height="18" fill="#d9b38c"/>` +
+    `<rect x="12" y="10" width="24" height="10" fill="${p.hair}"/>` +
+    `<rect x="12" y="18" width="4" height="10" fill="${p.hair}"/>` +
+    `<rect x="32" y="18" width="4" height="10" fill="${p.hair}"/>` +
+    `<rect x="19" y="25" width="3" height="3" fill="#222"/>` +
+    `<rect x="26" y="25" width="3" height="3" fill="#222"/>` +
+    `<rect x="8" y="38" width="32" height="10" fill="${p.top}"/>` +
+    `</svg>`;
+}
+
 const DAYS = 30;
 const START_CASH = 2000;
 const START_DEBT = 5000;
@@ -541,6 +610,7 @@ function newGame() {
     city: 'London', inv: {}, paid: {},
     market: {}, over: false,
     heat: 0, tradeHere: 0,
+    job: null, nextJob: 0, scenes: {},
     sackTruck: false,
     cheated: false,
     enc: null,          // pending encounter: {type, bribe, demand}
@@ -552,6 +622,7 @@ function newGame() {
       cities: { London: true },
       peakNet: START_CASH - START_DEBT,
       encounters: 0, escapes: 0, bribes: 0, daysLost: 0,
+      jobsDone: 0, jobsMissed: 0, jobBonus: 0,
     },
   };
   selMarket = selVan = null;
@@ -650,9 +721,14 @@ function travel(city) {
   log(`Day ${S.day}: ${city}. ${CITIES.find(c => c.name === city).blurb}`, 'day');
   genMarket();
 
-  // one drama per day: debt collectors first, then heat encounters, then the mild
-  // stuff — with a few days' grace at the start while word gets round
-  if (S.day >= 8 && S.debt > COLLECTOR_DEBT && Math.random() < 0.14) {
+  // jobs resolve first; then one drama per day, where a chapter scene or a
+  // ringing payphone takes the slot ahead of collectors and heat encounters
+  jobArrival();
+  if (showChapterScene()) {
+    // the scene is the day's drama
+  } else if (ringPhone()) {
+    // and so is a call from Sandrine
+  } else if (S.day >= 8 && S.debt > COLLECTOR_DEBT && Math.random() < 0.14) {
     // no point shaking down the destitute — they get a warning, not a bill
     if (S.cash + cargoValue() < Math.max(400, S.debt * 0.15) * 0.5) {
       log(`One of Uncle Barry's lads watches you from across the road, makes a note, and leaves. “Barry says get earning.”`, 'bad');
@@ -776,6 +852,74 @@ function tipEvent() {
   const tip = ri(50, 200);
   S.cash += tip;
   log(`A grateful buyer sends a ${fmt(tip)} tip: “the sideboard made the room”.`, 'good');
+}
+
+/* ---------- Sandrine's jobs & cutscenes ---------- */
+
+function sandrineSays(line) { log(`SANDRINE: ${line}`, 'day'); }
+
+// deliveries hand over automatically on arrival: market value plus the bonus
+function jobArrival() {
+  const job = S.job;
+  if (job) {
+    if (S.city === job.dest && S.day <= job.deadline && (S.inv[job.item] || 0) >= job.qty) {
+      const it = ITEMS.find(i => i.name === job.item);
+      const unit = S.market[job.item] || Math.round((it.min + it.max) / 2 * cityMult(it, S.city));
+      recordSale(job.item, job.qty, unit);
+      S.cash += job.bonus;
+      S.stats.jobsDone++;
+      S.stats.jobBonus += job.bonus;
+      S.job = null;
+      log(`Job done: ${job.qty} × ${job.item} handed over in ${job.dest} for ${fmt(unit * job.qty)}, plus the ${fmt(job.bonus)} bonus.`, 'good');
+      sandrineSays(pick(JOB_DONE_LINES));
+    } else if (S.day > job.deadline) {
+      S.stats.jobsMissed++;
+      S.job = null;
+      log(`You missed Sandrine's deadline. The bonus is gone.`, 'bad');
+      sandrineSays(pick(JOB_MISSED_LINES));
+    }
+  }
+}
+
+// the payphone rings with the next job once its day comes round
+function ringPhone() {
+  if (S.job || S.nextJob >= JOBS.length) return false;
+  const j = JOBS[S.nextJob];
+  if (S.day < j.ring) return false;
+  if (S.day > j.deadline - 1) { S.nextJob++; return false; } // rang out; too late to take
+  S.nextJob++;
+  choiceMsg(
+    `<div class="callrow">${portraitHtml('sandrine')}<div class="calltext" id="callText"></div></div>` +
+    `<div class="dim" style="margin-top:8px">${j.qty} × ${j.item} to ${j.dest} by day ${j.deadline}. Bonus: ${fmt(j.bonus)}. Placeholder portrait, pending approval.</div>`,
+    'Take the job', 'Let it ring',
+    ok => {
+      if (ok) {
+        S.job = { ...j };
+        log(`Job taken: ${j.qty} × ${j.item} to ${j.dest} by day ${j.deadline} for a ${fmt(j.bonus)} bonus.`, 'day');
+      } else {
+        log(`You let the payphone ring out. Sandrine doesn't call twice.`);
+      }
+      render();
+    },
+    'The payphone is ringing'
+  );
+  typeInto($('callText'), `SANDRINE: ${j.brief}`);
+  return true;
+}
+
+function showChapterScene() {
+  const idx = SCENES.findIndex((sc, i) => S.day >= sc.day && !S.scenes[i]);
+  if (idx < 0) return false;
+  const sc = SCENES[idx];
+  S.scenes[idx] = true;
+  baseMsg(
+    `<div class="dim" style="margin-bottom:8px">${sc.setting}</div>` +
+    `<div class="callrow">${portraitHtml(sc.who)}<div class="calltext" id="sceneText"></div></div>`,
+    sc.title, false,
+    '<button onclick="closeMsg(true)">Continue</button>', null
+  );
+  typeInto($('sceneText'), sc.lines.join('\n\n'));
+  return true;
 }
 
 /* ---------- encounters ---------- */
@@ -1142,6 +1286,30 @@ function bigMsg(html, title) {
 function confirmMsg(html, cb) {
   baseMsg(html, null, false, '<button onclick="closeMsg(true)">Yes</button><button onclick="closeMsg(false)">No</button>', cb);
 }
+function choiceMsg(html, yesLabel, noLabel, cb, title) {
+  baseMsg(html, title, false,
+    `<button onclick="closeMsg(true)">${yesLabel}</button><button onclick="closeMsg(false)">${noLabel}</button>`, cb);
+}
+
+// dialogue types out, caper-game style; instant when timers or motion are off
+let typeTimer = null;
+function typeInto(el, text) {
+  if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+  if (typeof setInterval !== 'function' || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = text;
+    return;
+  }
+  let i = 0;
+  el.textContent = '';
+  el.onclick = () => { // click skips to the full text
+    if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+    el.textContent = text;
+  };
+  typeTimer = setInterval(() => {
+    el.textContent = text.slice(0, ++i);
+    if (i >= text.length) { clearInterval(typeTimer); typeTimer = null; }
+  }, 16);
+}
 function closeMsg(ok) {
   if (S && S.enc) return; // encounters must be answered with their own buttons
   $('dlgMsg').classList.remove('show');
@@ -1149,15 +1317,19 @@ function closeMsg(ok) {
   if (cb) cb(ok);
 }
 
+// Chapter 1: the game opens on a call from Sandrine
 function showIntro() {
-  infoMsg(
-    `<b>November 2026. Launch week.</b><br><br>` +
-    `Half of Europe is about to spend a month on the sofa, and they've just noticed how ` +
-    `tired it looks.<br><br>` +
-    `Uncle Barry has lent you ${fmt(START_DEBT)} to make the most of it. You've got a van, ` +
-    `${DAYS} days and his complete confidence. Don't waste any of them.`,
-    'Vice Settee'
+  baseMsg(
+    `<div class="dim" style="margin-bottom:8px">November 2026. Launch week. The phone is ringing.</div>` +
+    `<div class="callrow">${portraitHtml('sandrine')}<div class="calltext" id="introText"></div></div>` +
+    `<div class="dim" style="margin-top:8px">Placeholder portrait, pending approval.</div>`,
+    'Incoming call', false,
+    '<button onclick="closeMsg(true)">Take the van keys</button>', null
   );
+  typeInto($('introText'),
+    `SANDRINE: It's Sandrine. Launch week. Half of Europe is about to live on their sofas, and most of those sofas are hideous.\n\n` +
+    `You've got a van and Barry's money. I've got jobs. Do them well and I'll pay well.\n\n` +
+    `Don't bore me.`);
 }
 
 function showHelp() {
@@ -1170,6 +1342,7 @@ function showHelp() {
     `High heat means more trouble: wardens, rivals, heavies. Run, bribe or talk your way out. ` +
     `Heat cools as you keep moving.<br>` +
     `• The van holds <b>${START_CAP} slots</b> to start. Watch for offers: a bigger van, or a sack truck for quicker getaways.<br>` +
+    `• Answer the payphone: Sandrine's delivery jobs pay a bonus on top of the sale. Jobs are optional; missing one only loses the bonus.<br>` +
     `• Stock can spoil: woodworm eats wood, moths eat fabric, glass smashes, leather moulds.<br>` +
     `• Miami is a flight away: cheap postmodern pieces, wild prices.<br><br>` +
     `Finish with the highest net worth you can. Your best run is saved on this device only.`,
@@ -1318,6 +1491,7 @@ function statsHtml() {
     ['Cities visited', `${Object.keys(st.cities).length} of ${CITIES.length}`],
     ['Close shaves', `${st.encounters} encounter${st.encounters === 1 ? '' : 's'}, ${st.escapes} clean getaway${st.escapes === 1 ? '' : 's'}`],
     ['Spent on bribes', fmt(st.bribes)],
+    ['Jobs for Sandrine', `${st.jobsDone} done, ${st.jobsMissed} missed, ${fmt(st.jobBonus)} in bonuses`],
     ['Days lost to trouble', String(st.daysLost)],
     ['Lucky finds / stock lost', `${st.found} found, ${st.lost} lost`],
     ['Peak net worth', fmt(st.peakNet)],
@@ -1343,9 +1517,13 @@ function showEndDialog(newBest) {
   const cheatNote = endInfo.cheated
     ? `<div class="center" style="margin:6px 0"><b>Cheats were used</b>, so this run doesn't count for your personal best. The golden chair knows what it did.</div>`
     : (newBest ? `<div class="center" style="margin:6px 0"><b>New personal best!</b></div>` : '');
+  const verdict = VERDICTS[endInfo.rank]
+    ? `<div class="callrow" style="margin:8px 0">${portraitHtml('sandrine')}<div class="calltext">SANDRINE: ${VERDICTS[endInfo.rank]}</div></div>`
+    : '';
   bigMsg(
     `<div class="center">The ${DAYS} days are up. Uncle Barry counts on his fingers.<br>` +
     `Final net worth: <b class="${endInfo.net < 0 ? 'neg' : ''}">${fmt(endInfo.net)}</b><br><b>${endInfo.rank}</b></div>` +
+    verdict +
     cheatNote +
     statsHtml() +
     `<div>${bestHtml()}</div>` +
@@ -1423,6 +1601,13 @@ function render() {
   $('stNet').textContent = fmt(net);
   $('stNet').className = net < 0 ? 'neg' : '';
   $('stHeat').innerHTML = heatHtml();
+  const jobEl = $('stJob');
+  if (S.job) {
+    jobEl.style.display = '';
+    jobEl.innerHTML = `Job: <b>${S.job.qty} × ${S.job.item} to ${S.job.dest} by day ${S.job.deadline}</b>`;
+  } else {
+    jobEl.style.display = 'none';
+  }
   $('marketLegend').textContent = 'Market: ' + S.city;
   $('statusLoc').textContent = S.city + ', day ' + Math.min(S.day, DAYS);
   document.body.classList.toggle('miami', S.city === 'Miami');
