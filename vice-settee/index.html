@@ -267,13 +267,43 @@
     position: fixed; inset: 0;
     background: #000;
     z-index: 60;
-    display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
-    gap: 18px;
+    display: flex; flex-direction: column; align-items: center;
+    overflow-y: auto;
+    padding: 16px 0;
     cursor: pointer;
     outline: none;
   }
-  #titleCard svg { width: min(94vw, 760px); height: auto; display: block; }
+  /* auto margins centre the content but let it scroll on short screens */
+  #titleCard .tc-inner {
+    margin: auto 0;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 14px;
+    width: min(94vw, 760px);
+  }
+  #titleCard svg { width: 100%; height: auto; display: block; }
+  #titleCard .tc-help {
+    width: 100%;
+    box-sizing: border-box;
+    border: 2px solid #c2357f;
+    background: #14072b;
+    color: #f3e9ff;
+    font-family: Tahoma, "MS Sans Serif", Geneva, sans-serif;
+    font-size: 12px; line-height: 1.55;
+    padding: 10px 14px;
+    animation: tcfade .4s ease 1.2s both;
+  }
+  #titleCard .tc-help h2 {
+    font-size: 12px; letter-spacing: 3px;
+    color: #ffd23f;
+    margin: 0 0 4px;
+  }
+  #titleCard .tc-help p { margin: 0 0 8px; }
+  #titleCard .tc-help ul { list-style: none; margin: 0; padding: 0; }
+  #titleCard .tc-help li { padding-left: 14px; position: relative; }
+  #titleCard .tc-help li::before { content: "\25B8"; position: absolute; left: 0; color: #ff5fa8; }
+  @media (max-width: 480px) {
+    #titleCard .tc-help { font-size: 11px; padding: 8px 10px; }
+  }
   #titleCard .tc-scene { animation: tcfade .6s ease both; }
   #titleCard .tc-title {
     transform-box: fill-box; transform-origin: center;
@@ -1720,8 +1750,20 @@ function titleCardSvg() {
 function showTitleCard() {
   const card = $('titleCard');
   const touch = matchMedia('(pointer: coarse)').matches;
-  card.innerHTML = titleCardSvg() +
-    `<div class="tc-press">${touch ? 'TAP TO START' : 'PRESS ANY KEY'}</div><div class="tc-flash"></div>`;
+  card.innerHTML = `<div class="tc-inner">${titleCardSvg()}` +
+    `<div class="tc-help">` +
+      `<h2>THE GOAL</h2>` +
+      `<p>Turn Uncle Barry's ${fmt(START_DEBT)} loan into as much money as possible in ${DAYS} days. Your score is your cash minus whatever you still owe him.</p>` +
+      `<h2>HOW TO PLAY</h2>` +
+      `<ul>` +
+        `<li>Buy vintage furniture where it's cheap, drive it somewhere it's dear, and sell.</li>` +
+        `<li>Every trip takes a day, and Barry's interest is ${Math.round(INTEREST * 100)}% a day. Pay him back in London, early.</li>` +
+        `<li>Trade big and you draw heat: traffic wardens, rival dealers, auction-house heavies. Run, bribe or talk your way out.</li>` +
+        `<li>Answer the payphone. Sandrine's delivery jobs pay a bonus on top of the sale.</li>` +
+        `<li>Teak FM tells you when prices go mad. Miami is a flight away and madder still.</li>` +
+      `</ul>` +
+    `</div>` +
+    `<div class="tc-press">${touch ? 'TAP TO START' : 'PRESS ANY KEY'}</div></div><div class="tc-flash"></div>`;
   card.style.display = '';
   card.focus();
   let gone = false;
