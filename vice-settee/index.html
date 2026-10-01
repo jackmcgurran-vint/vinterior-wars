@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinterior Wars: Vice Settee</title>
+<!-- Win98-style pixel-art "V" favicon, inlined to keep the game a single file -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20shape-rendering='crispEdges'%3E%3Crect%20width='16'%20height='16'%20fill='%23c0c0c0'/%3E%3Crect%20width='16'%20height='1'%20fill='%23ffffff'/%3E%3Crect%20width='1'%20height='16'%20fill='%23ffffff'/%3E%3Crect%20y='15'%20width='16'%20height='1'%20fill='%23404040'/%3E%3Crect%20x='15'%20width='1'%20height='16'%20fill='%23404040'/%3E%3Cg%20fill='%23000080'%3E%3Crect%20x='3'%20y='3'%20width='2'%20height='2'/%3E%3Crect%20x='4'%20y='5'%20width='2'%20height='2'/%3E%3Crect%20x='5'%20y='7'%20width='2'%20height='2'/%3E%3Crect%20x='6'%20y='9'%20width='2'%20height='2'/%3E%3Crect%20x='7'%20y='11'%20width='2'%20height='2'/%3E%3Crect%20x='11'%20y='3'%20width='2'%20height='2'/%3E%3Crect%20x='10'%20y='5'%20width='2'%20height='2'/%3E%3Crect%20x='9'%20y='7'%20width='2'%20height='2'/%3E%3Crect%20x='8'%20y='9'%20width='2'%20height='2'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    /* desktop wallpaper: classic Win98 tiled pattern, but the motifs are tiny
+       pixel furniture silhouettes — subtle, low-contrast, on-theme */
+    background: #008080 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' shape-rendering='crispEdges'%3E%3Crect width='120' height='120' fill='%23008080'/%3E%3Cg fill='%23006e6e'%3E%3Crect x='20' y='10' width='4' height='18'/%3E%3Crect x='20' y='22' width='16' height='4'/%3E%3Crect x='32' y='26' width='4' height='8'/%3E%3Crect x='20' y='28' width='4' height='6'/%3E%3Crect x='79' y='8' width='2' height='10'/%3E%3Crect x='73' y='18' width='14' height='4'/%3E%3Crect x='71' y='22' width='18' height='4'/%3E%3Crect x='78' y='27' width='4' height='3'/%3E%3Crect x='14' y='78' width='30' height='14'/%3E%3Crect x='16' y='92' width='3' height='5'/%3E%3Crect x='39' y='92' width='3' height='5'/%3E%3Crect x='74' y='70' width='14' height='8'/%3E%3Crect x='79' y='78' width='3' height='8'/%3E%3Crect x='75' y='86' width='11' height='3'/%3E%3C/g%3E%3Crect x='28' y='82' width='2' height='6' fill='%23008080'/%3E%3C/svg%3E");
+    background-size: 120px 120px;
+    font-family: Tahoma, "MS Sans Serif", Geneva, sans-serif;
+    font-size: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 24px 8px;
+    -webkit-font-smoothing: none;
+  }
+  /* Miami: same furniture tile in 80s pink; the window chrome stays Win98 grey */
+  body.miami {
+    background: #ff6ec7 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' shape-rendering='crispEdges'%3E%3Crect width='120' height='120' fill='%23ff6ec7'%3E%3C/rect%3E%3Cg fill='%23e256ab'%3E%3Crect x='20' y='10' width='4' height='18'/%3E%3Crect x='20' y='22' width='16' height='4'/%3E%3Crect x='32' y='26' width='4' height='8'/%3E%3Crect x='20' y='28' width='4' height='6'/%3E%3Crect x='79' y='8' width='2' height='10'/%3E%3Crect x='73' y='18' width='14' height='4'/%3E%3Crect x='71' y='22' width='18' height='4'/%3E%3Crect x='78' y='27' width='4' height='3'/%3E%3Crect x='14' y='78' width='30' height='14'/%3E%3Crect x='16' y='92' width='3' height='5'/%3E%3Crect x='39' y='92' width='3' height='5'/%3E%3Crect x='74' y='70' width='14' height='8'/%3E%3Crect x='79' y='78' width='3' height='8'/%3E%3Crect x='75' y='86' width='11' height='3'/%3E%3C/g%3E%3Crect x='28' y='82' width='2' height='6' fill='%23ff6ec7'/%3E%3C/svg%3E");
+    background-size: 120px 120px;
+  }
+
+  /* ---- Win98 chrome ---- */
+  .win {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #dfdfdf #404040 #404040 #dfdfdf;
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080, 2px 2px 6px rgba(0,0,0,.35);
+    width: 720px;
+    max-width: 100%;
+  }
+  .titlebar {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #fff;
+    font-weight: bold;
+    padding: 3px 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+  }
+  .titlebar .title { flex: 1; }
+  .tbtn {
+    width: 16px; height: 14px;
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #fff #404040 #404040 #fff;
+    box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+    font-size: 9px; line-height: 12px; text-align: center;
+    color: #000; font-family: "Marlett", Tahoma, sans-serif;
+  }
+  .menubar {
+    padding: 2px 4px;
+    border-bottom: 1px solid #808080;
+    box-shadow: 0 1px 0 #fff;
+    display: flex; gap: 2px;
+    user-select: none;
+  }
+  .menuitem { padding: 2px 7px; cursor: default; }
+  .menuitem:hover { background: #000080; color: #fff; }
+
+  .body { padding: 8px; }
+
+  /* ---- stats bar ---- */
+  .stats {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;
+  }
+  .stat {
+    flex: 1 1 auto;
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+  .stat b { font-weight: bold; }
+  .stat .neg, b.neg { color: #a00000; }
+
+  /* heat meter: five inset LED blocks */
+  .heatled {
+    display: inline-block;
+    width: 9px; height: 9px;
+    margin: 0 1px -1px 0;
+    background: #e8e8e8;
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+  }
+  .heatled.on { background: #c00000; border-color: #600 #f88 #f88 #600; }
+
+  /* ---- panels ---- */
+  .panels { display: flex; flex-wrap: wrap; gap: 8px; }
+  fieldset {
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+    box-shadow: 1px 1px 0 #fff inset;
+    padding: 6px;
+    flex: 1;
+    min-width: 0;
+    flex-basis: 220px;
+  }
+  legend { padding: 0 4px; font-weight: bold; }
+
+  .listbox {
+    background: #fff;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
+    height: 232px;
+    overflow-y: auto;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-weight: bold;
+    background: #c0c0c0;
+    border-bottom: 1px solid #808080;
+    padding: 2px 6px;
+    position: sticky; top: 0;
+  }
+  th.r, td.r { text-align: right; }
+  td { padding: 3px 6px; cursor: default; }
+  tbody tr:hover { background: #cce4ff; }
+  tbody tr.sel { background: #000080; color: #fff; }
+  .dim { color: #808080; }
+  .empty { color: #808080; padding: 8px; font-style: italic; }
+  a.shoplink { color: #000080; text-decoration: underline; font-size: 10px; white-space: nowrap; }
+  tr.sel a.shoplink { color: #fff; }
+
+  .panelbtns { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+
+  /* ---- buttons ---- */
+  button {
+    font-family: inherit; font-size: 11px;
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #fff #404040 #404040 #fff;
+    box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+    padding: 3px 12px;
+    min-width: 66px;
+    cursor: pointer;
+  }
+  button:active:not(:disabled) {
+    border-color: #404040 #fff #fff #404040;
+    box-shadow: inset 1px 1px 0 #808080;
+  }
+  button:disabled { color: #808080; text-shadow: 1px 1px 0 #fff; cursor: default; }
+  button:focus { outline: 1px dotted #000; outline-offset: -4px; }
+
+  /* ---- travel ---- */
+  .travel { margin-top: 8px; }
+  .travelbtns { display: flex; flex-wrap: wrap; gap: 6px; }
+  .travelbtns button { flex: 1 1 90px; }
+
+  /* ---- log ---- */
+  .log {
+    margin-top: 8px;
+    background: #fff;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
+    height: 84px;
+    overflow-y: auto;
+    padding: 4px 6px;
+  }
+  .log p { margin: 0 0 2px; }
+  .log p.day { color: #000080; font-weight: bold; }
+  .log p.bad { color: #a00000; }
+  .log p.good { color: #006000; }
+
+  /* ---- Teak FM ticker ---- */
+  .tickerrow {
+    display: flex; align-items: stretch; gap: 0;
+    margin-top: 8px;
+  }
+  .tickerlabel {
+    background: #000080; color: #fff; font-weight: bold;
+    padding: 3px 8px;
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+    white-space: nowrap;
+  }
+  .tickerbox {
+    flex: 1;
+    overflow: hidden;
+    background: #fff;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    box-shadow: inset 1px 1px 0 #404040;
+    position: relative;
+  }
+  .tickertext {
+    display: inline-block;
+    white-space: nowrap;
+    padding: 3px 0;
+    animation: tick linear infinite;
+    will-change: transform;
+  }
+  @keyframes tick {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(-100%); }
+  }
+
+  .statusbar {
+    display: flex; gap: 2px;
+    padding: 2px;
+    border-top: 1px solid #fff;
+  }
+  .statusbar .cell {
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 2px 8px;
+    flex: 1;
+  }
+  .statusbar .cell.tight { flex: 0 0 auto; }
+
+  /* ---- dialogs ---- */
+  .overlay {
+    position: fixed; inset: 0;
+    display: none;
+    justify-content: center; align-items: center;
+    background: rgba(0,0,0,.15);
+    z-index: 10;
+  }
+  .overlay.show { display: flex; }
+  .dlg { width: 320px; }
+  .dlg.wide { width: 460px; }
+  .dlg .body { padding: 12px; }
+  .dlg .msg { margin-bottom: 10px; line-height: 1.5; }
+  .dlg .row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .dlg input[type=number], .dlg input[type=text] {
+    font-family: inherit; font-size: 11px;
+    padding: 3px 4px;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
+    background: #fff;
+  }
+  .dlg select {
+    font-family: inherit; font-size: 11px;
+    min-width: 80px; padding: 3px 4px;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    background: #fff;
+  }
+  .dlg input[type=number] { width: 80px; }
+  .dlg .btns { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .dlg a { color: #000080; }
+  .center { text-align: center; }
+
+  .stattbl { width: 100%; margin: 8px 0; }
+  .stattbl td { padding: 2px 4px; border-bottom: 1px dotted #a0a0a0; }
+
+  /* error dialog icon */
+  .erricon { flex: 0 0 auto; }
+  .errrow { display: flex; gap: 10px; align-items: flex-start; }
+
+  /* calls and cutscenes */
+  .callrow { display: flex; gap: 10px; align-items: flex-start; }
+  .calltext { white-space: pre-line; line-height: 1.5; flex: 1; min-height: 44px; }
+  .portrait {
+    flex: 0 0 auto;
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    background: #fff;
+  }
+
+  /* city-name card on travel: big chunky capitals, level-intro style */
+  #cityCard {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, .88);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #cityCard.show { animation: citycard 1.5s ease forwards; }
+  @keyframes citycard {
+    0% { opacity: 0; }
+    12% { opacity: 1; }
+    72% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  #cityCard .cityname {
+    font-family: Impact, "Arial Black", "Helvetica Neue", sans-serif;
+    font-weight: 900;
+    font-size: min(72px, 14vw);
+    color: #ffd400;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transform: skewX(-6deg);
+    text-shadow: 3px 3px 0 #8a3c00, 6px 6px 0 rgba(0, 0, 0, .7);
+  }
+  #cityCard .citysub {
+    color: #fff;
+    margin-top: 10px;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="win">
+  <div class="titlebar">
+    <span class="title" id="titleCaption">Vinterior Wars: Vice Settee</span>
+    <div class="tbtn">_</div><div class="tbtn">□</div><div class="tbtn">✕</div>
+  </div>
+  <div class="menubar">
+    <span class="menuitem" onclick="newGame()">New Game</span>
+    <span class="menuitem" onclick="showBest()">Best</span>
+    <span class="menuitem" onclick="showHelp()">Help</span>
+  </div>
+
+  <div class="body">
+    <div class="stats">
+      <div class="stat">Day: <b id="stDay"></b></div>
+      <div class="stat">Cash: <b id="stCash"></b></div>
+      <div class="stat">Debt: <b id="stDebt" class="neg"></b></div>
+      <div class="stat">Van: <b id="stVan"></b></div>
+      <div class="stat">Net: <b id="stNet"></b></div>
+      <div class="stat">Heat: <span id="stHeat"></span></div>
+      <div class="stat" id="stJob" style="display:none"></div>
+    </div>
+
+    <div class="panels">
+      <fieldset>
+        <legend id="marketLegend">Market</legend>
+        <div class="listbox" id="marketBox"></div>
+        <div class="panelbtns">
+          <button id="btnBuy" onclick="openBuy()">Buy…</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Your Van</legend>
+        <div class="listbox" id="vanBox"></div>
+        <div class="panelbtns">
+          <button id="btnSell" onclick="openSell()">Sell…</button>
+          <button id="btnRepay" onclick="openRepay()">Repay loan…</button>
+        </div>
+      </fieldset>
+    </div>
+
+    <fieldset class="travel">
+      <legend>Travel (ends the day)</legend>
+      <div class="travelbtns" id="travelBtns"></div>
+    </fieldset>
+
+    <div class="log" id="log"></div>
+
+    <div class="tickerrow">
+      <div class="tickerlabel">TEAK FM</div>
+      <div class="tickerbox"><span class="tickertext" id="ticker"></span></div>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <div class="cell" id="statusMsg">Ready.</div>
+    <div class="cell tight" id="statusLoc"></div>
+  </div>
+</div>
+
+<!-- amount dialog -->
+<div class="overlay" id="dlgAmt">
+  <div class="win dlg">
+    <div class="titlebar"><span class="title" id="amtTitle">Buy</span><div class="tbtn" onclick="closeAmt()">✕</div></div>
+    <div class="body">
+      <div class="msg" id="amtMsg"></div>
+      <div class="row">
+        <label id="amtLabel">How many?</label>
+        <select id="amtSelect"></select>
+        <input type="number" id="amtInput" inputmode="numeric" min="0" value="1">
+        <button style="min-width:48px" onclick="amtMax()">Max</button>
+      </div>
+      <div class="btns">
+        <button onclick="amtOk()">OK</button>
+        <button onclick="closeAmt()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- message / confirm / encounter dialog -->
+<div class="overlay" id="dlgMsg">
+  <div class="win dlg" id="msgWin">
+    <div class="titlebar"><span class="title" id="msgTitle">Vice Settee</span><div class="tbtn" id="msgClose" onclick="closeMsg(false)">✕</div></div>
+    <div class="body">
+      <div class="msg" id="msgBody"></div>
+      <div class="btns" id="msgBtns"></div>
+    </div>
+  </div>
+</div>
+
+<!-- city-name card shown on travel -->
+<div id="cityCard"><div class="cityname"></div><div class="citysub"></div></div>
+
+<!-- cheat entry ("Run…" box, opened by typing on desktop or tapping the title 5 times) -->
+<div class="overlay" id="dlgCheat">
+  <div class="win dlg">
+    <div class="titlebar"><span class="title">Run</span><div class="tbtn" onclick="closeCheat()">✕</div></div>
+    <div class="body">
+      <div class="msg">Type the name of a program, folder or dubious favour, and Windows will open it for you.</div>
+      <div class="row">
+        <label>Open:</label>
+        <input type="text" id="cheatInput" style="flex:1" autocomplete="off" autocapitalize="characters">
+      </div>
+      <div class="btns">
+        <button onclick="cheatOk()">OK</button>
+        <button onclick="closeCheat()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ================= configuration ================= */
+
+// Public edition: no remote leaderboard, no analytics, no network calls.
+// Personal best only, stored locally on the player's device.
+
+// "Find a real one on Vinterior" links — placeholder search URLs, to be
+// confirmed before launch. UTM appended at render time.
+const UTM = 'utm_source=vice-settee&utm_medium=game&utm_campaign=gta6-launch-2026';
+const ITEM_LINKS = {
+  'Ercol Windsor Chair':      'https://www.vinterior.co/search?q=ercol+windsor+chair',
+  'Anglepoise Lamp':          'https://www.vinterior.co/search?q=anglepoise+lamp',
+  'Persian Rug':              'https://www.vinterior.co/search?q=persian+rug',
+  'G Plan Sideboard':         'https://www.vinterior.co/search?q=g+plan+sideboard',
+  'Danish Teak Desk':         'https://www.vinterior.co/search?q=danish+teak+desk',
+  'Murano Chandelier':        'https://www.vinterior.co/search?q=murano+chandelier',
+  'Chesterfield Sofa':        'https://www.vinterior.co/search?q=chesterfield+sofa',
+  'Eames Lounge Chair':       'https://www.vinterior.co/search?q=eames+lounge+chair',
+  'Togo Sofa Suite':          'https://www.vinterior.co/search?q=togo+sofa',
+  'Memphis-Style Bookcase':   'https://www.vinterior.co/search?q=memphis+style+bookcase',
+  'Postmodern Squiggle Lamp': 'https://www.vinterior.co/search?q=postmodern+lamp',
+};
+// end-screen call to action
+const VINTERIOR_URL = 'https://www.vinterior.co/';
+
+/* ---- Sandrine: calls, jobs, cutscenes (SCRIPT PENDING HER APPROVAL) ---- */
+// Portraits are abstract pixel placeholders, not likenesses, until the
+// design team's art is drawn and approved.
+
+const JOBS = [
+  { ring: 2,  qty: 5, item: 'Ercol Windsor Chair',    dest: 'Paris',     deadline: 7,  bonus: 800,
+    brief: `Paris has discovered the Ercol chair and thinks it invented it. Five chairs, Paris, day 7. Smile. Don't correct anyone.` },
+  { ring: 8,  qty: 3, item: 'Danish Teak Desk',       dest: 'London',    deadline: 13, bonus: 2000,
+    brief: `Three teak desks to London by day 13. The client works from home and wants everyone on their video calls to know it.` },
+  { ring: 13, qty: 2, item: 'Murano Chandelier',      dest: 'Amsterdam', deadline: 18, bonus: 3500,
+    brief: `Two Murano chandeliers to Amsterdam by day 18. They're glass. Amsterdam is cobbles. Drive like there's a pavlova on the passenger seat.` },
+  { ring: 18, qty: 1, item: 'Memphis-Style Bookcase', dest: 'Milan',     deadline: 24, bonus: 4000,
+    brief: `Milan wants a Memphis bookcase home. Miami's full of them, obviously. One to Milan by day 24. If it doesn't look like a fruit bowl fell on a shelf, it's the wrong one.` },
+  { ring: 23, qty: 1, item: 'Togo Sofa Suite',        dest: 'London',    deadline: 29, bonus: 10000,
+    brief: `One Togo, London, day 29. It's the big one. The client says it's for the dog. I didn't ask. Measure the dog.` },
+];
+const JOB_DONE_LINES = [
+  `On time. Money's in. Try not to look so surprised.`,
+  `Delivered. The client cried. The good kind, I'm told.`,
+  `That's how it's done. Do it again.`,
+];
+const JOB_MISSED_LINES = [
+  `You're late. The client panicked and bought something new. From a catalogue. You did that.`,
+  `Next time, tell me before it goes wrong. Not after. Ideally, not at all.`,
+];
+
+const SCENES = [
+  { day: 10, title: 'Chapter 2: The Interest Is Doing Better Than You', who: 'barry',
+    setting: 'Uncle Barry slides into the seat opposite you with a fry-up he brought from home. Nobody tells him he can’t do that.',
+    lines: [`BARRY: You're doing alright, kid. Not as well as my interest, mind. My interest is having the year of its life.`,
+            `BARRY: Day 30. Every penny. I've got a little book, and you're in it. In pen.`] },
+  { day: 20, title: `Chapter 3: Marlene's Patch`, who: 'marlene',
+    setting: 'Outside the auction rooms. Marlene is leaning on an estate car that has seen things.',
+    lines: [`MARLENE: I've seen you about. Buying my chairs. Selling to my buyers. Parking in my space.`,
+            `MARLENE: Ten days, sunshine. Then it's back to car boots for you. I'll be there. I'll offer you a fiver. For the van.`] },
+];
+
+const VERDICTS = {
+  'Bankrupt. Back to flat-pack': `You went bust. Selling furniture. To people who sit down every day. I didn't know that was possible.`,
+  'Car Boot Browser':     `You made money. About one nice lamp's worth. It's a start. It's not a career.`,
+  'Market Stall Regular': `Decent. I don't do decent.`,
+  'Respected Dealer':     `Good. Not legendary. But good. I'll stop there before it goes to your head.`,
+  'Vintage Connoisseur':  `Now that's a bet that paid off. I'll ring you first next time. Don't make it weird.`,
+  'Vinterior Legend':     `Vinterior Legend. I said it. I won't say it twice, and I'll deny it if asked.`,
+};
+
+const PORTRAITS = {
+  sandrine: { bg: '#4d7f99', hair: '#3a2a1e', top: '#000080' },
+  barry:    { bg: '#8a7a55', hair: '#c9c2b4', top: '#5a4632' },
+  marlene:  { bg: '#6e8060', hair: '#b9a98f', top: '#405a40' },
+};
+function portraitHtml(who) {
+  const p = PORTRAITS[who];
+  return `<svg class="portrait" width="48" height="48" viewBox="0 0 48 48" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">` +
+    `<rect width="48" height="48" fill="${p.bg}"/>` +
+    `<rect x="14" y="18" width="20" height="18" fill="#d9b38c"/>` +
+    `<rect x="12" y="10" width="24" height="10" fill="${p.hair}"/>` +
+    `<rect x="12" y="18" width="4" height="10" fill="${p.hair}"/>` +
+    `<rect x="32" y="18" width="4" height="10" fill="${p.hair}"/>` +
+    `<rect x="19" y="25" width="3" height="3" fill="#222"/>` +
+    `<rect x="26" y="25" width="3" height="3" fill="#222"/>` +
+    `<rect x="8" y="38" width="32" height="10" fill="${p.top}"/>` +
+    `</svg>`;
+}
+
+const DAYS = 30;
+const START_CASH = 2000;
+const START_DEBT = 5000;
+const START_CAP = 20;
+const INTEREST = 0.06;        // per day — Uncle Barry is family, not a charity
+
+const MIAMI_FARE = 300;       // flight there or back
+const SACK_TRUCK_PRICE = 450;
+const COLLECTOR_DEBT = 8000;  // above this, Uncle Barry's lads roam
+
+// encounter frequency: base + per-heat, checked on each travel day
+const ENC_BASE = 0.05;
+const ENC_PER_HEAT = 0.06;
+const HEAT_TRADE_UNITS = 26;  // units bought+sold in one city before tongues wag
+
+/* ================= data ================= */
+
+// mats: what the item is made of — targeted mishaps only hit matching stock
+const ITEMS = [
+  { name: 'Ercol Windsor Chair',      min: 40,   max: 180,   tag: 'uk', mats: ['wood'] },
+  { name: 'Anglepoise Lamp',          min: 60,   max: 240,   tag: 'uk', mats: ['metal'] },
+  { name: 'Persian Rug',              min: 150,  max: 700,   tag: null, mats: ['textile'] },
+  { name: 'G Plan Sideboard',         min: 180,  max: 750,   tag: 'uk', mats: ['wood'] },
+  { name: 'Postmodern Squiggle Lamp', min: 90,   max: 700,   tag: 'us', mats: ['metal'] },
+  { name: 'Danish Teak Desk',         min: 300,  max: 1400,  tag: 'dk', mats: ['wood'] },
+  { name: 'Memphis-Style Bookcase',   min: 250,  max: 1600,  tag: 'us', mats: ['wood'] },
+  { name: 'Murano Chandelier',        min: 450,  max: 2200,  tag: 'it', mats: ['glass'] },
+  { name: 'Chesterfield Sofa',        min: 700,  max: 3200,  tag: 'uk', mats: ['leather'] },
+  { name: 'Eames Lounge Chair',       min: 1800, max: 8500,  tag: null, mats: ['wood', 'leather'] },
+  { name: 'Togo Sofa Suite',          min: 4000, max: 20000, tag: 'fr', mats: ['textile'] },
+  // cheat-only: never listed by genMarket, immune to damage, flat silly price while held
+  { name: 'Golden Eames Chair',       min: 12345, max: 12345, tag: null, mats: ['gold'], golden: true },
+];
+
+const CITIES = [
+  { name: 'London',     mult: 1.15, home: 'uk', blurb: 'Everything costs more, including the parking. Uncle Barry takes payment here.' },
+  { name: 'Paris',      mult: 1.10, home: 'fr', blurb: 'Marché aux Puces. Everything is “une pièce unique”, including the bloke selling it.' },
+  { name: 'Copenhagen', mult: 1.00, home: 'dk', blurb: 'Teak country. Even the bus shelters have tapered legs.' },
+  { name: 'Milan',      mult: 1.00, home: 'it', blurb: 'Glass, brass and a man who will explain your own chandelier to you.' },
+  { name: 'Amsterdam',  mult: 0.95, home: null, blurb: 'Canal-side kringloop bargains. Mind the bikes. The bikes will not mind you.' },
+  { name: 'Berlin',     mult: 0.85, home: null, blurb: 'Flohmarkt city. Cheap, cheerful, and open until a time you won’t remember.' },
+  { name: 'Miami',      mult: 1.00, home: 'us', blurb: 'Neon, pastels and furniture that looks like it’s been to a rave.', volatile: true },
+];
+
+const SPIKES = [
+  'A {item} is spotted in the background of a celebrity video call. Collectors lose their minds!',
+  'A Sunday supplement calls the {item} “the new avocado”. Prices go stratospheric!',
+  'A {item} sets an auction record. The winning bidder had to sit down. Prices soar!',
+];
+const CRASHES = [
+  'A warehouse clearance floods the market with {item}s: prices collapse!',
+  'A home makeover show declares the {item} “so last year”. Prices tumble!',
+  'An influencer says the {item} “gives dentist’s waiting room”. Prices slide!',
+];
+
+const DJ_LINES = [
+  'You’re listening to Teak FM: all killer, no filler, mostly veneer.',
+  'Traffic news: a sideboard has shed its load on the ring road. Drivers are advised to slow down and make an offer.',
+  'That was the sound of a wardrobe being winched through a first-floor window. Beautiful. Let’s hear it again.',
+  'Teak FM weather: dry and bright, with a 40% chance of woodworm.',
+  'Coming up after the news: Desert Island Dovetails, with a man who has strong feelings about drawers.',
+  'Teak FM agony aunt: “My partner says the Chesterfield has to go.” Keep the Chesterfield.',
+  'Public service announcement: measure the doorway before you buy the sofa. Then measure it again. It’s smaller than that.',
+  'Teak FM travel: the ferry’s running, the van smells of mould, and morale is surprisingly high.',
+  'And now the shipping forecast, for anyone moving a sofa by sea. Why are you moving a sofa by sea.',
+  'Teak FM is a flat-pack-free station. If you can hear an Allen key, turn it off at the wall.',
+  'Caller on line two says his nan’s sideboard is “probably worth a fortune”. Line two, we love you. Get it valued.',
+];
+
+// material-targeted mishaps (van)
+const DAMAGE = [
+  { mat: 'wood',    msg: 'Woodworm! {n} × {item} now more hole than furniture.' },
+  { mat: 'textile', msg: 'Moths have unionised in the back of the van. {n} × {item} eaten.' },
+  { mat: 'glass',   msg: 'You hit a pothole and hear a sound like very expensive wind chimes. {n} × {item} smashed.' },
+  { mat: 'leather', msg: 'The van roof leaks and mould claims {n} × {item}. The smell stays. The smell is family now.' },
+  { mat: 'metal',   msg: 'Damp sea air on the ferry. {n} × {item} rusted solid. Very industrial chic. Totally unsellable.' },
+];
+
+/* ================= state & helpers ================= */
+
+let S = null;          // game state
+let selMarket = null;  // selected market item name
+let selVan = null;     // selected van item name
+let endInfo = null;    // last finished game: {net, rank, cheated}
+
+const $ = id => document.getElementById(id);
+const fmt = n => (n < 0 ? '-£' : '£') + Math.abs(Math.round(n)).toLocaleString('en-GB');
+const rnd = (a, b) => a + Math.random() * (b - a);
+const ri = (a, b) => Math.floor(rnd(a, b + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const escHtml = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// storage must never be load-bearing: private windows and blocked storage are fine
+function loadJson(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch (e) { return fallback; }
+}
+function saveJson(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage unavailable — carry on */ }
+}
+
+function newGame() {
+  S = {
+    day: 1, cash: START_CASH, debt: START_DEBT, cap: START_CAP,
+    city: 'London', inv: {}, paid: {},
+    market: {}, over: false,
+    heat: 0, tradeHere: 0,
+    job: null, nextJob: 0, scenes: {},
+    sackTruck: false,
+    cheated: false,
+    enc: null,          // pending encounter: {type, bribe, demand}
+    stats: {
+      buys: 0, sells: 0, unitsBought: 0, unitsSold: 0,
+      spend: 0, revenue: 0, profit: 0,
+      bestFlip: { item: null, profit: 0 },
+      perItem: {}, lost: 0, found: 0,
+      cities: { London: true },
+      peakNet: START_CASH - START_DEBT,
+      encounters: 0, escapes: 0, bribes: 0, daysLost: 0,
+      jobsDone: 0, jobsMissed: 0, jobBonus: 0,
+    },
+  };
+  selMarket = selVan = null;
+  endInfo = null;
+  $('log').innerHTML = '';
+  log(`Day 1: London`, 'day');
+  log(`Uncle Barry has lent you ${fmt(START_DEBT)} (${Math.round(INTEREST * 100)}% a day, “family rate”). You have ${fmt(START_CASH)}, a van with ${START_CAP} slots, and ${DAYS} days before he “pops round”.`);
+  genMarket();
+  render();
+}
+
+function cityMult(item, city) {
+  const c = CITIES.find(c => c.name === city);
+  let m = c.mult;
+  if (item.tag && item.tag === c.home && c.home !== 'uk') m *= 0.65; // local speciality is cheap
+  if (item.tag === 'uk' && c.home === 'uk') m *= 0.9;               // mild home discount
+  return m;
+}
+
+function genMarket() {
+  S.market = {};
+  const cityDef = CITIES.find(c => c.name === S.city);
+  // 5–7 of the items show up on any given day (never the golden one)
+  const pool = ITEMS.filter(i => !i.golden);
+  const n = ri(5, 7);
+  const avail = [...pool].sort(() => Math.random() - 0.5).slice(0, n);
+  for (const it of avail) {
+    let price = rnd(it.min, it.max) * cityMult(it, S.city);
+    if (cityDef.volatile) price *= rnd(0.55, 1.8); // Miami swings hard
+    S.market[it.name] = Math.max(5, Math.round(price));
+  }
+  // the golden chair (cheat) sells anywhere, at exactly what it says on the tin
+  if (S.inv['Golden Eames Chair']) S.market['Golden Eames Chair'] = 12345;
+
+  // chance of a spike or crash on a listed item (doubled in Miami)
+  const roll = Math.random() / (cityDef.volatile ? 2 : 1);
+  const names = Object.keys(S.market).filter(n => n !== 'Golden Eames Chair');
+  if (roll < 0.17 && names.length) {
+    const name = pick(names);
+    S.market[name] = Math.round(S.market[name] * rnd(2.5, 4));
+    headline(pick(SPIKES).replace('{item}', name), 'good');
+  } else if (roll < 0.34 && names.length) {
+    const name = pick(names);
+    S.market[name] = Math.max(5, Math.round(S.market[name] / rnd(2.5, 4)));
+    headline(pick(CRASHES).replace('{item}', name), 'bad');
+  }
+}
+
+function vanUsed() { return Object.values(S.inv).reduce((a, b) => a + b, 0); }
+function netWorth() { return S.cash - S.debt; }
+function cargoValue() {
+  let v = 0;
+  for (const [name, qty] of Object.entries(S.inv)) {
+    const it = ITEMS.find(i => i.name === name);
+    v += qty * (S.market[name] || Math.round((it.min + it.max) / 2));
+  }
+  return v;
+}
+
+/* ---------- heat ---------- */
+
+function bumpHeat(n, why) {
+  const before = S.heat;
+  S.heat = Math.max(0, Math.min(5, S.heat + n));
+  if (S.heat > before && why) log(why, 'bad');
+}
+
+function coolHeat() {
+  S.heat = Math.max(0, S.heat - 1);
+}
+
+/* ---------- travel & events ---------- */
+
+function travel(city) {
+  if (S.over || city === S.city || S.enc) return;
+  const flying = city === 'Miami' || S.city === 'Miami';
+  if (flying && S.cash < MIAMI_FARE) {
+    errorMsg(`The flight costs <b>${fmt(MIAMI_FARE)}</b> and you have ${fmt(S.cash)}. Even the budget airline says no.`, 'Flight unavailable');
+    return;
+  }
+
+  S.city = city;
+  S.day++;
+  if (S.debt > 0) S.debt = Math.round(S.debt * (1 + INTEREST));
+  if (flying) {
+    S.cash -= MIAMI_FARE;
+    log(`Flights and excess baggage: ${fmt(MIAMI_FARE)}. The van rides in the hold, sulking.`);
+  }
+  if (S.day > DAYS) { endGame(); return; }
+
+  S.stats.cities[city] = true;
+  S.tradeHere = 0;
+  selMarket = selVan = null;
+  coolHeat();
+  showCityCard(city, `Day ${S.day} of ${DAYS}`);
+  log(`Day ${S.day}: ${city}. ${CITIES.find(c => c.name === city).blurb}`, 'day');
+  genMarket();
+
+  // jobs resolve first; then one drama per day, where a chapter scene or a
+  // ringing payphone takes the slot ahead of collectors and heat encounters
+  jobArrival();
+  if (showChapterScene()) {
+    // the scene is the day's drama
+  } else if (ringPhone()) {
+    // and so is a call from Sandrine
+  } else if (S.day >= 8 && S.debt > COLLECTOR_DEBT && Math.random() < 0.14) {
+    // no point shaking down the destitute — they get a warning, not a bill
+    if (S.cash + cargoValue() < Math.max(400, S.debt * 0.15) * 0.5) {
+      log(`One of Uncle Barry's lads watches you from across the road, eats a pasty with real menace, and leaves. “Barry says get earning.”`, 'bad');
+      arrivalEvent();
+    } else {
+      startEncounter('barry');
+    }
+  } else if (S.day >= 4 && Math.random() < ENC_BASE + S.heat * ENC_PER_HEAT) {
+    startEncounter(pick(['warden', 'rival', 'heavies']));
+  } else {
+    arrivalEvent();
+  }
+  render();
+}
+
+function loseDay(why) {
+  S.day++;
+  S.stats.daysLost++;
+  if (S.debt > 0) S.debt = Math.round(S.debt * (1 + INTEREST));
+  log(why + ` (Day ${Math.min(S.day, DAYS)} dawns.)`, 'bad');
+  if (S.day > DAYS) { endGame(); return true; }
+  genMarket();
+  return false;
+}
+
+function arrivalEvent() {
+  const roll = Math.random();
+  const held = Object.keys(S.inv).filter(k => S.inv[k] > 0 && !ITEMS.find(i => i.name === k).golden);
+
+  // skint dealers spend more time round the back of house clearances
+  const findChance = netWorth() < 0 ? 0.18 : 0.10;
+  if (roll < findChance) luckyFind();
+  else if (roll < 0.18 && held.length) damageEvent(held);
+  else if (roll < 0.26 && S.cash > 100) customsEvent();
+  else if (roll < 0.33 && S.cap < 60) vanOffer();
+  else if (roll < 0.38 && !S.sackTruck) sackOffer();
+  else if (roll < 0.45 && held.length) dresserOffer(held);
+  else if (roll < 0.50) tipEvent();
+}
+
+function luckyFind() {
+  const it = pick(ITEMS.filter(i => i.min <= 750 && !i.golden));
+  const qty = Math.min(ri(1, 3), S.cap - vanUsed());
+  if (qty < 1) return;
+  addStock(it.name, qty, 0);
+  S.stats.found += qty;
+  log(`A skip outside a house clearance! ${qty} × ${it.name}: free, slightly damp, entirely yours.`, 'good');
+}
+
+// mishaps only strike stock made of the matching material
+function damageEvent(held) {
+  const options = [];
+  for (const name of held) {
+    const it = ITEMS.find(i => i.name === name);
+    for (const d of DAMAGE) if (it.mats.includes(d.mat)) options.push({ name, d });
+  }
+  if (!options.length) return;
+  const { name, d } = pick(options);
+  const lost = Math.max(1, Math.ceil(S.inv[name] * rnd(0.3, 0.6)));
+  removeStock(name, lost);
+  S.stats.lost += lost;
+  log(d.msg.replace('{n}', lost).replace('{item}', name), 'bad');
+}
+
+function customsEvent() {
+  const fee = Math.min(S.cash, ri(80, 250) + S.day * 10);
+  S.cash -= fee;
+  log(`Customs at the border. Form B7, form B7a, and ${fmt(fee)} for the form that tells you which form you need.`, 'bad');
+}
+
+function vanOffer() {
+  const price = ri(600, 900) + S.day * 40;
+  confirmMsg(`A dealer is retiring to Spain and selling their box van: +15 slots for ${fmt(price)}. It's only been on fire once. Buy it?`, ok => {
+    if (ok && S.cash >= price) {
+      S.cash -= price; S.cap += 15;
+      log(`The bigger van is yours. ${S.cap} slots, and only a faint smell of smoke.`, 'good');
+    } else if (ok) {
+      log(`You can't afford the van. The dealer retires anyway.`, 'bad');
+    } else {
+      log(`You pass on the van. Something about the word “once”.`);
+    }
+    render();
+  });
+}
+
+// one-off purchase: the sack truck keeps its Run bonus in encounters
+function sackOffer() {
+  confirmMsg(`A removals firm is selling off a sack truck for ${fmt(SACK_TRUCK_PRICE)}. It makes running away a lot easier, which is not what they used it for. Buy it?`, ok => {
+    if (ok && S.cash >= SACK_TRUCK_PRICE) {
+      S.cash -= SACK_TRUCK_PRICE;
+      S.sackTruck = true;
+      log(`You buy the sack truck. Suddenly every getaway has wheels.`, 'good');
+    } else if (ok) {
+      log(`You can't afford the sack truck. You'll have to run away the old-fashioned way.`, 'bad');
+    } else {
+      log(`You pass on the sack truck. Your legs will have to do.`);
+    }
+    render();
+  });
+}
+
+// a film set dresser pays over the odds for stock you're holding
+function dresserOffer(held) {
+  const name = pick(held);
+  const it = ITEMS.find(i => i.name === name);
+  const qty = Math.min(S.inv[name], ri(1, 3));
+  const base = S.market[name] || Math.round((it.min + it.max) / 2 * cityMult(it, S.city));
+  const offer = Math.round(base * rnd(1.4, 2));
+  confirmMsg(`A set dresser on a period drama needs ${qty} × ${name} by lunchtime and offers ${fmt(offer)} each, well over the odds. Sell?`, ok => {
+    if (ok) {
+      recordSale(name, qty, offer);
+      log(`Sold ${qty} × ${name} to the film crew for ${fmt(qty * offer)}. Look out for them behind somebody in a bonnet.`, 'good');
+    } else {
+      log(`You send the set dresser away. The period drama makes do with flat-pack. The critics notice.`);
+    }
+    render();
+  });
+}
+
+function tipEvent() {
+  const tip = ri(50, 200);
+  S.cash += tip;
+  log(`A happy customer sends a ${fmt(tip)} tip and a photo of their cat asleep on the sideboard.`, 'good');
+}
+
+/* ---------- Sandrine's jobs & cutscenes ---------- */
+
+function sandrineSays(line) { log(`SANDRINE: ${line}`, 'day'); }
+
+// deliveries hand over automatically on arrival: market value plus the bonus
+function jobArrival() {
+  const job = S.job;
+  if (job) {
+    if (S.city === job.dest && S.day <= job.deadline && (S.inv[job.item] || 0) >= job.qty) {
+      const it = ITEMS.find(i => i.name === job.item);
+      const unit = S.market[job.item] || Math.round((it.min + it.max) / 2 * cityMult(it, S.city));
+      recordSale(job.item, job.qty, unit);
+      S.cash += job.bonus;
+      S.stats.jobsDone++;
+      S.stats.jobBonus += job.bonus;
+      S.job = null;
+      log(`Job done: ${job.qty} × ${job.item} handed over in ${job.dest} for ${fmt(unit * job.qty)}, plus the ${fmt(job.bonus)} bonus.`, 'good');
+      sandrineSays(pick(JOB_DONE_LINES));
+    } else if (S.day > job.deadline) {
+      S.stats.jobsMissed++;
+      S.job = null;
+      log(`You missed Sandrine's deadline. The bonus is gone.`, 'bad');
+      sandrineSays(pick(JOB_MISSED_LINES));
+    }
+  }
+}
+
+// the payphone rings with the next job once its day comes round
+function ringPhone() {
+  if (S.job || S.nextJob >= JOBS.length) return false;
+  const j = JOBS[S.nextJob];
+  if (S.day < j.ring) return false;
+  if (S.day > j.deadline - 1) { S.nextJob++; return false; } // rang out; too late to take
+  S.nextJob++;
+  choiceMsg(
+    `<div class="callrow">${portraitHtml('sandrine')}<div class="calltext" id="callText"></div></div>` +
+    `<div class="dim" style="margin-top:8px">${j.qty} × ${j.item} to ${j.dest} by day ${j.deadline}. Bonus: ${fmt(j.bonus)}. Placeholder portrait, pending approval.</div>`,
+    'Take the job', 'Let it ring',
+    ok => {
+      if (ok) {
+        S.job = { ...j };
+        log(`Job taken: ${j.qty} × ${j.item} to ${j.dest} by day ${j.deadline} for a ${fmt(j.bonus)} bonus.`, 'day');
+      } else {
+        log(`You let the payphone ring out. Sandrine doesn't call twice.`);
+      }
+      render();
+    },
+    'The payphone is ringing'
+  );
+  typeInto($('callText'), `SANDRINE: ${j.brief}`);
+  return true;
+}
+
+function showChapterScene() {
+  const idx = SCENES.findIndex((sc, i) => S.day >= sc.day && !S.scenes[i]);
+  if (idx < 0) return false;
+  const sc = SCENES[idx];
+  S.scenes[idx] = true;
+  baseMsg(
+    `<div class="dim" style="margin-bottom:8px">${sc.setting}</div>` +
+    `<div class="callrow">${portraitHtml(sc.who)}<div class="calltext" id="sceneText"></div></div>`,
+    sc.title, false,
+    '<button onclick="closeMsg(true)">Continue</button>', null
+  );
+  typeInto($('sceneText'), sc.lines.join('\n\n'));
+  return true;
+}
+
+/* ---------- encounters ---------- */
+
+const ENC_DEFS = {
+  warden: {
+    title: 'Traffic warden',
+    intro: () => `A traffic warden is photographing your van on the double yellows from several artistic angles. “This your vehicle?”`,
+    options: ['run', 'bribe', 'talk'],
+  },
+  rival: {
+    title: 'Rival dealer',
+    intro: () => `Marlene from the auction rooms has parked her estate car across the pavement. “This is MY patch, sunshine. I've been here since decimalisation.”`,
+    options: ['run', 'bribe', 'talk'],
+  },
+  heavies: {
+    title: 'Auction-house heavies',
+    intro: () => `Two enormous, very polite representatives of the auction house would like a word about some “unpaid buyer's premium”. One of them is holding a gavel he does not need.`,
+    options: ['run', 'bribe', 'talk'],
+  },
+  barry: {
+    title: "Uncle Barry's lads",
+    intro: (enc) => `Two of Uncle Barry's lads are leaning on your van, eating chips. “Barry says hello. Barry also says ${fmt(enc.demand)}.”`,
+    options: ['pay', 'stock', 'run'],
+  },
+};
+
+// button labels carry the odds, so every choice is an informed one;
+// Pay up and Hand over stock always work, so they get no percentage
+function encBtnLabel(type, action) {
+  if (action === 'pay') return 'Pay up';
+  if (action === 'stock') return 'Hand over stock';
+  const p = Math.round(encOdds(action) * 100) + '%';
+  if (action === 'run') return `Run (${p})`;
+  if (action === 'talk') return `Talk (${p})`;
+  const cost = fmt(S.enc.bribe);
+  return type === 'warden' ? `Pay the ticket ${cost} (${p})` : `Bribe ${cost} (${p})`;
+}
+
+function startEncounter(type) {
+  const enc = { type };
+  if (type === 'barry') {
+    enc.demand = Math.min(S.cash + cargoValue(), Math.max(400, Math.round(S.debt * 0.15)));
+  } else {
+    enc.bribe = Math.max(100, Math.round(S.cash * (type === 'heavies' ? 0.12 : 0.08)));
+  }
+  S.enc = enc;
+  S.stats.encounters++;
+  const def = ENC_DEFS[type];
+  baseMsg(
+    def.intro(enc),
+    def.title, false,
+    def.options.map(o => `<button onclick="resolveEncounter('${o}')">${encBtnLabel(type, o)}</button>`).join(''),
+    null
+  );
+  $('msgClose').style.display = 'none'; // no sneaking out of the dialog
+}
+
+function encOdds(action) {
+  const load = vanUsed() / Math.max(1, S.cap);
+  if (action === 'run') {
+    return Math.max(0.1, Math.min(0.95,
+      0.62 + (S.sackTruck ? 0.15 : 0) - S.heat * 0.04 - load * 0.15));
+  }
+  if (action === 'bribe') {
+    return Math.max(0.2, Math.min(0.95, 0.80 - S.heat * 0.06));
+  }
+  // talk: easier with an innocent-looking van
+  return Math.max(0.1, Math.min(0.9,
+    0.50 - S.heat * 0.04 + (cargoValue() < 1000 ? 0.15 : 0)));
+}
+
+function resolveEncounter(action) {
+  const enc = S.enc;
+  if (!enc) return;
+  S.enc = null;
+  $('dlgMsg').classList.remove('show');
+  $('msgClose').style.display = '';
+
+  if (enc.type === 'barry') { resolveBarry(enc, action); return; }
+
+  const ok = Math.random() < encOdds(action);
+  if (action === 'bribe') {
+    const paid = Math.min(S.cash, enc.bribe);
+    S.cash -= paid;
+    S.stats.bribes += paid;
+  }
+
+  if (ok) {
+    S.stats.escapes++;
+    encounterSuccess(enc.type, action);
+  } else {
+    bumpHeat(1);
+    encounterFailure(enc.type, action);
+  }
+  render();
+}
+
+function encounterSuccess(type, action) {
+  const lines = {
+    warden: {
+      run: `You're in the cab and gone before his printer finishes. Not dignified, but effective.`,
+      bribe: `You pay the ticket on the spot and throw in a Custard Cream. He moves on, mollified.`,
+      talk: `You explain you're only loading. You produce a sideboard as evidence. He waves you on.`,
+    },
+    rival: {
+      run: `You nip down a one-way street the wrong way. The estate car can't follow. The curses can.`,
+      bribe: `You buy her a carvery and promise first refusal on your next sideboard. She has three Yorkshire puddings. Peace, of a sort.`,
+      talk: `You compliment her eye for walnut. She tells you about her eye for walnut for forty minutes, then forgets why she stopped you.`,
+    },
+    heavies: {
+      run: `You lose them at the lock gates. They're big lads, but they're not built for cornering.`,
+      bribe: `The “account” is settled. Nobody mentions it again.`,
+      talk: `You quote clause 14b of the auction terms at them. Then 14c. By 14d they're asking if you're all right.`,
+    },
+  };
+  log(lines[type][action], 'good');
+  if (action === 'talk') S.heat = Math.max(0, S.heat - 1); // a good story cools things down
+  // sometimes a clean getaway comes with a little bonus
+  if (Math.random() < 0.15) {
+    const bonus = ri(40, 150);
+    S.cash += bonus;
+    log(`In the confusion somebody drops a tenner or three: you're ${fmt(bonus)} up.`, 'good');
+  }
+}
+
+function encounterFailure(type, action) {
+  if (type === 'heavies') {
+    // heavies cost you time, and money if they can find any
+    const fine = Math.min(S.cash, ri(200, 600));
+    S.cash -= fine;
+    const msg = action === 'bribe'
+      ? `They take the ${fmt(fine)} and your afternoon. Mostly the afternoon.`
+      : `They follow you all the way to the depot and make you sit through a two-hour talk on auction etiquette. There are slides.${fine ? ` You're ${fmt(fine)} lighter.` : ''} Day lost.`;
+    if (loseDay(msg)) return;
+    return;
+  }
+  const held = Object.keys(S.inv).filter(k => S.inv[k] > 0 && !ITEMS.find(i => i.name === k).golden);
+  if (held.length && (type === 'warden' || Math.random() < 0.6)) {
+    const name = pick(held);
+    const lost = Math.max(1, Math.ceil(S.inv[name] * rnd(0.2, 0.4)));
+    removeStock(name, lost);
+    S.stats.lost += lost;
+    const msgs = {
+      warden: action === 'bribe'
+        ? `He takes the money AND calls the tow truck. The pound “mislays” ${lost} × ${name}.`
+        : `Your story has more holes than the upholstery. The van gets towed and the pound “mislays” ${lost} × ${name}.`,
+      rival: action === 'bribe'
+        ? `She takes the lunch AND ${lost} × ${name}. You've been done up like a kipper.`
+        : `She talks faster, knows more, and leaves with ${lost} × ${name}. Masterclass, really.`,
+    };
+    log(msgs[type], 'bad');
+  } else {
+    const fine = Math.min(S.cash, ri(150, 400) + S.day * 8);
+    S.cash -= fine;
+    const msgs = {
+      warden: `The ticket writes itself: ${fmt(fine)}, plus a leaflet about loading bays.`,
+      rival: `She gazumps you on the spot and it costs you ${fmt(fine)} to keep face. Worth it? Unclear.`,
+    };
+    log(msgs[type], 'bad');
+  }
+}
+
+function resolveBarry(enc, action) {
+  if (action === 'pay') {
+    const paid = Math.min(S.cash, enc.demand);
+    S.cash -= paid;
+    S.debt = Math.max(0, S.debt - paid);
+    log(`You pay ${fmt(paid)} off the loan. They hand you a chip. “No hard feelings.”`);
+    if (paid < enc.demand) { bumpHeat(1, `It wasn't the full amount, though. Barry will hear about it.`); }
+  } else if (action === 'stock') {
+    const held = Object.keys(S.inv).filter(k => S.inv[k] > 0 && !ITEMS.find(i => i.name === k).golden);
+    if (!held.length) {
+      bumpHeat(1, `Your van is empty. The lads look at each other. Barry will hear about this.`);
+    } else {
+      let owed = enc.demand, took = [];
+      for (const name of [...held].sort(() => Math.random() - 0.5)) {
+        if (owed <= 0) break;
+        const it = ITEMS.find(i => i.name === name);
+        const unit = S.market[name] || Math.round((it.min + it.max) / 2);
+        const qty = Math.min(S.inv[name], Math.max(1, Math.ceil(owed / unit)));
+        removeStock(name, qty);
+        S.stats.lost += qty;
+        owed -= qty * unit;
+        took.push(`${qty} × ${name}`);
+      }
+      S.debt = Math.max(0, S.debt - (enc.demand - Math.max(0, owed)));
+      log(`They take ${took.join(', ')} “for the showroom”. Barry has a showroom now, apparently.`, 'bad');
+    }
+  } else { // run
+    S.stats.encounters++; // running from Barry counts double against the nerves
+    if (Math.random() < encOdds('run')) {
+      S.stats.escapes++;
+      bumpHeat(1);
+      log(`You're gone before the chips are finished. Barry will hear about this.`, 'good');
+    } else {
+      const grabbed = Math.min(S.cash, Math.round(enc.demand * 0.6));
+      S.cash -= grabbed;
+      bumpHeat(1);
+      log(`They were expecting that. They empty your pockets of ${fmt(grabbed)} and finish the chips.`, 'bad');
+    }
+  }
+  render();
+}
+
+/* ---------- stock helpers ---------- */
+
+function addStock(name, qty, cost) {
+  S.inv[name] = (S.inv[name] || 0) + qty;
+  S.paid[name] = (S.paid[name] || 0) + cost;
+}
+function removeStock(name, qty) {
+  const had = S.inv[name] || 0;
+  if (!had) return;
+  const take = Math.min(qty, had);
+  S.paid[name] = Math.round((S.paid[name] || 0) * (had - take) / had);
+  S.inv[name] = had - take;
+  if (!S.inv[name]) { delete S.inv[name]; delete S.paid[name]; }
+}
+function recordBuy(name, n, price) {
+  S.cash -= n * price;
+  addStock(name, n, n * price);
+  const st = S.stats;
+  st.buys++; st.unitsBought += n; st.spend += n * price;
+  st.perItem[name] = (st.perItem[name] || 0) + n;
+  tradeHeat(n);
+}
+
+function recordSale(name, n, price) {
+  const had = S.inv[name] || 0;
+  const avg = had ? (S.paid[name] || 0) / had : 0;
+  S.cash += n * price;
+  removeStock(name, n);
+  const st = S.stats;
+  st.sells++; st.unitsSold += n; st.revenue += n * price;
+  const flip = Math.round((price - avg) * n);
+  st.profit += flip;
+  if (flip > st.bestFlip.profit) st.bestFlip = { item: name, profit: flip };
+  st.perItem[name] = (st.perItem[name] || 0) + n;
+  tradeHeat(n);
+}
+
+// shifting a lot of stock in one city gets you noticed
+function tradeHeat(n) {
+  S.tradeHere += n;
+  while (S.tradeHere >= HEAT_TRADE_UNITS) {
+    S.tradeHere -= HEAT_TRADE_UNITS;
+    bumpHeat(1, `Word gets round about a big spender in ${S.city}. People are starting to point. Heat is rising.`);
+  }
+}
+
+/* ---------- buy / sell / repay / stash dialogs ---------- */
+
+let amtCtx = null;
+
+function openBuy() {
+  if (S.over || S.enc || !selMarket) return;
+  const price = S.market[selMarket];
+  const max = Math.min(Math.floor(S.cash / price), S.cap - vanUsed());
+  if (max < 1) { errorMsg(`You can't afford any <b>${selMarket}</b>, or the van is full. Possibly both. Have a look.`, 'No deal'); return; }
+  amtCtx = { kind: 'buy', name: selMarket, price, max };
+  $('amtTitle').textContent = 'Buy';
+  $('amtMsg').innerHTML = `<b>${selMarket}</b> at ${fmt(price)} each.<br>You can afford <b>${max}</b>.`;
+  showAmt(max);
+}
+
+function openSell() {
+  if (S.over || S.enc || !selVan) return;
+  const qty = S.inv[selVan] || 0;
+  const price = S.market[selVan];
+  if (!price) { errorMsg(`Nobody in ${S.city} wants a <b>${selVan}</b> today. Try another city. Or another item. Or, at a push, another career.`, 'No buyers'); return; }
+  amtCtx = { kind: 'sell', name: selVan, price, max: qty };
+  $('amtTitle').textContent = 'Sell';
+  $('amtMsg').innerHTML = `<b>${selVan}</b> fetches ${fmt(price)} each here.<br>You have <b>${qty}</b>.`;
+  showAmt(qty);
+}
+
+function openRepay() {
+  if (S.over || S.enc || S.debt <= 0) return;
+  if (S.city !== 'London') { errorMsg(`Uncle Barry only takes payment in <b>London</b>. Cash, in person. No cheques, no “I'll transfer it later”.`, 'Wrong city'); return; }
+  const max = Math.min(S.cash, S.debt);
+  if (max < 1) { errorMsg('You have no cash to repay with.', 'Empty pockets'); return; }
+  amtCtx = { kind: 'repay', name: 'debt', price: 1, max };
+  $('amtTitle').textContent = 'Repay loan';
+  $('amtMsg').innerHTML = `You owe Uncle Barry <b>${fmt(S.debt)}</b>. How much will you repay?`;
+  showAmt(max);
+}
+
+// quantities (small max) use a select — native wheel picker on iOS/Android, no
+// keyboard; free amounts like loan repayment keep the typed field
+function amtUsesSelect() { return amtCtx.max <= 200; }
+
+function showAmt(def) {
+  $('amtLabel').textContent = amtCtx.kind === 'repay' ? 'Repay (£):' : 'How many?';
+  if (amtUsesSelect()) {
+    $('amtSelect').innerHTML = Array.from({ length: amtCtx.max }, (_, i) =>
+      `<option value="${i + 1}">${i + 1}</option>`).join('');
+    $('amtSelect').value = def;
+    $('amtSelect').style.display = '';
+    $('amtInput').style.display = 'none';
+  } else {
+    $('amtInput').value = def;
+    $('amtInput').max = amtCtx.max;
+    $('amtSelect').style.display = 'none';
+    $('amtInput').style.display = '';
+    if (matchMedia('(pointer: fine)').matches) { $('amtInput').focus(); $('amtInput').select(); }
+  }
+  $('dlgAmt').classList.add('show');
+}
+function closeAmt() { $('dlgAmt').classList.remove('show'); amtCtx = null; }
+function amtMax() {
+  if (!amtCtx) return;
+  $(amtUsesSelect() ? 'amtSelect' : 'amtInput').value = amtCtx.max;
+}
+
+function amtOk() {
+  if (!amtCtx) return;
+  const raw = $(amtUsesSelect() ? 'amtSelect' : 'amtInput').value;
+  const n = Math.max(0, Math.min(amtCtx.max, Math.floor(Number(raw) || 0)));
+  const { kind, name, price } = amtCtx;
+  closeAmt();
+  if (!n) return;
+
+  if (kind === 'buy') {
+    recordBuy(name, n, price);
+    log(`Bought ${n} × ${name} for ${fmt(n * price)}.`);
+  } else if (kind === 'sell') {
+    recordSale(name, n, price);
+    log(`Sold ${n} × ${name} for ${fmt(n * price)}.`);
+  } else if (kind === 'repay') {
+    S.cash -= n; S.debt -= n;
+    log(`Repaid ${fmt(n)}. ${S.debt > 0 ? 'Still owing ' + fmt(S.debt) + '.' : 'Loan cleared. Uncle Barry buys YOU a chip.'}`, S.debt > 0 ? null : 'good');
+  }
+  render();
+}
+
+/* ---------- message / confirm dialog ---------- */
+
+let msgCb = null;
+
+function baseMsg(html, title, wide, btnsHtml, cb) {
+  $('msgTitle').textContent = title || 'Vice Settee';
+  $('msgWin').classList.toggle('wide', !!wide);
+  $('msgBody').innerHTML = html;
+  $('msgBtns').innerHTML = btnsHtml;
+  msgCb = cb || null;
+  $('dlgMsg').classList.add('show');
+}
+function infoMsg(html, title) {
+  baseMsg(html, title, false, '<button onclick="closeMsg(true)">OK</button>', null);
+}
+// blocking problems get a proper Win98 error box, not a quiet status-bar mumble
+const ERR_ICON = `<svg class="erricon" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">` +
+  `<circle cx="16" cy="16" r="14" fill="#d40000" stroke="#7a0000" stroke-width="2"/>` +
+  `<path d="M10 10 L22 22 M22 10 L10 22" stroke="#fff" stroke-width="4" stroke-linecap="square"/></svg>`;
+function errorMsg(text, title) {
+  baseMsg(`<div class="errrow">${ERR_ICON}<div>${text}</div></div>`, title || 'Vice Settee', false,
+    '<button onclick="closeMsg(true)">OK</button>', null);
+  status(text.replace(/<[^>]*>/g, ''));
+}
+function bigMsg(html, title) {
+  baseMsg(html, title, true, '<button onclick="closeMsg(true)">Close</button>', null);
+}
+function confirmMsg(html, cb) {
+  baseMsg(html, null, false, '<button onclick="closeMsg(true)">Yes</button><button onclick="closeMsg(false)">No</button>', cb);
+}
+function choiceMsg(html, yesLabel, noLabel, cb, title) {
+  baseMsg(html, title, false,
+    `<button onclick="closeMsg(true)">${yesLabel}</button><button onclick="closeMsg(false)">${noLabel}</button>`, cb);
+}
+
+// dialogue types out, caper-game style; instant when timers or motion are off
+let typeTimer = null;
+function typeInto(el, text) {
+  if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+  if (typeof setInterval !== 'function' || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = text;
+    return;
+  }
+  let i = 0;
+  el.textContent = '';
+  el.onclick = () => { // click skips to the full text
+    if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+    el.textContent = text;
+  };
+  typeTimer = setInterval(() => {
+    el.textContent = text.slice(0, ++i);
+    if (i >= text.length) { clearInterval(typeTimer); typeTimer = null; }
+  }, 16);
+}
+function closeMsg(ok) {
+  if (S && S.enc) return; // encounters must be answered with their own buttons
+  $('dlgMsg').classList.remove('show');
+  const cb = msgCb; msgCb = null;
+  if (cb) cb(ok);
+}
+
+// Chapter 1: the game opens on a call from Sandrine
+function showIntro() {
+  baseMsg(
+    `<div class="dim" style="margin-bottom:8px">A phone box in London is ringing. Against all odds, it's for you.</div>` +
+    `<div class="callrow">${portraitHtml('sandrine')}<div class="calltext" id="introText"></div></div>` +
+    `<div class="dim" style="margin-top:8px">Placeholder portrait, pending approval.</div>`,
+    'Incoming call', false,
+    '<button onclick="closeMsg(true)">Find the van keys</button>', null
+  );
+  typeInto($('introText'),
+    `SANDRINE: It's Sandrine. Half of Europe is about to spend a month on the sofa, and most of those sofas are a cry for help.\n\n` +
+    `You've got a van, thirty days and a loan from someone called Barry. I won't ask about Barry. Nobody asks about Barry.\n\n` +
+    `I'll ring with jobs. You deliver, I pay. Don't make me ring twice.`);
+}
+
+function showHelp() {
+  infoMsg(
+    `Buy vintage furniture low, travel, sell it high.<br><br>` +
+    `• Travelling ends the day; you have <b>${DAYS} days</b>.<br>` +
+    `• Uncle Barry's loan grows <b>${Math.round(INTEREST * 100)}% a day</b>: repay it in London. ` +
+    `Let it pile up and his lads will find you anywhere.<br>` +
+    `• <b>Heat</b> (status bar) rises when you trade big or botch an encounter. ` +
+    `High heat means more trouble: wardens, rivals, heavies. Run, bribe or talk your way out. ` +
+    `Heat cools as you keep moving.<br>` +
+    `• The van holds <b>${START_CAP} slots</b> to start. Watch for offers: a bigger van, or a sack truck for quicker getaways.<br>` +
+    `• Answer the payphone: Sandrine's delivery jobs pay a bonus on top of the sale. Jobs are optional; missing one only loses the bonus.<br>` +
+    `• Stock can spoil: woodworm eats wood, moths eat fabric, glass smashes, leather moulds.<br>` +
+    `• Miami is a flight away: cheap postmodern pieces, wild prices.<br><br>` +
+    `Finish with the highest net worth you can. Your best run is saved on this device only.`,
+    'How to play'
+  );
+}
+
+/* ---------- cheats ---------- */
+
+const CHEATS = {
+  MIDAS:      () => { addStock('Golden Eames Chair', 1, 0); S.market['Golden Eames Chair'] = 12345; return 'A Golden Eames Chair materialises in the van. It hums faintly.'; },
+  HOLDALL:    () => { S.cap = 999; return 'The van is now significantly bigger on the inside.'; },
+  CUPPA:      () => { S.heat = 0; return 'You put the kettle on. Everyone calms down. Heat wiped.'; },
+};
+
+function applyCheat(code) {
+  const fn = CHEATS[code.trim().toUpperCase()];
+  if (!fn || !S || S.over) return false;
+  S.cheated = true;
+  log(fn(), 'good');
+  log(`(Cheat active: this run won't count for your personal best.)`);
+  render();
+  return true;
+}
+
+// desktop: just type the code; mobile: tap the title 5 times for a Run… box
+let keyBuf = '';
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA')) return;
+  if (!/^[a-zA-Z]$/.test(e.key)) return;
+  keyBuf = (keyBuf + e.key.toUpperCase()).slice(-12);
+  for (const code of Object.keys(CHEATS)) {
+    if (keyBuf.endsWith(code)) { keyBuf = ''; applyCheat(code); }
+  }
+});
+
+let titleTaps = [];
+function titleTap() {
+  const now = Date.now();
+  titleTaps = titleTaps.filter(t => now - t < 3000);
+  titleTaps.push(now);
+  if (titleTaps.length >= 5) {
+    titleTaps = [];
+    $('cheatInput').value = '';
+    $('dlgCheat').classList.add('show');
+  }
+}
+function closeCheat() { $('dlgCheat').classList.remove('show'); }
+function cheatOk() {
+  const val = $('cheatInput').value;
+  closeCheat();
+  if (!applyCheat(val)) errorMsg(`Windows cannot find '<b>${escHtml(val)}</b>'. Check the spelling and try again.`, 'Run');
+}
+
+/* ---------- personal best & lifetime (this device only) ---------- */
+
+function updateLifetime() {
+  const lt = loadJson('vs-lifetime', {});
+  const st = S.stats;
+  const net = netWorth();
+  lt.games = (lt.games || 0) + 1;
+  lt.profit = (lt.profit || 0) + st.profit;
+  lt.units = (lt.units || 0) + st.unitsBought + st.unitsSold;
+  lt.perItem = lt.perItem || {};
+  for (const [k, v] of Object.entries(st.perItem)) lt.perItem[k] = (lt.perItem[k] || 0) + v;
+  saveJson('vs-lifetime', lt);
+  if (!S.cheated) {
+    const best = loadJson('vs-best', null);
+    if (!best || net > best.net) {
+      saveJson('vs-best', { net, rank: rankFor(net), when: new Date().toISOString().slice(0, 10) });
+      return !best ? false : true; // "new personal best" only means something once there was one
+    }
+  }
+  return false;
+}
+
+function bestHtml() {
+  const best = loadJson('vs-best', null);
+  if (!best) return `<div class="dim">No personal best yet. Finish a run without cheats.</div>`;
+  return `Personal best on this device: <b>${fmt(best.net)}</b>, ${escHtml(best.rank)} <span class="dim">(${escHtml(best.when)})</span>`;
+}
+
+function lifetimeHtml() {
+  const lt = loadJson('vs-lifetime', {});
+  if (!lt.games) return '';
+  const fav = Object.entries(lt.perItem || {}).sort((a, b) => b[1] - a[1])[0];
+  return `<div class="dim" style="margin-top:6px">Lifetime on this device: ${lt.games} game${lt.games === 1 ? '' : 's'}, ` +
+    `${(lt.units || 0).toLocaleString('en-GB')} units traded, ${fmt(lt.profit || 0)} trading profit` +
+    `${fav ? ', favourite item: ' + escHtml(fav[0]) : ''}.</div>`;
+}
+
+function showBest() {
+  bigMsg(`<div>${bestHtml()}</div>${lifetimeHtml()}`, 'Personal best');
+}
+
+/* ---------- share ---------- */
+
+function shareText() {
+  const url = location.origin !== 'null' ? location.href.split('?')[0].split('#')[0] : '';
+  const text = endInfo.net >= 0
+    ? `I turned Uncle Barry's ${fmt(START_DEBT)} loan into ${fmt(endInfo.net)} in ${DAYS} days on Vinterior Wars: Vice Settee. Beat that: ${url}`
+    : `I went bust owing Uncle Barry ${fmt(Math.abs(endInfo.net))} on Vinterior Wars: Vice Settee. You'll do better: ${url}`;
+  return text.trim();
+}
+
+async function shareScore() {
+  if (!endInfo) return;
+  const text = shareText();
+  const el = $('shareStatus');
+  try {
+    if (navigator.share) {
+      await navigator.share({ text });
+      if (el) el.textContent = 'Shared.';
+      return;
+    }
+    await navigator.clipboard.writeText(text);
+    if (el) el.textContent = 'Copied to clipboard. Paste it anywhere.';
+  } catch (e) {
+    if (el) el.textContent = 'Could not share, so copy it yourself: ' + text;
+  }
+}
+
+/* ---------- end game ---------- */
+
+function rankFor(net) {
+  if (net < 0)           return 'Bankrupt. Back to flat-pack';
+  if (net < 5000)        return 'Car Boot Browser';
+  if (net < 20000)       return 'Market Stall Regular';
+  if (net < 50000)       return 'Respected Dealer';
+  if (net < 150000)      return 'Vintage Connoisseur';
+  return 'Vinterior Legend';
+}
+
+function statsHtml() {
+  const st = S.stats;
+  const most = Object.entries(st.perItem).sort((a, b) => b[1] - a[1])[0];
+  const rows = [
+    ['Deals done', `${st.buys + st.sells} (${st.buys} buys, ${st.sells} sales)`],
+    ['Units shifted', `${st.unitsBought} bought, ${st.unitsSold} sold`],
+    ['Spent on stock', fmt(st.spend)],
+    ['Takings', fmt(st.revenue)],
+    ['Trading profit', fmt(st.profit)],
+    ['Best flip', st.bestFlip.item ? `${fmt(st.bestFlip.profit)} on ${st.bestFlip.item}` : '-'],
+    ['Most traded item', most ? `${most[0]} (${most[1]} units)` : '-'],
+    ['Cities visited', `${Object.keys(st.cities).length} of ${CITIES.length}`],
+    ['Close shaves', `${st.encounters} encounter${st.encounters === 1 ? '' : 's'}, ${st.escapes} clean getaway${st.escapes === 1 ? '' : 's'}`],
+    ['Spent on bribes', fmt(st.bribes)],
+    ['Jobs for Sandrine', `${st.jobsDone} done, ${st.jobsMissed} missed, ${fmt(st.jobBonus)} in bonuses`],
+    ['Days lost to trouble', String(st.daysLost)],
+    ['Lucky finds / stock lost', `${st.found} found, ${st.lost} lost`],
+    ['Peak net worth', fmt(st.peakNet)],
+  ];
+  return '<table class="stattbl">' +
+    rows.map(r => `<tr><td>${r[0]}</td><td class="r"><b>${r[1]}</b></td></tr>`).join('') +
+    '</table>';
+}
+
+function endGame() {
+  S.over = true;
+  S.enc = null;
+  const net = netWorth();
+  endInfo = { net, rank: rankFor(net), cheated: S.cheated };
+  const newBest = updateLifetime();
+  render();
+  showEndDialog(newBest);
+  log(`Game over. Final net worth ${fmt(net)}. ${endInfo.rank}.`, 'day');
+}
+
+function showEndDialog(newBest) {
+  if (!endInfo) return;
+  const cheatNote = endInfo.cheated
+    ? `<div class="center" style="margin:6px 0"><b>Cheats were used</b>, so this run doesn't count for your personal best. The golden chair knows what it did.</div>`
+    : (newBest ? `<div class="center" style="margin:6px 0"><b>New personal best!</b></div>` : '');
+  const verdict = VERDICTS[endInfo.rank]
+    ? `<div class="callrow" style="margin:8px 0">${portraitHtml('sandrine')}<div class="calltext">SANDRINE: ${VERDICTS[endInfo.rank]}</div></div>`
+    : '';
+  bigMsg(
+    `<div class="center">The ${DAYS} days are up. Uncle Barry counts it twice, licks his thumb, and counts it again.<br>` +
+    `Final net worth: <b class="${endInfo.net < 0 ? 'neg' : ''}">${fmt(endInfo.net)}</b><br><b>${endInfo.rank}</b></div>` +
+    verdict +
+    cheatNote +
+    statsHtml() +
+    `<div>${bestHtml()}</div>` +
+    `<div class="row" style="margin-top:8px"><button onclick="shareScore()">Share your score</button>` +
+    `<span id="shareStatus" class="dim"></span></div>` +
+    `<div class="center" style="margin-top:6px"><a href="${withUtm(VINTERIOR_URL)}" target="_blank" rel="noopener">Done dealing? The real thing is on Vinterior</a></div>`,
+    'Last orders'
+  );
+}
+
+/* ---------- rendering ---------- */
+
+function log(text, cls) {
+  const p = document.createElement('p');
+  if (cls) p.className = cls;
+  p.textContent = text;
+  $('log').prepend(p);
+}
+function status(text) { $('statusMsg').textContent = text; }
+
+function showCityCard(name, sub) {
+  const card = $('cityCard');
+  card.querySelector('.cityname').textContent = name;
+  card.querySelector('.citysub').textContent = sub;
+  card.classList.remove('show');
+  void card.offsetWidth; // restart the animation
+  card.classList.add('show');
+}
+
+// today's Teak FM bulletin: headlines first, then filler; rebuilt on demand,
+// only touching the DOM when the text changes so the animation doesn't restart
+let todaysHeadlines = [];
+function headline(text, cls) {
+  log(text, cls);
+  todaysHeadlines.push(text);
+  if (todaysHeadlines.length > 3) todaysHeadlines.shift();
+}
+let lastTicker = '';
+function updateTicker() {
+  const bits = [...todaysHeadlines];
+  // deterministic-ish filler per day so render() calls don't reshuffle it
+  const idx = (S.day * 3) % DJ_LINES.length;
+  bits.push(DJ_LINES[idx % DJ_LINES.length], DJ_LINES[(idx + 1) % DJ_LINES.length]);
+  if (S.heat >= 4) bits.push('A word to the wise: the wardens are out in force. You didn’t hear it from Teak FM. Teak FM was never here.');
+  const text = bits.join('  •••  ');
+  if (text === lastTicker) return;
+  lastTicker = text;
+  const el = $('ticker');
+  el.textContent = text;
+  el.style.animationDuration = Math.max(14, Math.round(text.length / 7)) + 's';
+}
+
+function heatHtml() {
+  let h = '';
+  for (let i = 1; i <= 5; i++) h += `<span class="heatled${S.heat >= i ? ' on' : ''}"></span>`;
+  return h;
+}
+
+function withUtm(url) { return url + (url.includes('?') ? '&' : '?') + UTM; }
+
+function shopLink(name) {
+  const url = ITEM_LINKS[name];
+  if (!url) return '';
+  return `<a class="shoplink" href="${withUtm(url)}" target="_blank" rel="noopener" ` +
+    `title="Find a real one on Vinterior" onclick="event.stopPropagation()">Shop&nbsp;real&nbsp;↗</a>`;
+}
+
+function render() {
+  $('stDay').textContent = Math.min(S.day, DAYS) + ' / ' + DAYS;
+  $('stCash').textContent = fmt(S.cash);
+  $('stDebt').textContent = fmt(S.debt);
+  $('stVan').textContent = vanUsed() + ' / ' + S.cap + ' slots';
+  const net = netWorth();
+  S.stats.peakNet = Math.max(S.stats.peakNet, net);
+  $('stNet').textContent = fmt(net);
+  $('stNet').className = net < 0 ? 'neg' : '';
+  $('stHeat').innerHTML = heatHtml();
+  const jobEl = $('stJob');
+  if (S.job) {
+    jobEl.style.display = '';
+    jobEl.innerHTML = `Job: <b>${S.job.qty} × ${S.job.item} to ${S.job.dest} by day ${S.job.deadline}</b>`;
+  } else {
+    jobEl.style.display = 'none';
+  }
+  $('marketLegend').textContent = 'Market: ' + S.city;
+  $('statusLoc').textContent = S.city + ', day ' + Math.min(S.day, DAYS);
+  document.body.classList.toggle('miami', S.city === 'Miami');
+
+  // market
+  const mNames = Object.keys(S.market).sort();
+  if (mNames.length) {
+    $('marketBox').innerHTML =
+      '<table><thead><tr><th>Item</th><th class="r">Price</th><th></th></tr></thead><tbody>' +
+      mNames.map(n =>
+        `<tr class="${selMarket === n ? 'sel' : ''}" onclick="selectMarket('${esc(n)}')" ondblclick="selectMarket('${esc(n)}');openBuy()">` +
+        `<td>${n}</td><td class="r">${fmt(S.market[n])}</td><td class="r">${shopLink(n)}</td></tr>`
+      ).join('') + '</tbody></table>';
+  } else {
+    $('marketBox').innerHTML = '<div class="empty">Nothing on offer today. Even the pigeons have left.</div>';
+  }
+
+  // van
+  const vNames = Object.keys(S.inv).sort();
+  if (vNames.length) {
+    $('vanBox').innerHTML =
+      '<table><thead><tr><th>Item</th><th class="r">Qty</th><th class="r">Paid avg</th><th class="r">Here</th></tr></thead><tbody>' +
+      vNames.map(n => {
+        const avg = S.inv[n] ? Math.round((S.paid[n] || 0) / S.inv[n]) : 0;
+        const here = S.market[n] ? fmt(S.market[n]) : '<span class="dim">-</span>';
+        return `<tr class="${selVan === n ? 'sel' : ''}" onclick="selectVan('${esc(n)}')" ondblclick="selectVan('${esc(n)}');openSell()">` +
+          `<td>${n}</td><td class="r">${S.inv[n]}</td><td class="r">${fmt(avg)}</td><td class="r">${here}</td></tr>`;
+      }).join('') + '</tbody></table>';
+  } else {
+    $('vanBox').innerHTML = '<div class="empty">The van is empty. It echoes.</div>';
+  }
+
+  // buttons
+  const inLondon = S.city === 'London';
+  $('btnBuy').disabled = S.over || !!S.enc || !selMarket;
+  $('btnSell').disabled = S.over || !!S.enc || !selVan || !S.market[selVan];
+  $('btnRepay').disabled = S.over || !!S.enc || S.debt <= 0 || !inLondon;
+
+  // travel
+  $('travelBtns').innerHTML = CITIES.map(c => {
+    const fare = (c.name === 'Miami' || S.city === 'Miami') && c.name !== S.city ? ` ✈` : '';
+    return `<button ${S.over || c.name === S.city || S.enc ? 'disabled' : ''} onclick="travel('${c.name}')">${c.name}${fare}</button>`;
+  }).join('');
+
+  updateTicker();
+  status(S.over ? 'Game over. Click New Game to play again.' : 'Ready.');
+}
+
+function esc(s) { return s.replace(/'/g, "\\'"); }
+function selectMarket(name) { selMarket = name; render(); }
+function selectVan(name) { selVan = name; render(); }
+
+$('amtInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') amtOk();
+  if (e.key === 'Escape') closeAmt();
+});
+$('cheatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') cheatOk();
+  if (e.key === 'Escape') closeCheat();
+});
+$('titleCaption').addEventListener('click', titleTap);
+
+newGame();
+showIntro();
+</script>
+</body>
+</html>
