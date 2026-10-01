@@ -262,6 +262,44 @@
   .erricon { flex: 0 0 auto; }
   .errrow { display: flex; gap: 10px; align-items: flex-start; }
 
+  /* title card on load: hand-drawn pixel lettering over an 80s sunset */
+  #titleCard {
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 60;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    gap: 18px;
+    cursor: pointer;
+    outline: none;
+  }
+  #titleCard svg { width: min(94vw, 760px); height: auto; display: block; }
+  #titleCard .tc-scene { animation: tcfade .6s ease both; }
+  #titleCard .tc-title {
+    transform-box: fill-box; transform-origin: center;
+    animation: tcslam .45s cubic-bezier(.2, 1.5, .4, 1) .45s both;
+  }
+  #titleCard .tc-flash {
+    position: absolute; inset: 0; background: #fff;
+    pointer-events: none; opacity: 0;
+    animation: tcflash .6s ease-out .88s both;
+  }
+  #titleCard .tc-press {
+    font-family: Tahoma, "MS Sans Serif", Geneva, sans-serif;
+    font-weight: bold; font-size: 13px; letter-spacing: 4px;
+    color: #ffd23f;
+    animation: tcfade .01s linear 1.4s both, tcblink 1s steps(1) 1.4s infinite;
+  }
+  #titleCard.out { animation: tcout .35s ease forwards; }
+  @keyframes tcfade  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes tcslam  { from { opacity: 0; transform: scale(2.4); } to { opacity: 1; transform: scale(1); } }
+  @keyframes tcflash { 0% { opacity: .95; } 100% { opacity: 0; } }
+  @keyframes tcblink { 0% { visibility: visible; } 50% { visibility: hidden; } }
+  @keyframes tcout   { to { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    #titleCard, #titleCard * { animation: none !important; }
+  }
+
   /* calls and cutscenes */
   .callrow { display: flex; gap: 10px; align-items: flex-start; }
   .calltext { white-space: pre-line; line-height: 1.5; flex: 1; min-height: 44px; }
@@ -402,6 +440,9 @@
 
 <!-- city-name card shown on travel -->
 <div id="cityCard"><div class="cityname"></div><div class="citysub"></div></div>
+
+<!-- title card shown once on load -->
+<div id="titleCard" role="button" tabindex="0" aria-label="Vinterior Wars: Vice Settee. Press any key to start." style="display:none"></div>
 
 <!-- cheat entry ("Run…" box, opened by typing on desktop or tapping the title 5 times) -->
 <div class="overlay" id="dlgCheat">
@@ -1553,6 +1594,148 @@ function log(text, cls) {
 }
 function status(text) { $('statusMsg').textContent = text; }
 
+/* ---------- title card ---------- */
+
+// 5×7 bitmap font, drawn for this game (only the letters the title needs)
+const PIXEL_FONT = {
+  A: ['.###.', '#...#', '#...#', '#####', '#...#', '#...#', '#...#'],
+  C: ['.####', '#....', '#....', '#....', '#....', '#....', '.####'],
+  E: ['#####', '#....', '#....', '####.', '#....', '#....', '#####'],
+  I: ['#####', '..#..', '..#..', '..#..', '..#..', '..#..', '#####'],
+  N: ['#...#', '##..#', '#.#.#', '#.#.#', '#..##', '#...#', '#...#'],
+  O: ['.###.', '#...#', '#...#', '#...#', '#...#', '#...#', '.###.'],
+  R: ['####.', '#...#', '#...#', '####.', '#.#..', '#..#.', '#...#'],
+  S: ['.####', '#....', '#....', '.###.', '....#', '....#', '####.'],
+  T: ['#####', '..#..', '..#..', '..#..', '..#..', '..#..', '..#..'],
+  V: ['#...#', '#...#', '#...#', '#...#', '.#.#.', '.#.#.', '..#..'],
+  W: ['#...#', '#...#', '#...#', '#.#.#', '#.#.#', '##.##', '#...#'],
+};
+
+const svgRect = (x, y, w, h, fill) =>
+  `<rect x="${+x.toFixed(2)}" y="${+y.toFixed(2)}" width="${+w.toFixed(2)}" height="${+h.toFixed(2)}" fill="${fill}"/>`;
+
+function pixelTextWidth(str, bold) {
+  let w = 0;
+  for (const ch of str) w += ch === ' ' ? 4 : (bold ? 6 : 5) + 1;
+  return w - 1;
+}
+
+// bold doubles each pixel sideways; outline and drop shadow are drawn as
+// slightly larger cells behind the fill, which keeps the chunky pixel edge
+function pixelText(str, ox, oy, s, { bold = false, fill, outline, shadow }) {
+  const seen = new Set();
+  const cells = [];
+  let cx = 0;
+  for (const ch of str) {
+    if (ch === ' ') { cx += 4; continue; }
+    PIXEL_FONT[ch].forEach((row, y) => {
+      for (let x = 0; x < 5; x++) {
+        if (row[x] !== '#') continue;
+        for (const dx of bold ? [0, 1] : [0]) {
+          const k = (cx + x + dx) + ',' + y;
+          if (!seen.has(k)) { seen.add(k); cells.push([cx + x + dx, y]); }
+        }
+      }
+    });
+    cx += (bold ? 6 : 5) + 1;
+  }
+  const o = s * 0.45, sh = s * 0.75;
+  let out = '';
+  if (shadow) out += cells.map(([x, y]) => svgRect(ox + x * s + sh - o, oy + y * s + sh - o, s + 2 * o, s + 2 * o, shadow)).join('');
+  if (outline) out += cells.map(([x, y]) => svgRect(ox + x * s - o, oy + y * s - o, s + 2 * o, s + 2 * o, outline)).join('');
+  return out + cells.map(([x, y]) => svgRect(ox + x * s, oy + y * s, s, s, fill)).join('');
+}
+
+function pixelPalm(x, base, flip) {
+  const c = '#10051f';
+  const lean = flip ? -1 : 1;
+  let out = '';
+  for (let i = 0; i < 15; i++) out += svgRect(x + Math.floor(i / 4) * lean, base - 2 - i * 2, 2, 2, c);
+  const tx = x + 3 * lean, ty = base - 31;
+  const fronds = [
+    [-5, -1, 5, 2], [-9, 0, 4, 2], [-12, 1, 3, 2], [-14, 3, 2, 3],
+    [1, -1, 5, 2], [5, 0, 4, 2], [9, 1, 3, 2], [12, 3, 2, 3],
+    [-7, 2, 3, 2], [-9, 4, 2, 2], [5, 2, 3, 2], [7, 4, 2, 2],
+    [-4, -3, 3, 2], [-6, -5, 3, 2], [2, -3, 3, 2], [4, -5, 3, 2],
+    [-1, -2, 4, 3],
+  ];
+  for (const [dx, dy, w, h] of fronds) {
+    const fx = flip ? -dx - w + 2 : dx;
+    out += svgRect(tx + fx, ty + dy, w, h, c);
+  }
+  return out;
+}
+
+function titleCardSvg() {
+  const W = 160, H = 100, HZ = 72;
+  let s = '';
+  // sky, in flat bands
+  const bands = ['#1a0f3d', '#24124e', '#331660', '#4a1b6e', '#6a2276', '#8f2a78', '#b83570', '#df4f62', '#f47a4f'];
+  const bh = HZ / bands.length;
+  bands.forEach((c, i) => { s += svgRect(0, i * bh, W, bh + 0.5, c); });
+  for (const [x, y] of [[12, 6], [30, 14], [8, 19], [150, 21], [24, 3], [134, 2], [118, 14], [139, 4], [152, 11], [23, 26], [133, 27]]) {
+    s += svgRect(x, y, 1, 1, '#fff6d6');
+  }
+  // striped setting sun
+  const R = 26, gaps = new Set([1, 2, 5, 6, 10, 14]);
+  for (let d = 1; d <= R; d++) {
+    if (gaps.has(d)) continue;
+    const hw = Math.floor(Math.sqrt(R * R - (d - 0.5) * (d - 0.5)));
+    const col = d > R * 0.66 ? '#ffe55c' : d > R * 0.33 ? '#ffb347' : '#ff6f91';
+    s += svgRect(80 - hw, HZ - d, hw * 2, 1, col);
+  }
+  // neon grid
+  s += svgRect(0, HZ, W, H - HZ, '#14072b');
+  for (const y of [74, 77, 81, 86, 93]) s += svgRect(0, y, W, 0.6, '#c2357f');
+  for (let i = -8; i <= 8; i++) {
+    s += `<line x1="80" y1="${HZ}" x2="${80 + i * 22}" y2="${H}" stroke="#c2357f" stroke-width="0.6"/>`;
+  }
+  s += svgRect(0, HZ, W, 0.8, '#ff8fd1');
+  // a lone settee on the horizon, plus palms
+  const sofa = '#10051f';
+  s += svgRect(72, HZ - 8, 16, 3, sofa) + svgRect(70, HZ - 5, 20, 3, sofa) +
+       svgRect(69, HZ - 7, 3, 5, sofa) + svgRect(88, HZ - 7, 3, 5, sofa) +
+       svgRect(71, HZ - 2, 1, 2, sofa) + svgRect(88, HZ - 2, 1, 2, sofa);
+  s += pixelPalm(14, HZ, false) + pixelPalm(144, HZ, true);
+
+  // lettering: stepped gradient bands, dark outline, drop shadow
+  const band = (id, y1, y2, cols) => `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="${y1}" x2="0" y2="${y2}">` +
+    cols.map((c, i) => `<stop offset="${i / cols.length}" stop-color="${c}"/><stop offset="${(i + 1) / cols.length}" stop-color="${c}"/>`).join('') +
+    `</linearGradient>`;
+  const big = 3, viceY = 15, setteeY = 39;
+  const defs = `<defs>${band('tgVice', viceY, viceY + 7 * big, ['#fff4b0', '#ffd23f', '#ff9a3c'])}` +
+               `${band('tgSettee', setteeY, setteeY + 7 * big, ['#ffd23f', '#ff9a3c', '#ff5fa8'])}</defs>`;
+  const style = { outline: '#1a0730', shadow: '#3b0a45' };
+  const small = 'VINTERIOR WARS';
+  const title =
+    pixelText(small, (W - pixelTextWidth(small, false)) / 2, 4, 1, { fill: '#ffffff', ...style }) +
+    pixelText('VICE', (W - pixelTextWidth('VICE', true) * big) / 2, viceY, big, { bold: true, fill: 'url(#tgVice)', ...style }) +
+    pixelText('SETTEE', (W - pixelTextWidth('SETTEE', true) * big) / 2, setteeY, big, { bold: true, fill: 'url(#tgSettee)', ...style });
+
+  return `<svg viewBox="0 0 ${W} ${H}" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">` +
+    defs + `<g class="tc-scene">${s}</g>` +
+    `<g class="tc-title"><g transform="translate(80 38) skewX(-8) translate(-80 -38)">${title}</g></g></svg>`;
+}
+
+function showTitleCard() {
+  const card = $('titleCard');
+  const touch = matchMedia('(pointer: coarse)').matches;
+  card.innerHTML = titleCardSvg() +
+    `<div class="tc-press">${touch ? 'TAP TO START' : 'PRESS ANY KEY'}</div><div class="tc-flash"></div>`;
+  card.style.display = '';
+  card.focus();
+  let gone = false;
+  const start = () => {
+    if (gone) return;
+    gone = true;
+    document.removeEventListener('keydown', start, true);
+    card.classList.add('out');
+    setTimeout(() => { card.remove(); showIntro(); }, 350);
+  };
+  card.addEventListener('click', start);
+  document.addEventListener('keydown', start, true);
+}
+
 function showCityCard(name, sub) {
   const card = $('cityCard');
   card.querySelector('.cityname').textContent = name;
@@ -1680,7 +1863,7 @@ $('cheatInput').addEventListener('keydown', e => {
 $('titleCaption').addEventListener('click', titleTap);
 
 newGame();
-showIntro();
+showTitleCard();
 </script>
 </body>
 </html>
