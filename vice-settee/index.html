@@ -454,37 +454,44 @@ const VINTERIOR_URL = 'https://www.vinterior.co/';
 
 const JOBS = [
   { ring: 2,  qty: 5, item: 'Ercol Windsor Chair',    dest: 'Paris',     deadline: 7,  bonus: 800,
-    brief: `Paris has discovered the Ercol chair. Five of them, there by day 7. Easy money. Don't make it hard.` },
+    brief: `Paris has discovered the Ercol chair. They think they invented it. Five chairs, Paris, day 7. Don't correct anyone.` },
   { ring: 8,  qty: 3, item: 'Danish Teak Desk',       dest: 'London',    deadline: 13, bonus: 2000,
-    brief: `Copenhagen is selling teak like it's firewood. Three desks, London, day 13. Tell me early if you can't do it.` },
+    brief: `Three teak desks to London by day 13. The client works from home and wants everyone on their video calls to know it.` },
   { ring: 13, qty: 2, item: 'Murano Chandelier',      dest: 'Amsterdam', deadline: 18, bonus: 3500,
-    brief: `Amsterdam wants Murano. Two chandeliers, day 18. Glass, so drive like you mean it, but carefully.` },
+    brief: `Two Murano chandeliers to Amsterdam by day 18. They're glass. Amsterdam is cobbles. I'll let you do the maths.` },
   { ring: 18, qty: 1, item: 'Memphis-Style Bookcase', dest: 'Milan',     deadline: 24, bonus: 4000,
-    brief: `Memphis was born in Milan, and Milan wants it back. Get to Miami, find me a bookcase, bring it home by day 24.` },
+    brief: `Milan wants a Memphis bookcase back. Miami's full of them, obviously. One to Milan by day 24. If it doesn't look like a fruit bowl fell on a shelf, it's the wrong one.` },
   { ring: 23, qty: 1, item: 'Togo Sofa Suite',        dest: 'London',    deadline: 29, bonus: 10000,
-    brief: `One Togo. London. Day 29. It's the big one. Bold bets only.` },
+    brief: `One Togo, London, day 29. It's the big one. The client says it's for the dog. Don't ask questions. Do measure the dog.` },
 ];
-const JOB_DONE_LINES = [`On time. Money's in.`, `Good. Next.`, `That's how it's done.`];
-const JOB_MISSED_LINES = [`You're late. I'll find someone who isn't.`, `Next time, tell me before, not after.`];
+const JOB_DONE_LINES = [
+  `On time. Money's in. Try not to look so surprised.`,
+  `Delivered. The client cried. The good kind, I'm told.`,
+  `That's how it's done. Do it again.`,
+];
+const JOB_MISSED_LINES = [
+  `You're late. The client panicked and bought something new. From a catalogue. You did that.`,
+  `Next time, tell me before it goes wrong. Not after. Ideally, not at all.`,
+];
 
 const SCENES = [
   { day: 10, title: 'Chapter 2: The Interest Is Doing Better Than You', who: 'barry',
-    setting: 'A greasy spoon in London. Uncle Barry is eating a full English.',
-    lines: [`BARRY: You're doing alright, kid. Not as well as my interest, mind. That's doing brilliantly.`,
-            `BARRY: Just so we understand each other. Day 30. Every penny.`] },
+    setting: 'Uncle Barry slides into the seat opposite you. He has brought his own fry-up.',
+    lines: [`BARRY: You're doing alright, kid. Not as well as my interest, mind. My interest is having the year of its life.`,
+            `BARRY: Day 30. Every penny. I've got a little book, and you're in it. In pen.`] },
   { day: 20, title: `Chapter 3: Marlene's Patch`, who: 'marlene',
-    setting: 'Outside the auction rooms. Marlene is leaning on an estate car.',
-    lines: [`MARLENE: I've seen you about. Buying my chairs. Selling to my buyers.`,
-            `MARLENE: Ten days, sunshine. Then it's back to car boots for you.`] },
+    setting: 'Outside the auction rooms. Marlene is leaning on an estate car that has seen things.',
+    lines: [`MARLENE: I've seen you about. Buying my chairs. Selling to my buyers. Parking in my space.`,
+            `MARLENE: Ten days, sunshine. Then it's back to car boots for you. I'll be there. I'll offer you a fiver.`] },
 ];
 
 const VERDICTS = {
-  'Bankrupt. Back to flat-pack': `You went bust. In launch week. When everyone wanted a sofa. Impressive, in its way.`,
-  'Car Boot Browser':     `You made money. Not much. Next time, think bigger.`,
+  'Bankrupt. Back to flat-pack': `You went bust. Selling furniture. To people who sit down every day. I didn't know that was possible.`,
+  'Car Boot Browser':     `You made money. About one nice lamp's worth. Think bigger.`,
   'Market Stall Regular': `Decent. I don't do decent.`,
-  'Respected Dealer':     `Good. Not legendary. But good.`,
-  'Vintage Connoisseur':  `Now that's a bet that paid off. Call me.`,
-  'Vinterior Legend':     `Vinterior Legend. I said it. Don't make me say it twice.`,
+  'Respected Dealer':     `Good. Not legendary. But good. I'll stop there before it goes to your head.`,
+  'Vintage Connoisseur':  `Now that's a bet that paid off. I'll ring you first next time.`,
+  'Vinterior Legend':     `Vinterior Legend. I said it. I won't say it twice, and I'll deny it if asked.`,
 };
 
 const PORTRAITS = {
@@ -1320,16 +1327,16 @@ function closeMsg(ok) {
 // Chapter 1: the game opens on a call from Sandrine
 function showIntro() {
   baseMsg(
-    `<div class="dim" style="margin-bottom:8px">November 2026. Launch week. The phone is ringing.</div>` +
+    `<div class="dim" style="margin-bottom:8px">A phone box in London is ringing. Against all odds, it's for you.</div>` +
     `<div class="callrow">${portraitHtml('sandrine')}<div class="calltext" id="introText"></div></div>` +
     `<div class="dim" style="margin-top:8px">Placeholder portrait, pending approval.</div>`,
     'Incoming call', false,
-    '<button onclick="closeMsg(true)">Take the van keys</button>', null
+    '<button onclick="closeMsg(true)">Find the van keys</button>', null
   );
   typeInto($('introText'),
-    `SANDRINE: It's Sandrine. Launch week. Half of Europe is about to live on their sofas, and most of those sofas are hideous.\n\n` +
-    `You've got a van and Barry's money. I've got jobs. Do them well and I'll pay well.\n\n` +
-    `Don't bore me.`);
+    `SANDRINE: It's Sandrine. I hear you've got a van, thirty days and a loan from someone called Barry.\n\n` +
+    `I'm not going to ask about Barry. Nobody should ask about Barry.\n\n` +
+    `I'll ring with jobs. You deliver, I pay. Bring me anything in orange pine and I'll hang up.`);
 }
 
 function showHelp() {
