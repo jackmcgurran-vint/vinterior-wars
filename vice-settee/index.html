@@ -653,6 +653,27 @@ const DJ_LINES = [
   'Caller on line two says his nan’s sideboard is “probably worth a fortune”. Line two, we love you. Get it valued.',
 ];
 
+// Teak FM ad breaks: fake products, read with a straight face
+const ADVERTS = [
+  'ADVERT: Tired of chairs that just sit there? Try ReclinaMax. It goes back. It comes forward. Ask your doctor if leaning is right for you.',
+  'ADVERT: Veneer Direct. It looks like walnut. It feels like walnut. Our lawyers have asked us to stop there.',
+  'ADVERT: Lost the little key that came with the wardrobe? Allen\u2019s Keys of Croydon has it. Nobody knows how. Nobody asks.',
+  'ADVERT: SofaGuard. Because one day, someone will rest a red wine on the arm. SofaGuard: we can\u2019t stop them, but we can judge them.',
+  'ADVERT: Dustsheets of Distinction. For the furniture that\u2019s too good to sit on, in the room nobody\u2019s allowed in.',
+  'ADVERT: Feeling tense? Try Lino, the floor that forgives. Lino: you\u2019ve walked on worse.',
+  'ADVERT: Uncle Barry\u2019s Loans. Friendly rates. Friendly lads. Terms and conditions apply, and so do the lads.',
+  'ADVERT: This bulletin was brought to you by Doorframe Removals. Sofa won\u2019t fit? It will now.',
+];
+
+// police-scanner chatter, heard once you've been drawing attention
+const SCANNER_LINES = [
+  'SCANNER: All units, a white van is double-parked with intent. Approach with a pen.',
+  'SCANNER: Suspect is carrying a sideboard. Repeat, a sideboard. Do not attempt to lift it alone.',
+  'SCANNER: Van last seen heading north. Smells strongly of linseed oil. Probably armed with a tape measure.',
+  'SCANNER: Can someone come and help with a chandelier situation. Not urgent. Quite urgent.',
+  'SCANNER: Units are advised the suspect will try to sell you a lamp. Do not make eye contact with the lamp.',
+];
+
 // material-targeted mishaps (van)
 const DAMAGE = [
   { mat: 'wood',    msg: 'Woodworm! {n} × {item} now more hole than furniture.' },
@@ -1801,6 +1822,8 @@ function updateTicker() {
   // deterministic-ish filler per day so render() calls don't reshuffle it
   const idx = (S.day * 3) % DJ_LINES.length;
   bits.push(DJ_LINES[idx % DJ_LINES.length], DJ_LINES[(idx + 1) % DJ_LINES.length]);
+  bits.push(ADVERTS[S.day % ADVERTS.length]);
+  if (S.heat >= 2) bits.push(SCANNER_LINES[(S.day + S.heat) % SCANNER_LINES.length]);
   if (S.heat >= 4) bits.push('A word to the wise: the wardens are out in force. You didn’t hear it from Teak FM. Teak FM was never here.');
   const text = bits.join('  •••  ');
   if (text === lastTicker) return;
