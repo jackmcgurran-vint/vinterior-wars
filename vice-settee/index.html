@@ -525,44 +525,44 @@ const VINTERIOR_URL = 'https://www.vinterior.co/';
 
 const JOBS = [
   { ring: 2,  qty: 5, item: 'Ercol Windsor Chair',    dest: 'Paris',     deadline: 7,  bonus: 800,
-    brief: `Paris has discovered the Ercol chair and thinks it invented it. Five chairs, Paris, day 7. Smile. Don't correct anyone.` },
+    brief: `Paris has discovered the Ercol chair and decided it invented it. I need five there by day 7. Smile, take the money, and do not correct a single Parisian. You will lose.` },
   { ring: 8,  qty: 3, item: 'Danish Teak Desk',       dest: 'London',    deadline: 13, bonus: 2000,
-    brief: `Three teak desks to London by day 13. The client works from home and wants everyone on their video calls to know it.` },
+    brief: `Three teak desks to London by day 13. The client works from home, has eleven video calls a day, and wants every single person on them to feel poor. Make it happen.` },
   { ring: 13, qty: 2, item: 'Murano Chandelier',      dest: 'Amsterdam', deadline: 18, bonus: 3500,
-    brief: `Two Murano chandeliers to Amsterdam by day 18. They're glass. Amsterdam is cobbles. Drive like there's a pavlova on the passenger seat.` },
+    brief: `Two Murano chandeliers to Amsterdam by day 18. Glass, on cobbles, in your van, with your driving. I've already lit a candle. Drive like there's a pavlova on the passenger seat.` },
   { ring: 18, qty: 1, item: 'Memphis-Style Bookcase', dest: 'Milan',     deadline: 24, bonus: 4000,
-    brief: `Milan wants a Memphis bookcase home. Miami's full of them, obviously. One to Milan by day 24. If it doesn't look like a fruit bowl fell on a shelf, it's the wrong one.` },
+    brief: `Milan wants a Memphis bookcase home. Miami's crawling with them. Bring one back by day 24. If it doesn't look like a fruit bowl fell down the stairs, it's the wrong one, and I will know.` },
   { ring: 23, qty: 1, item: 'Togo Sofa Suite',        dest: 'London',    deadline: 29, bonus: 10000,
-    brief: `One Togo, London, day 29. It's the big one. The client says it's for the dog. I didn't ask. Measure the dog.` },
+    brief: `This is the big one. One Togo, London, day 29. The client says it's for the dog. I've met the dog. The dog has better taste than you. Don't let the dog down.` },
 ];
 const JOB_DONE_LINES = [
-  `On time. Money's in. Try not to look so surprised.`,
-  `Delivered. The client cried. The good kind, I'm told.`,
-  `That's how it's done. Do it again.`,
+  `Delivered, on time. I'm almost disappointed. I had a whole speech ready.`,
+  `The client cried. The good kind. Money's in, so you can cry the good kind too.`,
+  `Money's in. Don't spend it all on a nicer van. It won't make you a nicer person.`,
 ];
 const JOB_MISSED_LINES = [
-  `You're late. The client panicked and bought something new. From a catalogue. You did that.`,
-  `Next time, tell me before it goes wrong. Not after. Ideally, not at all.`,
+  `You're late. The client panicked and bought a brand new sofa from a catalogue, with a matching footstool. You did that. You'll have to live with that.`,
+  `That's one. I don't usually allow one. Tell me before it goes wrong next time, not after, and ideally not at all.`,
 ];
 
 const SCENES = [
   { day: 10, title: 'Chapter 2: The Interest Is Doing Better Than You', who: 'barry',
-    setting: 'Uncle Barry slides into the seat opposite you with a fry-up he brought from home. Nobody tells him he can’t do that.',
-    lines: [`BARRY: You're doing alright, kid. Not as well as my interest, mind. My interest is having the year of its life.`,
-            `BARRY: Day 30. Every penny. I've got a little book, and you're in it. In pen.`] },
+    setting: 'Uncle Barry slides into the seat opposite you with a fry-up he brought from home. Nobody tells him he can’t do that. Nobody has ever told Barry he can’t do anything.',
+    lines: [`BARRY: You're doing alright, son. Not as well as my interest, mind. My interest is having the year of its life. I'm thinking of sending it on holiday.`,
+            `BARRY: Day 30, every penny, in readies. I've got a little book, and you're in it. In pen. Underlined. Twice.`] },
   { day: 20, title: `Chapter 3: Marlene's Patch`, who: 'marlene',
     setting: 'Outside the auction rooms. Marlene is leaning on an estate car that has seen things.',
-    lines: [`MARLENE: I've seen you about. Buying my chairs. Selling to my buyers. Parking in my space.`,
-            `MARLENE: Ten days, sunshine. Then it's back to car boots for you. I'll be there. I'll offer you a fiver. For the van.`] },
+    lines: [`MARLENE: I've seen you about, sunshine. Buying my chairs. Selling to my buyers. Breathing my air, which I bought at auction in 1987.`,
+            `MARLENE: Ten days. Then it's back to car boots for you, and I'll be there with a fiver for the van. And I'll want change.`] },
 ];
 
 const VERDICTS = {
-  'Bankrupt. Back to flat-pack': `You went bust. Selling furniture. To people who sit down every day. I didn't know that was possible.`,
-  'Car Boot Browser':     `You made money. About one nice lamp's worth. It's a start. It's not a career.`,
+  'Bankrupt. Back to flat-pack': `You went bust selling furniture to people who sit down every single day. I've been doing this for years and I didn't know that was possible. Genuinely, well done.`,
+  'Car Boot Browser':     `You made money. About one nice lamp's worth. Not a nice lamp, actually. A lamp.`,
   'Market Stall Regular': `Decent. I don't do decent.`,
-  'Respected Dealer':     `Good. Not legendary. But good. I'll stop there before it goes to your head.`,
-  'Vintage Connoisseur':  `Now that's a bet that paid off. I'll ring you first next time. Don't make it weird.`,
-  'Vinterior Legend':     `Vinterior Legend. I said it. I won't say it twice, and I'll deny it if asked.`,
+  'Respected Dealer':     `That's good. Properly good. Don't tell anyone I said that. It would ruin my reputation, and quite possibly yours.`,
+  'Vintage Connoisseur':  `Now that's a bet that paid off. I'll ring you first next time. You'll pretend you weren't waiting by the phone. We'll both know.`,
+  'Vinterior Legend':     `Vinterior Legend. There, I said it. I won't be saying it again, and if anyone asks, you misheard.`,
 };
 
 const PORTRAITS = {
@@ -1075,7 +1075,7 @@ const ENC_DEFS = {
   },
   barry: {
     title: "Uncle Barry's lads",
-    intro: (enc) => `Two of Uncle Barry's lads are leaning on your van, eating chips. “Barry says hello. Barry also says ${fmt(enc.demand)}.”`,
+    intro: (enc) => `Two of Uncle Barry's lads are leaning on your van eating chips, which means they've been waiting long enough to get hungry. “Barry says hello. Barry also says ${fmt(enc.demand)}.”`,
     options: ['pay', 'stock', 'run'],
   },
 };
@@ -1221,12 +1221,12 @@ function resolveBarry(enc, action) {
     const paid = Math.min(S.cash, enc.demand);
     S.cash -= paid;
     S.debt = Math.max(0, S.debt - paid);
-    log(`You pay ${fmt(paid)} off the loan. They hand you a chip. “No hard feelings.”`);
-    if (paid < enc.demand) { bumpHeat(1, `It wasn't the full amount, though. Barry will hear about it.`); }
+    log(`You hand over ${fmt(paid)}. One of them counts it with greasy fingers and gives you a chip as a receipt. “No hard feelings, son.”`);
+    if (paid < enc.demand) { bumpHeat(1, `It's not the full amount. The lads exchange a look that will definitely be reported to Barry.`); }
   } else if (action === 'stock') {
     const held = Object.keys(S.inv).filter(k => S.inv[k] > 0 && !ITEMS.find(i => i.name === k).golden);
     if (!held.length) {
-      bumpHeat(1, `Your van is empty. The lads look at each other. Barry will hear about this.`);
+      bumpHeat(1, `Your van is empty. The lads look in the back, then at each other, then at you, for a very long time. Barry will hear about this.`);
     } else {
       let owed = enc.demand, took = [];
       for (const name of [...held].sort(() => Math.random() - 0.5)) {
@@ -1240,19 +1240,19 @@ function resolveBarry(enc, action) {
         took.push(`${qty} × ${name}`);
       }
       S.debt = Math.max(0, S.debt - (enc.demand - Math.max(0, owed)));
-      log(`They take ${took.join(', ')} “for the showroom”. Barry has a showroom now, apparently.`, 'bad');
+      log(`They take ${took.join(', ')} “for the showroom”. Barry has a showroom now. Nobody knows where it is, and nobody is allowed to ask.`, 'bad');
     }
   } else { // run
     S.stats.encounters++; // running from Barry counts double against the nerves
     if (Math.random() < encOdds('run')) {
       S.stats.escapes++;
       bumpHeat(1);
-      log(`You're gone before the chips are finished. Barry will hear about this.`, 'good');
+      log(`You're round the corner before they've finished their chips. They won't forget this. They will, however, finish their chips.`, 'good');
     } else {
       const grabbed = Math.min(S.cash, Math.round(enc.demand * 0.6));
       S.cash -= grabbed;
       bumpHeat(1);
-      log(`They were expecting that. They empty your pockets of ${fmt(grabbed)} and finish the chips.`, 'bad');
+      log(`They were expecting that. Barry's lads have been chasing vans since before you were born. They relieve you of ${fmt(grabbed)} and offer you a chip for your trouble.`, 'bad');
     }
   }
   render();
@@ -1460,9 +1460,9 @@ function showIntro() {
     '<button onclick="closeMsg(true)">Find the van keys</button>', null
   );
   typeInto($('introText'),
-    `SANDRINE: It's Sandrine. Half of Europe is about to spend a month on the sofa, and most of those sofas are a cry for help.\n\n` +
-    `You've got a van, thirty days and a loan from someone called Barry. I won't ask about Barry. Nobody asks about Barry.\n\n` +
-    `I'll ring with jobs. You deliver, I pay. Don't make me ring twice.`);
+    `SANDRINE: Right. It's Sandrine. You don't know me yet, but I know you. You're the one with the van and the face of someone who's never owned a decent chair.\n\n` +
+    `I hear you've borrowed ${fmt(START_DEBT)} off a man called Barry. Brave. Stupid, but brave. I'm not going to ask about Barry, and if you've got any sense, neither will you.\n\n` +
+    `Here's the deal. I ring, you deliver, I pay. Bring me anything in orange pine and I'll have this number disconnected.`);
 }
 
 function showHelp() {
