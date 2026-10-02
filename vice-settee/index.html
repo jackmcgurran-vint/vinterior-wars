@@ -619,7 +619,7 @@ const ITEMS = [
 ];
 
 const CITIES = [
-  { name: 'London',     mult: 1.15, home: 'uk', blurb: 'Everything costs more, including the parking. Uncle Barry takes payment here.' },
+  { name: 'London',     mult: 1.15, home: 'uk', blurb: 'Where a parking space costs more than the sofa. Uncle Barry takes payment here.' },
   { name: 'Paris',      mult: 1.10, home: 'fr', blurb: 'Marché aux Puces. Everything is “une pièce unique”, including the bloke selling it.' },
   { name: 'Copenhagen', mult: 1.00, home: 'dk', blurb: 'Teak country. Even the bus shelters have tapered legs.' },
   { name: 'Milan',      mult: 1.00, home: 'it', blurb: 'Glass, brass and a man who will explain your own chandelier to you.' },
@@ -653,14 +653,46 @@ const DJ_LINES = [
   'Caller on line two says his nan’s sideboard is “probably worth a fortune”. Line two, we love you. Get it valued.',
 ];
 
+// Teak FM's breakfast DJ falls apart on air across the month, two days per beat
+const DJ_STORY = [
+  'CLIVE: Morning, Europe! Clive Mahogany on Teak FM, the only station broadcasting from inside a wardrobe. It\u2019s the acoustics.',
+  'CLIVE: Big welcome to my new producer, Dawn. Say hello, Dawn. Dawn\u2019s not saying hello. Dawn\u2019s on her break. Dawn started ten minutes ago.',
+  'CLIVE: Whoever\u2019s parked a sideboard across the studio door, I know where you live. Oh. It\u2019s Dawn\u2019s sideboard. Lovely piece, Dawn.',
+  'CLIVE: The jingle machine\u2019s broken, so I\u2019ll do it myself. Teeeeak Eff Emmm. Dawn\u2019s crying with laughter. Or just crying.',
+  'CLIVE: My ex-wife has taken the house, the dog and the Ercol. I\u2019ve kept the station and my dignity. Mostly the station.',
+  'CLIVE: Dawn has asked me to stop reading out my divorce on air. Fine. Here\u2019s one she picked. It\u2019s about a man who deserved it.',
+  'CLIVE: We\u2019ve lost the studio. Long story. A landlord, an Eames chair and a disagreement about what \u201csitting on it properly\u201d means.',
+  'CLIVE: Live from a lay-by outside Calais! Signal\u2019s lovely. Dawn\u2019s on the roof of the van holding the aerial. Higher, Dawn. Higher.',
+  'CLIVE: The van\u2019s been clamped. Teak FM continues as normal. Teak FM has never once been normal.',
+  'CLIVE: Dawn has resigned live on air, which I\u2019ll be appealing. Dawn, if you\u2019re listening, the aerial misses you. I miss you. The aerial more.',
+  'CLIVE: This hour is sponsored by Uncle Barry, who\u2019s asked me to say he\u2019s a lovely man. He\u2019s a lovely man. Blink twice if you can hear me.',
+  'CLIVE: New producer today. His name\u2019s Gary and he\u2019s a G Plan sideboard. Never late, never cries, and he\u2019s got lovely drawers.',
+  'CLIVE: Gary and I have had words. Gary didn\u2019t say any of them, which frankly is the problem with Gary.',
+  'CLIVE: Penultimate show. Thanks to Dawn, the bailiffs, and everyone who bought my mum\u2019s nest of tables. Mum, I\u2019m sorry.',
+  'CLIVE: Final broadcast. If you\u2019ve made your fortune, well done. If you haven\u2019t, I know a man called Barry. Clive Mahogany, signing off from a car park.',
+];
+
+// listener texts, pager-style: shouty, specific, rarely relevant
+const LISTENER_TEXTS = [
+  'TEXT IN FROM GARY, ESSEX: HAS ANYONE SEEN MY VAN. IT IS WHITE.',
+  'TEXT IN FROM BRENDA: LIFT WITH YOUR KNEES. NOT MY KNEES. YOUR KNEES.',
+  'TEXT IN FROM MUM: CLIVE YOUR DINNER IS IN THE DOG.',
+  'TEXT IN FROM PETE, LUTON: IS IT STILL VINTAGE IF I BOUGHT IT IN 2009. CLIVE SAYS: NO, PETE.',
+  'TEXT IN FROM SUE: PLEASE PLAY SOMETHING FOR MY HUSBAND. HE KNOWS WHAT HE DID TO THE CHESTERFIELD.',
+  'TEXT IN FROM AN UNKNOWN NUMBER: WE HAVE YOUR SIDEBOARD. ALL IS FORGIVEN. COME HOME.',
+  'TEXT IN FROM DEREK: HOW DO YOU PRONOUNCE MURANO. CLIVE SAYS: EXPENSIVELY, DEREK.',
+];
+
 // Teak FM ad breaks: fake products, read with a straight face
 const ADVERTS = [
   'ADVERT: Tired of chairs that just sit there? Try ReclinaMax. It goes back. It comes forward. Ask your doctor if leaning is right for you.',
   'ADVERT: Veneer Direct. It looks like walnut. It feels like walnut. Our lawyers have asked us to stop there.',
   'ADVERT: Lost the little key that came with the wardrobe? Allen\u2019s Keys of Croydon has it. Nobody knows how. Nobody asks.',
-  'ADVERT: SofaGuard. Because one day, someone will rest a red wine on the arm. SofaGuard: we can\u2019t stop them, but we can judge them.',
-  'ADVERT: Dustsheets of Distinction. For the furniture that\u2019s too good to sit on, in the room nobody\u2019s allowed in.',
-  'ADVERT: Feeling tense? Try Lino, the floor that forgives. Lino: you\u2019ve walked on worse.',
+  'ADVERT: Nan\u2019s Credit. Borrow against your nan\u2019s sideboard today. She need never know. Representative APR: rude to ask.',
+  'ADVERT: Pine Direct. We\u2019ve got orange pine, extra orange pine, and a pine so orange it\u2019s been banned in Denmark. Pine Direct: you\u2019ll squint.',
+  'ADVERT: Cushion+. Now with 30% more cushion. Side effects may include sinking, being swallowed by the sofa, and never leaving the house again.',
+  'ADVERT: TeakTone. The spray that makes anything look like Danish teak. Not for use on pets, children or the vicar.',
+  'ADVERT: Are you sitting comfortably? You\u2019re not, are you. You\u2019re on a dining chair from 1997. SitRight: your back has been trying to tell you.',
   'ADVERT: Uncle Barry\u2019s Loans. Friendly rates. Friendly lads. Terms and conditions apply, and so do the lads.',
   'ADVERT: This bulletin was brought to you by Doorframe Removals. Sofa won\u2019t fit? It will now.',
 ];
@@ -1820,9 +1852,9 @@ let lastTicker = '';
 function updateTicker() {
   const bits = [...todaysHeadlines];
   // deterministic-ish filler per day so render() calls don't reshuffle it
-  const idx = (S.day * 3) % DJ_LINES.length;
-  bits.push(DJ_LINES[idx % DJ_LINES.length], DJ_LINES[(idx + 1) % DJ_LINES.length]);
-  bits.push(ADVERTS[S.day % ADVERTS.length]);
+  bits.push(DJ_STORY[Math.min(DJ_STORY.length - 1, Math.floor((Math.min(S.day, DAYS) - 1) / 2))]);
+  bits.push(DJ_LINES[(S.day * 3) % DJ_LINES.length]);
+  bits.push(S.day % 2 ? ADVERTS[S.day % ADVERTS.length] : LISTENER_TEXTS[(S.day / 2) % LISTENER_TEXTS.length]);
   if (S.heat >= 2) bits.push(SCANNER_LINES[(S.day + S.heat) % SCANNER_LINES.length]);
   if (S.heat >= 4) bits.push('A word to the wise: the wardens are out in force. You didn’t hear it from Teak FM. Teak FM was never here.');
   const text = bits.join('  •••  ');
