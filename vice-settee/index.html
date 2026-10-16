@@ -86,15 +86,12 @@
   .stat .neg, b.neg { color: #a00000; }
 
   /* heat meter: five inset LED blocks */
-  .heatled {
-    display: inline-block;
-    width: 9px; height: 9px;
-    margin: 0 1px -1px 0;
-    background: #e8e8e8;
-    border: 1px solid;
-    border-color: #808080 #fff #fff #808080;
-  }
-  .heatled.on { background: #c00000; border-color: #600 #f88 #f88 #600; }
+  /* heat meter: five pixel sirens that flash red and blue when lit */
+  .siren { vertical-align: -2px; margin-right: 1px; }
+  .siren .dome { fill: #d0d0d0; }
+  .siren.on .dome { fill: #d40000; animation: sirenflash .8s steps(1) infinite; }
+  .siren.on:nth-child(even) .dome { animation-delay: .4s; }
+  @keyframes sirenflash { 50% { fill: #1f4fd8; } }
 
   /* ---- panels ---- */
   .panels { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -373,6 +370,46 @@
     font-size: 13px;
     letter-spacing: 1px;
   }
+  #cityCard .citykicker {
+    color: #ff5fa8;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 13px;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+  }
+  #cityCard .citykicker:empty { display: none; }
+  #cityCard.job .cityname { font-size: min(56px, 11vw); text-align: center; }
+
+  /* failure stamp: an auction-house rubber stamp over a drained screen */
+  #stamp {
+    position: fixed; inset: 0;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 55;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #stamp .stampword {
+    font-family: Impact, "Arial Black", "Helvetica Neue", sans-serif;
+    font-size: min(64px, 13vw);
+    letter-spacing: 4px;
+    color: #c8102e;
+    border: 7px double #c8102e;
+    border-radius: 6px;
+    padding: 4px 22px;
+    background: rgba(255, 245, 235, .92);
+    transform: rotate(-9deg);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  #stamp.show { animation: stampfade 1.9s ease forwards; }
+  #stamp.show .stampword { animation: stampslam .22s cubic-bezier(.3, 1.6, .5, 1) both; }
+  @keyframes stampfade { 0% { opacity: 1; } 75% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes stampslam { from { transform: rotate(-9deg) scale(2.6); } to { transform: rotate(-9deg) scale(1); } }
+  body.stamped .win { filter: grayscale(1) brightness(.8); transition: filter .15s; }
+  @media (prefers-reduced-motion: reduce) {
+    .siren.on .dome, #stamp.show .stampword { animation: none; }
+  }
 </style>
 </head>
 <body>
@@ -386,6 +423,7 @@
     <span class="menuitem" onclick="newGame()">New Game</span>
     <span class="menuitem" onclick="showBest()">Best</span>
     <span class="menuitem" onclick="showHelp()">Help</span>
+    <span class="menuitem" id="soundToggle" onclick="toggleSound()">Sound: On</span>
   </div>
 
   <div class="body">
@@ -469,7 +507,10 @@
 </div>
 
 <!-- city-name card shown on travel -->
-<div id="cityCard"><div class="cityname"></div><div class="citysub"></div></div>
+<div id="cityCard"><div class="citykicker"></div><div class="cityname"></div><div class="citysub"></div></div>
+
+<!-- failure stamp -->
+<div id="stamp"><div class="stampword"></div></div>
 
 <!-- title card shown once on load -->
 <div id="titleCard" role="button" tabindex="0" aria-label="Vinterior Wars: Vice Settee. Press any key to start." style="display:none"></div>
@@ -524,45 +565,45 @@ const VINTERIOR_URL = 'https://www.vinterior.co/';
 // design team's art is drawn and approved.
 
 const JOBS = [
-  { ring: 2,  qty: 5, item: 'Ercol Windsor Chair',    dest: 'Paris',     deadline: 7,  bonus: 800,
-    brief: `Paris has discovered the Ercol chair and thinks it invented it. Five chairs, Paris, day 7. Smile. Don't correct anyone.` },
-  { ring: 8,  qty: 3, item: 'Danish Teak Desk',       dest: 'London',    deadline: 13, bonus: 2000,
-    brief: `Three teak desks to London by day 13. The client works from home and wants everyone on their video calls to know it.` },
-  { ring: 13, qty: 2, item: 'Murano Chandelier',      dest: 'Amsterdam', deadline: 18, bonus: 3500,
-    brief: `Two Murano chandeliers to Amsterdam by day 18. They're glass. Amsterdam is cobbles. Drive like there's a pavlova on the passenger seat.` },
-  { ring: 18, qty: 1, item: 'Memphis-Style Bookcase', dest: 'Milan',     deadline: 24, bonus: 4000,
-    brief: `Milan wants a Memphis bookcase home. Miami's full of them, obviously. One to Milan by day 24. If it doesn't look like a fruit bowl fell on a shelf, it's the wrong one.` },
-  { ring: 23, qty: 1, item: 'Togo Sofa Suite',        dest: 'London',    deadline: 29, bonus: 10000,
-    brief: `One Togo, London, day 29. It's the big one. The client says it's for the dog. I didn't ask. Measure the dog.` },
+  { ring: 2,  qty: 5, item: 'Ercol Windsor Chair',    dest: 'Paris',     deadline: 7,  bonus: 800,   title: 'The Ercol Shuffle',
+    brief: `Paris has discovered the Ercol chair and decided it invented it. I need five there by day 7. Smile, take the money, and do not correct a single Parisian. You will lose.` },
+  { ring: 8,  qty: 3, item: 'Danish Teak Desk',       dest: 'London',    deadline: 13, bonus: 2000,  title: 'Desk Job',
+    brief: `Three teak desks to London by day 13. The client has eleven video calls a day and wants every one of them to end in quiet envy. Oiled, not varnished. If you varnish them, keep driving.` },
+  { ring: 13, qty: 2, item: 'Murano Chandelier',      dest: 'Amsterdam', deadline: 18, bonus: 3500,  title: 'The Glass Job',
+    brief: `Two Murano chandeliers to Amsterdam by day 18. Glass, on cobbles, in your van, with your driving. I've already lit a candle. Drive like there's a pavlova on the passenger seat.` },
+  { ring: 18, qty: 1, item: 'Memphis-Style Bookcase', dest: 'Milan',     deadline: 24, bonus: 4000,  title: 'The Memphis Run',
+    brief: `Milan wants a Memphis bookcase home. Miami's crawling with them. Bring one back by day 24. If it doesn't look like a fruit bowl fell down the stairs, it's the wrong one, and I will know.` },
+  { ring: 23, qty: 1, item: 'Togo Sofa Suite',        dest: 'London',    deadline: 29, bonus: 10000, title: 'One Last Sofa',
+    brief: `One last job. A Togo, London, day 29. The buyer runs a hedge fund and thinks a low sofa makes him look approachable. It won't. Charge him as if it will.` },
 ];
 const JOB_DONE_LINES = [
-  `On time. Money's in. Try not to look so surprised.`,
-  `Delivered. The client cried. The good kind, I'm told.`,
-  `That's how it's done. Do it again.`,
+  `On time, intact, and nobody sat on it. My expectations were low and you've cleared them.`,
+  `The client cried, the good kind. Bonus paid. Don't spend it on a nicer van; it won't make you a nicer person.`,
+  `Money's in. That's as close as I come to a compliment, so frame it.`,
 ];
 const JOB_MISSED_LINES = [
-  `You're late. The client panicked and bought something new. From a catalogue. You did that.`,
-  `Next time, tell me before it goes wrong. Not after. Ideally, not at all.`,
+  `You're late. The client panicked and bought new, from a catalogue, with a matching footstool. That footstool is on your conscience now.`,
+  `I don't usually allow a missed job, so consider this your one. Tell me before it goes wrong next time, not after, and ideally never.`,
 ];
 
 const SCENES = [
   { day: 10, title: 'Chapter 2: The Interest Is Doing Better Than You', who: 'barry',
-    setting: 'Uncle Barry slides into the seat opposite you with a fry-up he brought from home. Nobody tells him he can’t do that.',
-    lines: [`BARRY: You're doing alright, kid. Not as well as my interest, mind. My interest is having the year of its life.`,
-            `BARRY: Day 30. Every penny. I've got a little book, and you're in it. In pen.`] },
+    setting: 'Uncle Barry slides into the seat opposite you with a fry-up he brought from home. The café owner opens his mouth, sees who it is, and shuts it again.',
+    lines: [`BARRY: You're doing alright, son. Not as well as my interest, mind. My interest is having the year of its life. I'm thinking of sending it on holiday.`,
+            `BARRY: Day 30, every penny, in readies. I've got a little book with your name in it, in pen, underlined twice, and I've never owned a rubber.`] },
   { day: 20, title: `Chapter 3: Marlene's Patch`, who: 'marlene',
     setting: 'Outside the auction rooms. Marlene is leaning on an estate car that has seen things.',
-    lines: [`MARLENE: I've seen you about. Buying my chairs. Selling to my buyers. Parking in my space.`,
-            `MARLENE: Ten days, sunshine. Then it's back to car boots for you. I'll be there. I'll offer you a fiver. For the van.`] },
+    lines: [`MARLENE: I've seen you about, sunshine. Buying my chairs. Selling to my buyers. Breathing my air, which I bought at auction in 1987.`,
+            `MARLENE: I've got every auctioneer between here and Calais on speed dial. Ten days, and you're back at car boots, and I'll be there with a fiver for the van. I'll want change.`] },
 ];
 
 const VERDICTS = {
-  'Bankrupt. Back to flat-pack': `You went bust. Selling furniture. To people who sit down every day. I didn't know that was possible.`,
-  'Car Boot Browser':     `You made money. About one nice lamp's worth. It's a start. It's not a career.`,
+  'Bankrupt. Back to flat-pack': `You went bankrupt selling chairs to a species with backs. I'm not angry. I'm writing it up for a journal.`,
+  'Car Boot Browser':     `You made money. About one nice lamp's worth. Not a nice lamp, actually. A lamp.`,
   'Market Stall Regular': `Decent. I don't do decent.`,
-  'Respected Dealer':     `Good. Not legendary. But good. I'll stop there before it goes to your head.`,
-  'Vintage Connoisseur':  `Now that's a bet that paid off. I'll ring you first next time. Don't make it weird.`,
-  'Vinterior Legend':     `Vinterior Legend. I said it. I won't say it twice, and I'll deny it if asked.`,
+  'Respected Dealer':     `That's good. Properly good. Repeat that in public and I'll deny it in writing.`,
+  'Vintage Connoisseur':  `Now that's taste with a calculator attached. I'll ring you first next time. Try to sound like you weren't waiting by the phone.`,
+  'Vinterior Legend':     `Vinterior Legend. There, I said it. I won't be saying it again, and if anyone asks, you misheard.`,
 };
 
 const PORTRAITS = {
@@ -619,18 +660,18 @@ const ITEMS = [
 ];
 
 const CITIES = [
-  { name: 'London',     mult: 1.15, home: 'uk', blurb: 'Everything costs more, including the parking. Uncle Barry takes payment here.' },
+  { name: 'London',     mult: 1.15, home: 'uk', blurb: 'Where a parking space costs more than the sofa. Uncle Barry takes payment here.' },
   { name: 'Paris',      mult: 1.10, home: 'fr', blurb: 'Marché aux Puces. Everything is “une pièce unique”, including the bloke selling it.' },
   { name: 'Copenhagen', mult: 1.00, home: 'dk', blurb: 'Teak country. Even the bus shelters have tapered legs.' },
   { name: 'Milan',      mult: 1.00, home: 'it', blurb: 'Glass, brass and a man who will explain your own chandelier to you.' },
   { name: 'Amsterdam',  mult: 0.95, home: null, blurb: 'Canal-side kringloop bargains. Mind the bikes. The bikes will not mind you.' },
   { name: 'Berlin',     mult: 0.85, home: null, blurb: 'Flohmarkt city. Cheap, cheerful, and open until a time you won’t remember.' },
-  { name: 'Miami',      mult: 1.00, home: 'us', blurb: 'Neon, pastels and furniture that looks like it’s been to a rave.', volatile: true },
+  { name: 'Miami',      mult: 1.00, home: 'us', blurb: 'Pastel suits, mirrored side tables, and a man selling a glass coffee table off the back of a speedboat at four in the morning.', volatile: true },
 ];
 
 const SPIKES = [
   'A {item} is spotted in the background of a celebrity video call. Collectors lose their minds!',
-  'A Sunday supplement calls the {item} “the new avocado”. Prices go stratospheric!',
+  'A wellness influencer claims sleeping near a {item} realigns your finances. Prices go stratospheric!',
   'A {item} sets an auction record. The winning bidder had to sit down. Prices soar!',
 ];
 const CRASHES = [
@@ -653,12 +694,66 @@ const DJ_LINES = [
   'Caller on line two says his nan’s sideboard is “probably worth a fortune”. Line two, we love you. Get it valued.',
 ];
 
+// Teak FM's breakfast DJ falls apart on air across the month, two days per beat
+const DJ_STORY = [
+  'CLIVE: Good morning, Europe! Clive Mahogany, the voice that sold a thousand sideboards, live from inside a wardrobe. It\u2019s not a cupboard. It\u2019s an acoustic decision.',
+  'CLIVE: Please welcome my new producer, Dawn, who beat four hundred applicants for the honour of working with me. Dawn\u2019s on her break. Dawn started ten minutes ago.',
+  'CLIVE: Some coward has parked a sideboard across the studio door. I will find you, and when I do, I will make you an offer. Oh. It\u2019s Dawn\u2019s. Lovely piece, Dawn.',
+  'CLIVE: The jingle machine\u2019s packed up, which is fine, because I wrote the jingle and I\u2019ve got a better voice than the machine. Teeeeak Eff Emmm. Dawn has gone to sit in her car.',
+  'CLIVE: My ex-wife got the house, the dog and the Ercol. I got the station, which is worth more once you factor in my talent, which the court did not.',
+  'CLIVE: Dawn has asked me to stop reading my divorce papers on air, which is a shame, because they\u2019ve been our most popular segment by some distance.',
+  'CLIVE: We\u2019ve lost the studio over a landlord, an Eames chair and a disagreement about what \u201csitting on it properly\u201d means. Every great broadcaster loses a studio. Look it up.',
+  'CLIVE: Live from a lay-by outside Calais! The signal\u2019s never been better, which is down to my voice and nothing to do with Dawn holding the aerial on the roof. Higher, Dawn.',
+  'CLIVE: The van\u2019s been clamped. Teak FM continues as normal, and normal for Teak FM is why we have the listeners we have, which is eleven, and loyal.',
+  'CLIVE: Dawn has resigned live on air. I\u2019m appealing, also live on air, which is where I make all my best decisions. Dawn, the aerial misses you.',
+  'CLIVE: This hour is sponsored by Uncle Barry, who\u2019d like me to say he\u2019s a lovely man. He\u2019s a lovely man. Blink twice if you can hear me.',
+  'CLIVE: Meet my new producer, Gary, a G Plan sideboard. Never late, never cries, never questions my vision. Lovely drawers. Best hire I\u2019ve ever made.',
+  'CLIVE: Gary and I have had words. Gary didn\u2019t say any of them, which frankly is the problem with Gary.',
+  'CLIVE: Penultimate show. My thanks to Dawn, the bailiffs, and whoever bought my mum\u2019s nest of tables. Mum, it was a business decision.',
+  'CLIVE: Final broadcast. History will remember Teak FM as the greatest station ever run from a car park. Clive Mahogany, signing off. Could someone come and get me.',
+];
+
+// listener texts, pager-style: shouty, specific, rarely relevant
+const LISTENER_TEXTS = [
+  'TEXT IN FROM GARY, ESSEX: HAS ANYONE SEEN MY VAN. IT IS WHITE.',
+  'TEXT IN FROM BRENDA: LIFT WITH YOUR KNEES. NOT MY KNEES. YOUR KNEES.',
+  'TEXT IN FROM MUM: CLIVE YOUR DINNER IS IN THE DOG.',
+  'TEXT IN FROM PETE, LUTON: IS IT STILL VINTAGE IF I BOUGHT IT IN 2009. CLIVE SAYS: NO, PETE.',
+  'TEXT IN FROM SUE: PLAY SOMETHING UPLIFTING. NIGEL SAT ON THE GOOD SETTEE IN HIS WORK TROUSERS AND IS NOW SLEEPING IN THE CAR.',
+  'TEXT IN FROM AN UNKNOWN NUMBER: WE HAVE YOUR SIDEBOARD. ALL IS FORGIVEN. COME HOME.',
+  'TEXT IN FROM DEREK: HOW DO YOU PRONOUNCE MURANO. CLIVE SAYS: EXPENSIVELY, DEREK.',
+];
+
+// Teak FM ad breaks: fake products, read with a straight face
+const ADVERTS = [
+  'ADVERT: Tired of chairs that just sit there? Try ReclinaMax. It goes back. It comes forward. Ask your doctor if leaning is right for you.',
+  'ADVERT: Veneer Direct. It looks like walnut. It feels like walnut. Our lawyers have asked us to stop there.',
+  'ADVERT: Lost the little key that came with the wardrobe? Allen\u2019s Keys of Croydon has it. We have every little key in Britain, in jars, sorted by feel. Allen\u2019s Keys: we\u2019ve been expecting you.',
+  'ADVERT: SofaLoan. Why wait to own a sofa when you can pay for it in 39 monthly instalments and own it in 2041? SofaLoan: sit down, there are a lot of numbers.',
+  'ADVERT: Pine Direct. We\u2019ve got orange pine, extra orange pine, and a pine so orange it\u2019s been banned in Denmark. Pine Direct: you\u2019ll squint.',
+  'ADVERT: Cushion+. Now with 30% more cushion. Side effects may include sinking, being swallowed by the sofa, and never leaving the house again.',
+  'ADVERT: TeakTone. The spray that makes anything look like Danish teak. Not for use on pets, children or the vicar.',
+  'ADVERT: Are you sitting comfortably? You\u2019re not, are you. You\u2019re on a dining chair from 1997. SitRight: your back has been trying to tell you.',
+  'ADVERT: Uncle Barry\u2019s Loans. Friendly rates. Friendly lads. Terms and conditions apply, and so do the lads.',
+  'ADVERT: This bulletin was brought to you by Doorframe Removals. Sofa won\u2019t fit? It will now.',
+];
+
+// police-scanner chatter, heard once you've been drawing attention
+const SCANNER_LINES = [
+  'SCANNER: All units, a white van is double-parked with intent. Approach with a pen.',
+  'SCANNER: Suspect is carrying a sideboard. Repeat, a sideboard. Do not attempt to lift it alone.',
+  'SCANNER: Van last seen heading north. Smells strongly of linseed oil. Probably armed with a tape measure.',
+  'SCANNER: Can someone come and help with a chandelier situation. Not urgent. Quite urgent.',
+  'SCANNER: Units are advised the suspect will try to sell you a lamp. Do not make eye contact with the lamp.',
+  'SCANNER: All units, white van leaving rubber on the roundabout with a coffee table wedged between the seats. Do not scratch the lacquer.',
+];
+
 // material-targeted mishaps (van)
 const DAMAGE = [
-  { mat: 'wood',    msg: 'Woodworm! {n} × {item} now more hole than furniture.' },
+  { mat: 'wood',    msg: 'Woodworm in the van. {n} × {item} has been downgraded to high-end sawdust.' },
   { mat: 'textile', msg: 'Moths have unionised in the back of the van. {n} × {item} eaten.' },
   { mat: 'glass',   msg: 'You hit a pothole and hear a sound like very expensive wind chimes. {n} × {item} smashed.' },
-  { mat: 'leather', msg: 'The van roof leaks and mould claims {n} × {item}. The smell stays. The smell is family now.' },
+  { mat: 'leather', msg: 'The van roof leaks and mould claims {n} × {item}. The smell has been offered a permanent position.' },
   { mat: 'metal',   msg: 'Damp sea air on the ferry. {n} × {item} rusted solid. Very industrial chic. Totally unsellable.' },
 ];
 
@@ -797,7 +892,7 @@ function travel(city) {
   S.tradeHere = 0;
   selMarket = selVan = null;
   coolHeat();
-  showCityCard(city, `Day ${S.day} of ${DAYS}`);
+  showCard(city, `Day ${S.day} of ${DAYS}`);
   log(`Day ${S.day}: ${city}. ${CITIES.find(c => c.name === city).blurb}`, 'day');
   genMarket();
 
@@ -931,7 +1026,7 @@ function dresserOffer(held) {
 function tipEvent() {
   const tip = ri(50, 200);
   S.cash += tip;
-  log(`A happy customer sends a ${fmt(tip)} tip and a photo of their cat asleep on the sideboard.`, 'good');
+  log(`A delighted buyer sends a ${fmt(tip)} tip, with a voice note of their architect weeping openly in the background.`, 'good');
 }
 
 /* ---------- Sandrine's jobs & cutscenes ---------- */
@@ -952,11 +1047,14 @@ function jobArrival() {
       S.job = null;
       log(`Job done: ${job.qty} × ${job.item} handed over in ${job.dest} for ${fmt(unit * job.qty)}, plus the ${fmt(job.bonus)} bonus.`, 'good');
       sandrineSays(pick(JOB_DONE_LINES));
+      showCard(job.title, `+${fmt(job.bonus)} bonus`, 'Job done');
+      sfxChirp();
     } else if (S.day > job.deadline) {
       S.stats.jobsMissed++;
       S.job = null;
       log(`You missed Sandrine's deadline. The bonus is gone.`, 'bad');
       sandrineSays(pick(JOB_MISSED_LINES));
+      stamp('Late');
     }
   }
 }
@@ -976,6 +1074,8 @@ function ringPhone() {
       if (ok) {
         S.job = { ...j };
         log(`Job taken: ${j.qty} × ${j.item} to ${j.dest} by day ${j.deadline} for a ${fmt(j.bonus)} bonus.`, 'day');
+        showCard(j.title, `${j.qty} × ${j.item} to ${j.dest} by day ${j.deadline}`, 'New job from Sandrine');
+        sfxChirp();
       } else {
         log(`You let the payphone ring out. Sandrine doesn't call twice.`);
       }
@@ -984,6 +1084,7 @@ function ringPhone() {
     'The payphone is ringing'
   );
   typeInto($('callText'), `SANDRINE: ${j.brief}`);
+  sfxRing();
   return true;
 }
 
@@ -1012,7 +1113,7 @@ const ENC_DEFS = {
   },
   rival: {
     title: 'Rival dealer',
-    intro: () => `Marlene from the auction rooms has parked her estate car across the pavement. “This is MY patch, sunshine. I've been here since decimalisation.”`,
+    intro: () => `Marlene from the auction rooms has parked her estate car across the pavement. “This is MY patch, sunshine. I've been outbidding people like you since decimalisation.”`,
     options: ['run', 'bribe', 'talk'],
   },
   heavies: {
@@ -1022,7 +1123,7 @@ const ENC_DEFS = {
   },
   barry: {
     title: "Uncle Barry's lads",
-    intro: (enc) => `Two of Uncle Barry's lads are leaning on your van, eating chips. “Barry says hello. Barry also says ${fmt(enc.demand)}.”`,
+    intro: (enc) => `Two of Uncle Barry's lads are leaning on your van eating chips, which means they've been waiting long enough to get hungry. “Barry says hello. Barry also says ${fmt(enc.demand)}.”`,
     options: ['pay', 'stock', 'run'],
   },
 };
@@ -1101,18 +1202,18 @@ function resolveEncounter(action) {
 function encounterSuccess(type, action) {
   const lines = {
     warden: {
-      run: `You're in the cab and gone before his printer finishes. Not dignified, but effective.`,
+      run: `You're in the cab and gone before his printer finishes. “THAT WAS ON CAMERA, MATE!” It was. You look lovely in it.`,
       bribe: `You pay the ticket on the spot and throw in a Custard Cream. He moves on, mollified.`,
       talk: `You explain you're only loading. You produce a sideboard as evidence. He waves you on.`,
     },
     rival: {
-      run: `You nip down a one-way street the wrong way. The estate car can't follow. The curses can.`,
+      run: `You nip down a one-way street the wrong way. “YOU'LL NEVER WORK BERMONDSEY AGAIN!” follows you round the corner. You've never worked Bermondsey.`,
       bribe: `You buy her a carvery and promise first refusal on your next sideboard. She has three Yorkshire puddings. Peace, of a sort.`,
-      talk: `You compliment her eye for walnut. She tells you about her eye for walnut for forty minutes, then forgets why she stopped you.`,
+      talk: `You weaponise polite interest in her grain-matching technique. Forty minutes later her tea's gone cold and you're reversing into the sunset.`,
     },
     heavies: {
-      run: `You lose them at the lock gates. They're big lads, but they're not built for cornering.`,
-      bribe: `The “account” is settled. Nobody mentions it again.`,
+      run: `You lose them at the lock gates. “WE KNOW YOUR LOT NUMBER!” echoes off the water. Big lads, but not built for cornering.`,
+      bribe: `The “account” is settled with a small brown envelope, and the gavel goes back in his pocket.`,
       talk: `You quote clause 14b of the auction terms at them. Then 14c. By 14d they're asking if you're all right.`,
     },
   };
@@ -1132,8 +1233,9 @@ function encounterFailure(type, action) {
     const fine = Math.min(S.cash, ri(200, 600));
     S.cash -= fine;
     const msg = action === 'bribe'
-      ? `They take the ${fmt(fine)} and your afternoon. Mostly the afternoon.`
+      ? `They take the ${fmt(fine)}, then your afternoon, and somehow it's the afternoon you'll miss.`
       : `They follow you all the way to the depot and make you sit through a two-hour talk on auction etiquette. There are slides.${fine ? ` You're ${fmt(fine)} lighter.` : ''} Day lost.`;
+    stamp('Lectured');
     if (loseDay(msg)) return;
     return;
   }
@@ -1149,17 +1251,19 @@ function encounterFailure(type, action) {
         : `Your story has more holes than the upholstery. The van gets towed and the pound “mislays” ${lost} × ${name}.`,
       rival: action === 'bribe'
         ? `She takes the lunch AND ${lost} × ${name}. You've been done up like a kipper.`
-        : `She talks faster, knows more, and leaves with ${lost} × ${name}. Masterclass, really.`,
+        : `She knows every lot, every dealer and every house clearance in the county. By lunchtime she's bought ${lost} × ${name} out from under you and is telling people.`,
     };
     log(msgs[type], 'bad');
+    stamp(type === 'warden' ? 'Towed' : 'Gazumped');
   } else {
     const fine = Math.min(S.cash, ri(150, 400) + S.day * 8);
     S.cash -= fine;
     const msgs = {
       warden: `The ticket writes itself: ${fmt(fine)}, plus a leaflet about loading bays.`,
-      rival: `She gazumps you on the spot and it costs you ${fmt(fine)} to keep face. Worth it? Unclear.`,
+      rival: `She bids you up at the auction rooms out of pure spite. You win, at ${fmt(fine)} over the odds. She waves.`,
     };
     log(msgs[type], 'bad');
+    stamp(type === 'warden' ? 'Ticketed' : 'Outbid');
   }
 }
 
@@ -1168,12 +1272,12 @@ function resolveBarry(enc, action) {
     const paid = Math.min(S.cash, enc.demand);
     S.cash -= paid;
     S.debt = Math.max(0, S.debt - paid);
-    log(`You pay ${fmt(paid)} off the loan. They hand you a chip. “No hard feelings.”`);
-    if (paid < enc.demand) { bumpHeat(1, `It wasn't the full amount, though. Barry will hear about it.`); }
+    log(`You hand over ${fmt(paid)}. The broad one counts every note twice, leaves a film of vinegar on your logbook, and nods once. “Barry sends his regards, son.”`);
+    if (paid < enc.demand) { bumpHeat(1, `It's not the full amount. The lads exchange a look that will definitely be reported to Barry.`); }
   } else if (action === 'stock') {
     const held = Object.keys(S.inv).filter(k => S.inv[k] > 0 && !ITEMS.find(i => i.name === k).golden);
     if (!held.length) {
-      bumpHeat(1, `Your van is empty. The lads look at each other. Barry will hear about this.`);
+      bumpHeat(1, `Your van is empty. The lads look in the back, then at each other, then at you, for a very long time. Barry will hear about this.`);
     } else {
       let owed = enc.demand, took = [];
       for (const name of [...held].sort(() => Math.random() - 0.5)) {
@@ -1187,19 +1291,20 @@ function resolveBarry(enc, action) {
         took.push(`${qty} × ${name}`);
       }
       S.debt = Math.max(0, S.debt - (enc.demand - Math.max(0, owed)));
-      log(`They take ${took.join(', ')} “for the showroom”. Barry has a showroom now, apparently.`, 'bad');
+      log(`They take ${took.join(', ')} “for the showroom”. Barry has a showroom now. The address is on a need-to-know basis, and you don't.`, 'bad');
     }
   } else { // run
     S.stats.encounters++; // running from Barry counts double against the nerves
     if (Math.random() < encOdds('run')) {
       S.stats.escapes++;
       bumpHeat(1);
-      log(`You're gone before the chips are finished. Barry will hear about this.`, 'good');
+      log(`You're round the corner before they've wiped their fingers. “WE'VE GOT YOUR NUMBER, SUNSHINE!” They have. Barry gave it to them.`, 'good');
     } else {
       const grabbed = Math.min(S.cash, Math.round(enc.demand * 0.6));
       S.cash -= grabbed;
       bumpHeat(1);
-      log(`They were expecting that. They empty your pockets of ${fmt(grabbed)} and finish the chips.`, 'bad');
+      log(`They were expecting that. Barry's lads have been chasing vans since before you could drive one. They relieve you of ${fmt(grabbed)} and suggest you walk it off.`, 'bad');
+      stamp('Shaken down');
     }
   }
   render();
@@ -1331,7 +1436,7 @@ function amtOk() {
     log(`Sold ${n} × ${name} for ${fmt(n * price)}.`);
   } else if (kind === 'repay') {
     S.cash -= n; S.debt -= n;
-    log(`Repaid ${fmt(n)}. ${S.debt > 0 ? 'Still owing ' + fmt(S.debt) + '.' : 'Loan cleared. Uncle Barry buys YOU a chip.'}`, S.debt > 0 ? null : 'good');
+    log(`Repaid ${fmt(n)}. ${S.debt > 0 ? 'Still owing ' + fmt(S.debt) + '.' : 'Loan cleared. Uncle Barry tears your page out of the little book and hands it over like a medal.'}`, S.debt > 0 ? null : 'good');
   }
   render();
 }
@@ -1407,9 +1512,9 @@ function showIntro() {
     '<button onclick="closeMsg(true)">Find the van keys</button>', null
   );
   typeInto($('introText'),
-    `SANDRINE: It's Sandrine. Half of Europe is about to spend a month on the sofa, and most of those sofas are a cry for help.\n\n` +
-    `You've got a van, thirty days and a loan from someone called Barry. I won't ask about Barry. Nobody asks about Barry.\n\n` +
-    `I'll ring with jobs. You deliver, I pay. Don't make me ring twice.`);
+    `SANDRINE: It's Sandrine. I need someone with a van and no reputation to protect, and you came highly unrecommended.\n\n` +
+    `How you've funded yourself is between you and your van's suspension. I don't want to know, I won't be told, and none of it comes near my stock.\n\n` +
+    `I ring, you deliver, I pay. Everything I send you is the real thing, so treat it better than you treat yourself.`);
 }
 
 function showHelp() {
@@ -1418,7 +1523,7 @@ function showHelp() {
     `• Travelling ends the day; you have <b>${DAYS} days</b>.<br>` +
     `• Uncle Barry's loan grows <b>${Math.round(INTEREST * 100)}% a day</b>: repay it in London. ` +
     `Let it pile up and his lads will find you anywhere.<br>` +
-    `• <b>Heat</b> (status bar) rises when you trade big or botch an encounter. ` +
+    `• <b>Heat</b> (the sirens up top) rises when you trade big or botch an encounter. ` +
     `High heat means more trouble: wardens, rivals, heavies. Run, bribe or talk your way out. ` +
     `Heat cools as you keep moving.<br>` +
     `• The van holds <b>${START_CAP} slots</b> to start. Watch for offers: a bigger van, or a sack truck for quicker getaways.<br>` +
@@ -1589,6 +1694,7 @@ function endGame() {
   const newBest = updateLifetime();
   render();
   showEndDialog(newBest);
+  if (net < 0) stamp('Liquidated');
   log(`Game over. Final net worth ${fmt(net)}. ${endInfo.rank}.`, 'day');
 }
 
@@ -1770,6 +1876,7 @@ function showTitleCard() {
   const start = () => {
     if (gone) return;
     gone = true;
+    audio(); // first user gesture: unlock sound
     document.removeEventListener('keydown', start, true);
     card.classList.add('out');
     setTimeout(() => { card.remove(); showIntro(); }, 350);
@@ -1778,13 +1885,102 @@ function showTitleCard() {
   document.addEventListener('keydown', start, true);
 }
 
-function showCityCard(name, sub) {
-  const card = $('cityCard');
-  card.querySelector('.cityname').textContent = name;
-  card.querySelector('.citysub').textContent = sub;
-  card.classList.remove('show');
-  void card.offsetWidth; // restart the animation
-  card.classList.add('show');
+// full-screen cards and stamps take turns, so a city card, a job banner and
+// a stamp landing on the same day play one after another
+const overlayQueue = [];
+let overlayBusy = false;
+function queueOverlay(play, ms) {
+  if (typeof setTimeout !== 'function') return;
+  overlayQueue.push([play, ms]);
+  if (!overlayBusy) nextOverlay();
+}
+function nextOverlay() {
+  const item = overlayQueue.shift();
+  if (!item) { overlayBusy = false; return; }
+  overlayBusy = true;
+  item[0]();
+  setTimeout(nextOverlay, item[1]);
+}
+
+function showCard(name, sub, kicker) {
+  queueOverlay(() => {
+    const card = $('cityCard');
+    card.querySelector('.citykicker').textContent = kicker || '';
+    card.querySelector('.cityname').textContent = name;
+    card.querySelector('.citysub').textContent = sub;
+    card.classList.toggle('job', !!kicker);
+    card.classList.remove('show');
+    void card.offsetWidth; // restart the animation
+    card.classList.add('show');
+  }, 1500);
+}
+
+function stamp(word) {
+  queueOverlay(() => {
+    const el = $('stamp');
+    el.querySelector('.stampword').textContent = word;
+    el.classList.remove('show');
+    void el.offsetWidth;
+    el.classList.add('show');
+    document.body.classList.add('stamped');
+    sfxStamp();
+    setTimeout(() => document.body.classList.remove('stamped'), 1500);
+  }, 1900);
+}
+
+/* ---------- sound: synthesised in the browser, no audio files ---------- */
+
+let audioCtx = null;
+let soundOn = loadJson('vs-sound', true) !== false;
+function audio() {
+  if (!soundOn) return null;
+  try {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      audioCtx = new AC();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  } catch (e) { return null; }
+}
+function tone(a, freq, start, dur, type, gain, endFreq) {
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = type;
+  o.frequency.setValueAtTime(freq, start);
+  if (endFreq) o.frequency.exponentialRampToValueAtTime(endFreq, start + dur);
+  g.gain.setValueAtTime(gain, start);
+  g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+  o.connect(g).connect(a.destination);
+  o.start(start);
+  o.stop(start + dur + 0.02);
+}
+// British double ring, played as chiptune
+function sfxRing() {
+  const a = audio(); if (!a) return;
+  const t = a.currentTime;
+  for (const burst of [0, 0.55, 1.6, 2.15]) {
+    for (let i = 0; i < 8; i++) tone(a, i % 2 ? 450 : 400, t + burst + i * 0.05, 0.045, 'square', 0.035);
+  }
+}
+// pager chirp: three quick beeps
+function sfxChirp() {
+  const a = audio(); if (!a) return;
+  const t = a.currentTime;
+  [0, 0.09, 0.18].forEach(d => tone(a, 2100, t + d, 0.06, 'square', 0.03));
+}
+// rubber stamp: a low thud
+function sfxStamp() {
+  const a = audio(); if (!a) return;
+  const t = a.currentTime;
+  tone(a, 150, t, 0.35, 'sine', 0.35, 40);
+  tone(a, 90, t, 0.12, 'triangle', 0.2, 30);
+}
+function toggleSound() {
+  soundOn = !soundOn;
+  saveJson('vs-sound', soundOn);
+  $('soundToggle').textContent = 'Sound: ' + (soundOn ? 'On' : 'Off');
+  if (soundOn) sfxChirp();
 }
 
 // today's Teak FM bulletin: headlines first, then filler; rebuilt on demand,
@@ -1799,8 +1995,10 @@ let lastTicker = '';
 function updateTicker() {
   const bits = [...todaysHeadlines];
   // deterministic-ish filler per day so render() calls don't reshuffle it
-  const idx = (S.day * 3) % DJ_LINES.length;
-  bits.push(DJ_LINES[idx % DJ_LINES.length], DJ_LINES[(idx + 1) % DJ_LINES.length]);
+  bits.push(DJ_STORY[Math.min(DJ_STORY.length - 1, Math.floor((Math.min(S.day, DAYS) - 1) / 2))]);
+  bits.push(DJ_LINES[(S.day * 3) % DJ_LINES.length]);
+  bits.push(S.day % 2 ? ADVERTS[S.day % ADVERTS.length] : LISTENER_TEXTS[(S.day / 2) % LISTENER_TEXTS.length]);
+  if (S.heat >= 2) bits.push(SCANNER_LINES[(S.day + S.heat) % SCANNER_LINES.length]);
   if (S.heat >= 4) bits.push('A word to the wise: the wardens are out in force. You didn’t hear it from Teak FM. Teak FM was never here.');
   const text = bits.join('  •••  ');
   if (text === lastTicker) return;
@@ -1812,8 +2010,13 @@ function updateTicker() {
 
 function heatHtml() {
   let h = '';
-  for (let i = 1; i <= 5; i++) h += `<span class="heatled${S.heat >= i ? ' on' : ''}"></span>`;
-  return h;
+  for (let i = 1; i <= 5; i++) {
+    h += `<svg class="siren${S.heat >= i ? ' on' : ''}" width="12" height="12" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true">` +
+      `<rect x="1" y="10" width="10" height="2" fill="#404040"/>` +
+      `<rect class="dome" x="3" y="4" width="6" height="6"/><rect class="dome" x="4" y="3" width="4" height="1"/>` +
+      `<rect x="4" y="5" width="1" height="3" fill="#ffffff" opacity=".6"/></svg>`;
+  }
+  return `<span title="Heat ${S.heat} of 5">${h}</span>`;
 }
 
 function withUtm(url) { return url + (url.includes('?') ? '&' : '?') + UTM; }
@@ -1904,6 +2107,7 @@ $('cheatInput').addEventListener('keydown', e => {
 });
 $('titleCaption').addEventListener('click', titleTap);
 
+$('soundToggle').textContent = 'Sound: ' + (soundOn ? 'On' : 'Off');
 newGame();
 showTitleCard();
 </script>
