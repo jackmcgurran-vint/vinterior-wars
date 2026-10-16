@@ -16,7 +16,7 @@ Every line of player-facing copy in [index.html](index.html), generated from the
 | --- | --- | --- |
 | Sandrine | The boss. Rings with delivery jobs and gives the final verdict. Always on the legitimate side. Real person, pending her approval. | Cutting, confident, never wrong. Treats the player as a promising idiot. Never crude. |
 | Uncle Barry | Lent the player the money. Fictional. | London geezer. Calls you "son". Friendly in a way that worries you. |
-| Barry's lads | Collect the debt once it passes £8,000. Fictional. | Few words, many chips. |
+| Barry's lads | Collect the debt once it passes £8,000. Fictional. | Few words. Communicate mainly in looks that get reported to Barry. |
 | Marlene | Rival dealer from the auction rooms. Fictional. | Territorial, calls you "sunshine", has been here since decimalisation. |
 | The traffic warden | Recurring nuisance. Fictional. | Mostly silent. Photographs from artistic angles. |
 | Clive Mahogany | Teak FM's breakfast DJ. Fictional. | Falling apart on air across the month. |
@@ -46,11 +46,11 @@ Shown once on load, over pixel art of an 80s sunset. The title reads VINTERIOR W
 
 **Opening call** (Chapter 1). Sandrine's call opens the game after the title card.
 
-> SANDRINE: Right. It's Sandrine. You don't know me yet, but I know you. You're the one with the van and the face of someone who's never owned a decent chair.
+> SANDRINE: It's Sandrine. I need someone with a van and no reputation to protect, and you came highly unrecommended.
 >
-> I hear you've borrowed £5,000 off a man called Barry. Brave. Stupid, but brave. I'm not going to ask about Barry, and if you've got any sense, neither will you.
+> How you've funded yourself is between you and your van's suspension. I don't want to know, I won't be told, and none of it comes near my stock.
 >
-> Here's the deal. I ring, you deliver, I pay. Bring me anything in orange pine and I'll have this number disconnected.
+> I ring, you deliver, I pay. Everything I send you is the real thing, so treat it better than you treat yourself.
 
 Around the call (setting line, caption, title, button):
 
@@ -65,7 +65,7 @@ Around the call (setting line, caption, title, button):
 >
 > • Travelling ends the day; you have 30 days.
 > • Uncle Barry's loan grows 6% a day: repay it in London. Let it pile up and his lads will find you anywhere.
-> • Heat (status bar) rises when you trade big or botch an encounter. High heat means more trouble: wardens, rivals, heavies. Run, bribe or talk your way out. Heat cools as you keep moving.
+> • Heat (the sirens up top) rises when you trade big or botch an encounter. High heat means more trouble: wardens, rivals, heavies. Run, bribe or talk your way out. Heat cools as you keep moving.
 > • The van holds 20 slots to start. Watch for offers: a bigger van, or a sack truck for quicker getaways.
 > • Answer the payphone: Sandrine's delivery jobs pay a bonus on top of the sale. Jobs are optional; missing one only loses the bonus.
 > • Stock can spoil: woodworm eats wood, moths eat fabric, glass smashes, leather moulds.
@@ -81,13 +81,15 @@ Around the call (setting line, caption, title, button):
 
 A payphone rings on set days with an optional delivery job. Arriving in the destination with the goods hands them over for the market price plus a bonus. Missing the deadline only loses the bonus. Bonuses and deadlines are still placeholders until balance testing is finished.
 
-| # | Rings on day | Job | Bonus |
-| --- | --- | --- | --- |
-| 1 | 2 | 5 × Ercol Windsor Chair to Paris by day 7 | £800 |
-| 2 | 8 | 3 × Danish Teak Desk to London by day 13 | £2,000 |
-| 3 | 13 | 2 × Murano Chandelier to Amsterdam by day 18 | £3,500 |
-| 4 | 18 | 1 × Memphis-Style Bookcase to Milan by day 24 | £4,000 |
-| 5 | 23 | 1 × Togo Sofa Suite to London by day 29 | £10,000 |
+| # | Title card | Rings on day | Job | Bonus |
+| --- | --- | --- | --- | --- |
+| 1 | THE ERCOL SHUFFLE | 2 | 5 × Ercol Windsor Chair to Paris by day 7 | £800 |
+| 2 | DESK JOB | 8 | 3 × Danish Teak Desk to London by day 13 | £2,000 |
+| 3 | THE GLASS JOB | 13 | 2 × Murano Chandelier to Amsterdam by day 18 | £3,500 |
+| 4 | THE MEMPHIS RUN | 18 | 1 × Memphis-Style Bookcase to Milan by day 24 | £4,000 |
+| 5 | ONE LAST SOFA | 23 | 1 × Togo Sofa Suite to London by day 29 | £10,000 |
+
+Taking a job flashes a full-screen card: NEW JOB FROM SANDRINE, the job title in big yellow capitals, then the job. Delivering one flashes JOB DONE with the bonus. Both play a pager chirp.
 
 **Job 1**
 
@@ -95,7 +97,7 @@ A payphone rings on set days with an optional delivery job. Arriving in the dest
 
 **Job 2**
 
-> SANDRINE: Three teak desks to London by day 13. The client works from home, has eleven video calls a day, and wants every single person on them to feel poor. Make it happen.
+> SANDRINE: Three teak desks to London by day 13. The client has eleven video calls a day and wants every one of them to end in quiet envy. Oiled, not varnished. If you varnish them, keep driving.
 
 **Job 3**
 
@@ -107,18 +109,18 @@ A payphone rings on set days with an optional delivery job. Arriving in the dest
 
 **Job 5**
 
-> SANDRINE: This is the big one. One Togo, London, day 29. The client says it's for the dog. I've met the dog. The dog has better taste than you. Don't let the dog down.
+> SANDRINE: One last job. A Togo, London, day 29. The buyer runs a hedge fund and thinks a low sofa makes him look approachable. It won't. Charge him as if it will.
 
 **On delivery** (one picked at random):
 
-- Delivered, on time. I'm almost disappointed. I had a whole speech ready.
-- The client cried. The good kind. Money's in, so you can cry the good kind too.
-- Money's in. Don't spend it all on a nicer van. It won't make you a nicer person.
+- On time, intact, and nobody sat on it. My expectations were low and you've cleared them.
+- The client cried, the good kind. Bonus paid. Don't spend it on a nicer van; it won't make you a nicer person.
+- Money's in. That's as close as I come to a compliment, so frame it.
 
 **On a missed deadline** (one picked at random):
 
-- You're late. The client panicked and bought a brand new sofa from a catalogue, with a matching footstool. You did that. You'll have to live with that.
-- That's one. I don't usually allow one. Tell me before it goes wrong next time, not after, and ideally not at all.
+- You're late. The client panicked and bought new, from a catalogue, with a matching footstool. That footstool is on your conscience now.
+- I don't usually allow a missed job, so consider this your one. Tell me before it goes wrong next time, not after, and ideally never.
 
 **Payphone and job messages:**
 
@@ -126,20 +128,23 @@ A payphone rings on set days with an optional delivery job. Arriving in the dest
 - Take the job
 - Let it ring
 - Job taken: {n} × {item} to {city} by day {day} for a {£ amount} bonus.
+- {n} × {item} to {city} by day {day}
+- New job from Sandrine
 - You let the payphone ring out. Sandrine doesn't call twice.
 - The payphone is ringing
 - Job done: {n} × {item} handed over in {city} for {£ amount}, plus the {£ amount} bonus.
+- Job done
 - You missed Sandrine's deadline. The bonus is gone.
 
 ## Cutscenes
 
 **Chapter 2: The Interest Is Doing Better Than You** (day 10)
 
-> *Uncle Barry slides into the seat opposite you with a fry-up he brought from home. Nobody tells him he can’t do that. Nobody has ever told Barry he can’t do anything.*
+> *Uncle Barry slides into the seat opposite you with a fry-up he brought from home. The café owner opens his mouth, sees who it is, and shuts it again.*
 >
 > BARRY: You're doing alright, son. Not as well as my interest, mind. My interest is having the year of its life. I'm thinking of sending it on holiday.
 >
-> BARRY: Day 30, every penny, in readies. I've got a little book, and you're in it. In pen. Underlined. Twice.
+> BARRY: Day 30, every penny, in readies. I've got a little book with your name in it, in pen, underlined twice, and I've never owned a rubber.
 
 **Chapter 3: Marlene's Patch** (day 20)
 
@@ -147,7 +152,7 @@ A payphone rings on set days with an optional delivery job. Arriving in the dest
 >
 > MARLENE: I've seen you about, sunshine. Buying my chairs. Selling to my buyers. Breathing my air, which I bought at auction in 1987.
 >
-> MARLENE: Ten days. Then it's back to car boots for you, and I'll be there with a fiver for the van. And I'll want change.
+> MARLENE: I've got every auctioneer between here and Calais on speed dial. Ten days, and you're back at car boots, and I'll be there with a fiver for the van. I'll want change.
 
 ## Final verdict and end screen
 
@@ -155,11 +160,11 @@ Sandrine's verdict, chosen by the player's rank, opens the end screen.
 
 | Final net worth | Rank | Sandrine says |
 | --- | --- | --- |
-| Below £0 | Bankrupt. Back to flat-pack | You went bust selling furniture to people who sit down every single day. I've been doing this for years and I didn't know that was possible. Genuinely, well done. |
+| Below £0 | Bankrupt. Back to flat-pack | You went bankrupt selling chairs to a species with backs. I'm not angry. I'm writing it up for a journal. |
 | £0 to £4,999 | Car Boot Browser | You made money. About one nice lamp's worth. Not a nice lamp, actually. A lamp. |
 | £5,000 to £19,999 | Market Stall Regular | Decent. I don't do decent. |
-| £20,000 to £49,999 | Respected Dealer | That's good. Properly good. Don't tell anyone I said that. It would ruin my reputation, and quite possibly yours. |
-| £50,000 to £149,999 | Vintage Connoisseur | Now that's a bet that paid off. I'll ring you first next time. You'll pretend you weren't waiting by the phone. We'll both know. |
+| £20,000 to £49,999 | Respected Dealer | That's good. Properly good. Repeat that in public and I'll deny it in writing. |
+| £50,000 to £149,999 | Vintage Connoisseur | Now that's taste with a calculator attached. I'll ring you first next time. Try to sound like you weren't waiting by the phone. |
 | £150,000 or more | Vinterior Legend | Vinterior Legend. There, I said it. I won't be saying it again, and if anyone asks, you misheard. |
 
 **End screen:**
@@ -190,6 +195,21 @@ Sandrine's verdict, chosen by the player's rank, opens the end screen.
 - Copied to clipboard. Paste it anywhere.
 - Could not share, so copy it yourself:
 
+## Failure stamps
+
+When something goes wrong, the screen drains to grey and a red rubber stamp slams across it with a thud, like an auction-house stamp. One word, in our own style: not the GTA failure screens.
+
+| Stamp | When |
+| --- | --- |
+| TOWED | The warden catches you and the pound takes stock |
+| TICKETED | The warden catches you and fines you |
+| GAZUMPED | Marlene takes stock from under you |
+| OUTBID | Marlene bids you up at auction |
+| LECTURED | The auction-house heavies cost you a day |
+| SHAKEN DOWN | Running from Barry's lads fails |
+| LATE | You miss Sandrine's deadline |
+| LIQUIDATED | You end the game bankrupt |
+
 ## Cities
 
 Each city's line appears in the log on arrival, alongside a big city-name card.
@@ -202,7 +222,7 @@ Each city's line appears in the log on arrival, alongside a big city-name card.
 | Milan | Glass, brass and a man who will explain your own chandelier to you. |
 | Amsterdam | Canal-side kringloop bargains. Mind the bikes. The bikes will not mind you. |
 | Berlin | Flohmarkt city. Cheap, cheerful, and open until a time you won’t remember. |
-| Miami | Neon, pastels and furniture that looks like it’s been to a rave. |
+| Miami | Pastel suits, mirrored side tables, and a man selling a glass coffee table off the back of a speedboat at four in the morning. |
 
 **Travel messages:**
 
@@ -219,21 +239,21 @@ A scrolling ticker under the log. Each day it plays: that day's market headlines
 
 | Days | Line |
 | --- | --- |
-| 1 to 2 | CLIVE: Morning, Europe! Clive Mahogany on Teak FM, the only station broadcasting from inside a wardrobe. It’s the acoustics. |
-| 3 to 4 | CLIVE: Big welcome to my new producer, Dawn. Say hello, Dawn. Dawn’s not saying hello. Dawn’s on her break. Dawn started ten minutes ago. |
-| 5 to 6 | CLIVE: Whoever’s parked a sideboard across the studio door, I know where you live. Oh. It’s Dawn’s sideboard. Lovely piece, Dawn. |
-| 7 to 8 | CLIVE: The jingle machine’s broken, so I’ll do it myself. Teeeeak Eff Emmm. Dawn’s crying with laughter. Or just crying. |
-| 9 to 10 | CLIVE: My ex-wife has taken the house, the dog and the Ercol. I’ve kept the station and my dignity. Mostly the station. |
-| 11 to 12 | CLIVE: Dawn has asked me to stop reading out my divorce on air. Fine. Here’s one she picked. It’s about a man who deserved it. |
-| 13 to 14 | CLIVE: We’ve lost the studio. Long story. A landlord, an Eames chair and a disagreement about what “sitting on it properly” means. |
-| 15 to 16 | CLIVE: Live from a lay-by outside Calais! Signal’s lovely. Dawn’s on the roof of the van holding the aerial. Higher, Dawn. Higher. |
-| 17 to 18 | CLIVE: The van’s been clamped. Teak FM continues as normal. Teak FM has never once been normal. |
-| 19 to 20 | CLIVE: Dawn has resigned live on air, which I’ll be appealing. Dawn, if you’re listening, the aerial misses you. I miss you. The aerial more. |
-| 21 to 22 | CLIVE: This hour is sponsored by Uncle Barry, who’s asked me to say he’s a lovely man. He’s a lovely man. Blink twice if you can hear me. |
-| 23 to 24 | CLIVE: New producer today. His name’s Gary and he’s a G Plan sideboard. Never late, never cries, and he’s got lovely drawers. |
+| 1 to 2 | CLIVE: Good morning, Europe! Clive Mahogany, the voice that sold a thousand sideboards, live from inside a wardrobe. It’s not a cupboard. It’s an acoustic decision. |
+| 3 to 4 | CLIVE: Please welcome my new producer, Dawn, who beat four hundred applicants for the honour of working with me. Dawn’s on her break. Dawn started ten minutes ago. |
+| 5 to 6 | CLIVE: Some coward has parked a sideboard across the studio door. I will find you, and when I do, I will make you an offer. Oh. It’s Dawn’s. Lovely piece, Dawn. |
+| 7 to 8 | CLIVE: The jingle machine’s packed up, which is fine, because I wrote the jingle and I’ve got a better voice than the machine. Teeeeak Eff Emmm. Dawn has gone to sit in her car. |
+| 9 to 10 | CLIVE: My ex-wife got the house, the dog and the Ercol. I got the station, which is worth more once you factor in my talent, which the court did not. |
+| 11 to 12 | CLIVE: Dawn has asked me to stop reading my divorce papers on air, which is a shame, because they’ve been our most popular segment by some distance. |
+| 13 to 14 | CLIVE: We’ve lost the studio over a landlord, an Eames chair and a disagreement about what “sitting on it properly” means. Every great broadcaster loses a studio. Look it up. |
+| 15 to 16 | CLIVE: Live from a lay-by outside Calais! The signal’s never been better, which is down to my voice and nothing to do with Dawn holding the aerial on the roof. Higher, Dawn. |
+| 17 to 18 | CLIVE: The van’s been clamped. Teak FM continues as normal, and normal for Teak FM is why we have the listeners we have, which is eleven, and loyal. |
+| 19 to 20 | CLIVE: Dawn has resigned live on air. I’m appealing, also live on air, which is where I make all my best decisions. Dawn, the aerial misses you. |
+| 21 to 22 | CLIVE: This hour is sponsored by Uncle Barry, who’d like me to say he’s a lovely man. He’s a lovely man. Blink twice if you can hear me. |
+| 23 to 24 | CLIVE: Meet my new producer, Gary, a G Plan sideboard. Never late, never cries, never questions my vision. Lovely drawers. Best hire I’ve ever made. |
 | 25 to 26 | CLIVE: Gary and I have had words. Gary didn’t say any of them, which frankly is the problem with Gary. |
-| 27 to 28 | CLIVE: Penultimate show. Thanks to Dawn, the bailiffs, and everyone who bought my mum’s nest of tables. Mum, I’m sorry. |
-| 29 to 30 | CLIVE: Final broadcast. If you’ve made your fortune, well done. If you haven’t, I know a man called Barry. Clive Mahogany, signing off from a car park. |
+| 27 to 28 | CLIVE: Penultimate show. My thanks to Dawn, the bailiffs, and whoever bought my mum’s nest of tables. Mum, it was a business decision. |
+| 29 to 30 | CLIVE: Final broadcast. History will remember Teak FM as the greatest station ever run from a car park. Clive Mahogany, signing off. Could someone come and get me. |
 
 **Standalone DJ lines:**
 
@@ -255,7 +275,7 @@ A scrolling ticker under the log. Each day it plays: that day's market headlines
 - TEXT IN FROM BRENDA: LIFT WITH YOUR KNEES. NOT MY KNEES. YOUR KNEES.
 - TEXT IN FROM MUM: CLIVE YOUR DINNER IS IN THE DOG.
 - TEXT IN FROM PETE, LUTON: IS IT STILL VINTAGE IF I BOUGHT IT IN 2009. CLIVE SAYS: NO, PETE.
-- TEXT IN FROM SUE: PLEASE PLAY SOMETHING FOR MY HUSBAND. HE KNOWS WHAT HE DID TO THE CHESTERFIELD.
+- TEXT IN FROM SUE: PLAY SOMETHING UPLIFTING. NIGEL SAT ON THE GOOD SETTEE IN HIS WORK TROUSERS AND IS NOW SLEEPING IN THE CAR.
 - TEXT IN FROM AN UNKNOWN NUMBER: WE HAVE YOUR SIDEBOARD. ALL IS FORGIVEN. COME HOME.
 - TEXT IN FROM DEREK: HOW DO YOU PRONOUNCE MURANO. CLIVE SAYS: EXPENSIVELY, DEREK.
 
@@ -263,8 +283,8 @@ A scrolling ticker under the log. Each day it plays: that day's market headlines
 
 - ADVERT: Tired of chairs that just sit there? Try ReclinaMax. It goes back. It comes forward. Ask your doctor if leaning is right for you.
 - ADVERT: Veneer Direct. It looks like walnut. It feels like walnut. Our lawyers have asked us to stop there.
-- ADVERT: Lost the little key that came with the wardrobe? Allen’s Keys of Croydon has it. Nobody knows how. Nobody asks.
-- ADVERT: Nan’s Credit. Borrow against your nan’s sideboard today. She need never know. Representative APR: rude to ask.
+- ADVERT: Lost the little key that came with the wardrobe? Allen’s Keys of Croydon has it. We have every little key in Britain, in jars, sorted by feel. Allen’s Keys: we’ve been expecting you.
+- ADVERT: SofaLoan. Why wait to own a sofa when you can pay for it in 39 monthly instalments and own it in 2041? SofaLoan: sit down, there are a lot of numbers.
 - ADVERT: Pine Direct. We’ve got orange pine, extra orange pine, and a pine so orange it’s been banned in Denmark. Pine Direct: you’ll squint.
 - ADVERT: Cushion+. Now with 30% more cushion. Side effects may include sinking, being swallowed by the sofa, and never leaving the house again.
 - ADVERT: TeakTone. The spray that makes anything look like Danish teak. Not for use on pets, children or the vicar.
@@ -279,13 +299,14 @@ A scrolling ticker under the log. Each day it plays: that day's market headlines
 - SCANNER: Van last seen heading north. Smells strongly of linseed oil. Probably armed with a tape measure.
 - SCANNER: Can someone come and help with a chandelier situation. Not urgent. Quite urgent.
 - SCANNER: Units are advised the suspect will try to sell you a lamp. Do not make eye contact with the lamp.
+- SCANNER: All units, white van leaving rubber on the roundabout with a coffee table wedged between the seats. Do not scratch the lacquer.
 
 **Market headlines.** One may fire on arrival, pushing a listed item's price up (spike) or down (crash). These also go to the log.
 
 Spikes:
 
 - A {item} is spotted in the background of a celebrity video call. Collectors lose their minds!
-- A Sunday supplement calls the {item} “the new avocado”. Prices go stratospheric!
+- A wellness influencer claims sleeping near a {item} realigns your finances. Prices go stratospheric!
 - A {item} sets an auction record. The winning bidder had to sit down. Prices soar!
 
 Crashes:
@@ -305,7 +326,7 @@ Random encounters on arrival, more likely at higher heat. The player picks from 
 | Encounter | Title | Opening line |
 | --- | --- | --- |
 | warden | Traffic warden | A traffic warden is photographing your van on the double yellows from several artistic angles. “This your vehicle?” |
-| rival | Rival dealer | Marlene from the auction rooms has parked her estate car across the pavement. “This is MY patch, sunshine. I've been here since decimalisation.” |
+| rival | Rival dealer | Marlene from the auction rooms has parked her estate car across the pavement. “This is MY patch, sunshine. I've been outbidding people like you since decimalisation.” |
 | heavies | Auction-house heavies | Two enormous, very polite representatives of the auction house would like a word about some “unpaid buyer's premium”. One of them is holding a gavel he does not need. |
 | barry | Uncle Barry's lads | Two of Uncle Barry's lads are leaning on your van eating chips, which means they've been waiting long enough to get hungry. “Barry says hello. Barry also says {£ amount}.” |
 
@@ -317,36 +338,37 @@ Random encounters on arrival, more likely at higher heat. The player picks from 
 
 **Getting away clean** (by encounter, then by choice):
 
-- You're in the cab and gone before his printer finishes. Not dignified, but effective.
+- You're in the cab and gone before his printer finishes. “THAT WAS ON CAMERA, MATE!” It was. You look lovely in it.
 - You pay the ticket on the spot and throw in a Custard Cream. He moves on, mollified.
 - You explain you're only loading. You produce a sideboard as evidence. He waves you on.
-- You nip down a one-way street the wrong way. The estate car can't follow. The curses can.
+- You nip down a one-way street the wrong way. “YOU'LL NEVER WORK BERMONDSEY AGAIN!” follows you round the corner. You've never worked Bermondsey.
 - You buy her a carvery and promise first refusal on your next sideboard. She has three Yorkshire puddings. Peace, of a sort.
-- You compliment her eye for walnut. She tells you about her eye for walnut for forty minutes, then forgets why she stopped you.
-- You lose them at the lock gates. They're big lads, but they're not built for cornering.
-- The “account” is settled. Nobody mentions it again.
+- You weaponise polite interest in her grain-matching technique. Forty minutes later her tea's gone cold and you're reversing into the sunset.
+- You lose them at the lock gates. “WE KNOW YOUR LOT NUMBER!” echoes off the water. Big lads, but not built for cornering.
+- The “account” is settled with a small brown envelope, and the gavel goes back in his pocket.
 - You quote clause 14b of the auction terms at them. Then 14c. By 14d they're asking if you're all right.
 - In the confusion somebody drops a tenner or three: you're {£ amount} up.
 
 **When it goes wrong:**
 
-- They take the {£ amount} and your afternoon. Mostly the afternoon.
+- They take the {£ amount}, then your afternoon, and somehow it's the afternoon you'll miss.
 - They follow you all the way to the depot and make you sit through a two-hour talk on auction etiquette. There are slides. [You're {£ amount} lighter.] Day lost.
 - He takes the money AND calls the tow truck. The pound “mislays” {n} × {item}.
 - Your story has more holes than the upholstery. The van gets towed and the pound “mislays” {n} × {item}.
 - She takes the lunch AND {n} × {item}. You've been done up like a kipper.
-- She talks faster, knows more, and leaves with {n} × {item}. Masterclass, really.
+- She knows every lot, every dealer and every house clearance in the county. By lunchtime she's bought {n} × {item} out from under you and is telling people.
 - The ticket writes itself: {£ amount}, plus a leaflet about loading bays.
-- She gazumps you on the spot and it costs you {£ amount} to keep face. Worth it? Unclear.
+- She bids you up at the auction rooms out of pure spite. You win, at {£ amount} over the odds. She waves.
 
 **Uncle Barry's lads** (pay up, hand over stock, or run):
 
-- You hand over {£ amount}. One of them counts it with greasy fingers and gives you a chip as a receipt. “No hard feelings, son.”
+- You hand over {£ amount}. The broad one counts every note twice, leaves a film of vinegar on your logbook, and nods once. “Barry sends his regards, son.”
 - It's not the full amount. The lads exchange a look that will definitely be reported to Barry.
 - Your van is empty. The lads look in the back, then at each other, then at you, for a very long time. Barry will hear about this.
-- They take {the stock they take} “for the showroom”. Barry has a showroom now. Nobody knows where it is, and nobody is allowed to ask.
-- You're round the corner before they've finished their chips. They won't forget this. They will, however, finish their chips.
-- They were expecting that. Barry's lads have been chasing vans since before you were born. They relieve you of {£ amount} and offer you a chip for your trouble.
+- They take {the stock they take} “for the showroom”. Barry has a showroom now. The address is on a need-to-know basis, and you don't.
+- You're round the corner before they've wiped their fingers. “WE'VE GOT YOUR NUMBER, SUNSHINE!” They have. Barry gave it to them.
+- They were expecting that. Barry's lads have been chasing vans since before you could drive one. They relieve you of {£ amount} and suggest you walk it off.
+- Shaken down
 
 ## Random events
 
@@ -356,10 +378,10 @@ At most one arrival event a day, unless an encounter, cutscene or call takes the
 
 | Material | Line |
 | --- | --- |
-| wood | Woodworm! {n} × {item} now more hole than furniture. |
+| wood | Woodworm in the van. {n} × {item} has been downgraded to high-end sawdust. |
 | textile | Moths have unionised in the back of the van. {n} × {item} eaten. |
 | glass | You hit a pothole and hear a sound like very expensive wind chimes. {n} × {item} smashed. |
-| leather | The van roof leaks and mould claims {n} × {item}. The smell stays. The smell is family now. |
+| leather | The van roof leaks and mould claims {n} × {item}. The smell has been offered a permanent position. |
 | metal | Damp sea air on the ferry. {n} × {item} rusted solid. Very industrial chic. Totally unsellable. |
 
 **Other events:**
@@ -377,7 +399,7 @@ At most one arrival event a day, unless an encounter, cutscene or call takes the
 - A set dresser on a period drama needs {n} × {item} by lunchtime and offers {£ amount} each, well over the odds. Sell?
 - Sold {n} × {item} to the film crew for {£ amount}. Look out for them behind somebody in a bonnet.
 - You send the set dresser away. The period drama makes do with flat-pack. The critics notice.
-- A happy customer sends a {£ amount} tip and a photo of their cat asleep on the sideboard.
+- A delighted buyer sends a {£ amount} tip, with a voice note of their architect weeping openly in the background.
 - Word gets round about a big spender in {city}. People are starting to point. Heat is rising.
 
 ## Trading, errors and system messages
@@ -395,7 +417,7 @@ Blocking errors open a Windows 98 error box with a red ✕.
 - Empty pockets
 - Repay loan
 - You owe Uncle Barry {£ amount}. How much will you repay?
-- Repaid {£ amount}. [Still owing {£ amount}. / Loan cleared. Uncle Barry buys YOU a chip.]
+- Repaid {£ amount}. [Still owing {£ amount}. / Loan cleared. Uncle Barry tears your page out of the little book and hands it over like a medal.]
 - How many?
 - Job: {n} × {item} to {city} by day {day}
 - Nothing on offer today. Even the pigeons have left.

@@ -51,7 +51,7 @@ function placeholder(expr) {
   const e = expr.trim();
   if (CONSTS[e]) return CONSTS[e];
   if (/took\.join/.test(e)) return '{the stock they take}';
-  if (/S\.debt > 0/.test(e)) return '[Still owing {£ amount}. / Loan cleared. Uncle Barry buys YOU a chip.]';
+  if (/S\.debt > 0 \?/.test(e)) { const inner = stringsIn(e).filter(x => x.trim()); return `[Still owing {£ amount}. / ${inner[inner.length - 1]}]`; }
   if (/fav \?/.test(e)) return '[, favourite item: {item}]';
   if (/toLocaleString/.test(e)) return '{n}';
   if (/rank/.test(e)) return '{rank}';
@@ -185,7 +185,7 @@ h(2, 'Cast');
 p('| Character | Role | Voice |\n| --- | --- | --- |\n' +
   '| Sandrine | The boss. Rings with delivery jobs and gives the final verdict. Always on the legitimate side. Real person, pending her approval. | Cutting, confident, never wrong. Treats the player as a promising idiot. Never crude. |\n' +
   '| Uncle Barry | Lent the player the money. Fictional. | London geezer. Calls you "son". Friendly in a way that worries you. |\n' +
-  '| Barry\'s lads | Collect the debt once it passes ' + G.fmt(G.COLLECTOR_DEBT) + '. Fictional. | Few words, many chips. |\n' +
+  '| Barry\'s lads | Collect the debt once it passes ' + G.fmt(G.COLLECTOR_DEBT) + '. Fictional. | Few words. Communicate mainly in looks that get reported to Barry. |\n' +
   '| Marlene | Rival dealer from the auction rooms. Fictional. | Territorial, calls you "sunshine", has been here since decimalisation. |\n' +
   '| The traffic warden | Recurring nuisance. Fictional. | Mostly silent. Photographs from artistic angles. |\n' +
   '| Clive Mahogany | Teak FM\'s breakfast DJ. Fictional. | Falling apart on air across the month. |\n' +
@@ -207,8 +207,9 @@ copyFrom('newGame').forEach(t => quote(t));
 
 h(2, 'Sandrine\'s jobs');
 p('A payphone rings on set days with an optional delivery job. Arriving in the destination with the goods hands them over for the market price plus a bonus. Missing the deadline only loses the bonus. Bonuses and deadlines are still placeholders until balance testing is finished.');
-p('| # | Rings on day | Job | Bonus |\n| --- | --- | --- | --- |\n' +
-  G.JOBS.map((j, i) => `| ${i + 1} | ${j.ring} | ${j.qty} × ${j.item} to ${j.dest} by day ${j.deadline} | ${G.fmt(j.bonus)} |`).join('\n'));
+p('| # | Title card | Rings on day | Job | Bonus |\n| --- | --- | --- | --- | --- |\n' +
+  G.JOBS.map((j, i) => `| ${i + 1} | ${j.title.toUpperCase()} | ${j.ring} | ${j.qty} × ${j.item} to ${j.dest} by day ${j.deadline} | ${G.fmt(j.bonus)} |`).join('\n'));
+p('Taking a job flashes a full-screen card: NEW JOB FROM SANDRINE, the job title in big yellow capitals, then the job. Delivering one flashes JOB DONE with the bonus. Both play a pager chirp.');
 G.JOBS.forEach((j, i) => { p(`**Job ${i + 1}**`); quote('SANDRINE: ' + j.brief); });
 p('**On delivery** (one picked at random):');
 ul(G.JOB_DONE_LINES);
@@ -233,6 +234,17 @@ p('**Personal best and lifetime stats** (saved on the player\'s device only):');
 ul(copyFrom('bestHtml', 'lifetimeHtml'));
 p('**Share text** (Web Share API, or copied to the clipboard):');
 ul(copyFrom('shareText', 'shareScore'));
+
+h(2, 'Failure stamps');
+p('When something goes wrong, the screen drains to grey and a red rubber stamp slams across it with a thud, like an auction-house stamp. One word, in our own style: not the GTA failure screens.');
+const stamps = [...code.matchAll(/stamp\('([^']+)'\)/g)].map(m => m[1]);
+const ternStamps = [...code.matchAll(/stamp\(type === 'warden' \? '([^']+)' : '([^']+)'\)/g)].flatMap(m => [m[1], m[2]]);
+p('| Stamp | When |\n| --- | --- |\n' + [
+  ['TOWED', 'The warden catches you and the pound takes stock'], ['TICKETED', 'The warden catches you and fines you'],
+  ['GAZUMPED', 'Marlene takes stock from under you'], ['OUTBID', 'Marlene bids you up at auction'],
+  ['LECTURED', 'The auction-house heavies cost you a day'], ['SHAKEN DOWN', "Running from Barry's lads fails"],
+  ['LATE', "You miss Sandrine's deadline"], ['LIQUIDATED', 'You end the game bankrupt'],
+].filter(([w]) => stamps.concat(ternStamps).map(x => x.toUpperCase()).includes(w)).map(([w, when]) => `| ${w} | ${when} |`).join('\n'));
 
 h(2, 'Cities');
 p('Each city\'s line appears in the log on arrival, alongside a big city-name card.');
