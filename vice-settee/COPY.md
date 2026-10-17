@@ -420,6 +420,7 @@ Blocking errors open a Windows 98 error box with a red ✕.
 - Repaid {£ amount}. [Still owing {£ amount}. / Loan cleared. Uncle Barry tears your page out of the little book and hands it over like a medal.]
 - How many?
 - Job: {n} × {item} to {city} by day {day}
+- Your Van (/{slots})
 - Nothing on offer today. Even the pigeons have left.
 - The van is empty. It echoes.
 - Game over. Click New Game to play again.
